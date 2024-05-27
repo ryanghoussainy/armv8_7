@@ -14,7 +14,7 @@ int loadBinary(char fileName[20], uint8_t *memory) {
 
   if (fptr == NULL) {
     printf("Unable to read file: %s\n", fileName);
-    return 1;
+    return 0;
   }
   
   long nbytes = getFileSize(fptr);
@@ -22,9 +22,9 @@ int loadBinary(char fileName[20], uint8_t *memory) {
   for (int i = 0; i < nbytes; i++) {
     if (fread(memory + i, 1, 1, fptr) != 1) {
         printf("Error reading file: %s\n", fileName);
-        return 4;
+        return 0;
     }
   }
   fclose(fptr);
-  return 0;
+  return 1;
 }
