@@ -20,27 +20,27 @@ void initialise_cpu(struct CPU* cpu)
     cpu->ZR = 0;
 }
 
-void write_register(struct CPU* cpu, int register_no, int64_t value)
+void write_register(struct CPU* cpu, int register_no, uint64_t value)
 {
     cpu->registers[register_no] = value;
 }
 
-int64_t read_register(struct CPU* cpu, int register_no)
+uint64_t read_register(struct CPU* cpu, int register_no)
 {
     return cpu->registers[register_no];
 }
 
-void write_byte_memory(struct CPU* cpu, int address, int8_t byte)
+void write_byte_memory(struct CPU* cpu, int address, uint8_t byte)
 {
     cpu->memory[address] = byte;
 }
 
-int8_t read_byte_memory(struct CPU* cpu, int address)
+uint8_t read_byte_memory(struct CPU* cpu, int address)
 {
     return cpu->memory[address];
 }
 
-int64_t read_bytes_memory(struct CPU* cpu, int start_addr, int bytes)
+uint64_t read_bytes_memory(struct CPU* cpu, int start_addr, int bytes)
 {
     int64_t result = 0;
     for (int byte = 0; byte < bytes; byte++) {
@@ -77,11 +77,11 @@ void print_registers(struct CPU* cpu, FILE* out)
     for (int register_no = 0; register_no < REGISTER_COUNT; register_no++) {
         fprintf(out, "X%02d = ", register_no);
         
-        int64_t reg_value = read_register(cpu, register_no);
-        fprintf(out, "%016x\n", reg_value);
+        uint64_t reg_value = read_register(cpu, register_no);
+        fprintf(out, "%016lx\n", reg_value);
     }
 
-    fprintf(out, "PC = %016x\n", cpu->PC);
+    fprintf(out, "PC = %016lx\n", cpu->PC);
 }
 
 void print_pstate(struct CPU* cpu, FILE* out)
@@ -120,13 +120,13 @@ void print_non_zero_memory(struct CPU* cpu, FILE* out)
     fprintf(out, "Non-zero memory: \n");
 
     for (int address = 0; address < MEM_ADDRESSES; address += 4) {
-        int64_t mem_value = read_bytes_memory(cpu, address, 4);
+        uint64_t mem_value = read_bytes_memory(cpu, address, 4);
 
         if (mem_value == 0)
             continue;
         
         fprintf(out, "0x%08x = ", address);
-        fprintf(out, "0x%08x\n", mem_value);
+        fprintf(out, "0x%08lx\n", mem_value);
     }
 }
 
