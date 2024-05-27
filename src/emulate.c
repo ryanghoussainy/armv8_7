@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv) {
 
-  char FILE_IN[20] = {};
+  char FILE_IN[20];
   char FILE_OUT[20] = "stdout";
 
   if (argc == 2) {
