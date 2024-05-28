@@ -10,8 +10,8 @@ CFLAGS  ?= -std=c17 -g\
 all: assemble emulate
 
 assemble: assemble.o
-emulate: emulate.o cpu.o loader.o
+emulate: emulate.o cpu.o loader.o masks.o
 
 clean:
-	$(RM) *.o assemble emulate cpu loader
+	$(RM) *.o assemble emulate cpu loader masks
 	

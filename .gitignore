@@ -32,5 +32,6 @@ assemble
 *.vrb
 *.nav
 *.toc
+*.bin
 
 .vscode/settings.json

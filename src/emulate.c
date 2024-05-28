@@ -3,6 +3,7 @@
 #include <string.h>
 #include "cpu.h"
 #include "loader.h"
+#include "masks.h"
 
 int main(int argc, char **argv) {
 
@@ -25,6 +26,8 @@ int main(int argc, char **argv) {
     printf("Wrong number of arguments supplied");
     return EXIT_FAILURE;
   }
+
+  
   struct CPU cpu;
 
   initialise_cpu(&cpu);
