@@ -30,8 +30,8 @@ struct CPU {
 
 void initialise_cpu(struct CPU* cpu);
 
-void write_register(struct CPU* cpu, int register_no, uint64_t value);
-uint64_t read_register(struct CPU* cpu, int register_no);
+void write_register(struct CPU* cpu, int register_no, uint64_t value, int is64_bit);
+uint64_t read_register(struct CPU* cpu, int register_no, int is64_bit);
 
 void write_byte_memory(struct CPU* cpu, int address, uint8_t byte);
 uint8_t read_byte_memory(struct CPU* cpu, int address);

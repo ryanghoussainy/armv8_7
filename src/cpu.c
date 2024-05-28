@@ -1,4 +1,5 @@
 #include "cpu.h"
+#include "masks.h"
 
 void initialise_cpu(struct CPU* cpu)
 {
@@ -20,14 +21,30 @@ void initialise_cpu(struct CPU* cpu)
     cpu->ZR = 0;
 }
 
-void write_register(struct CPU* cpu, int register_no, uint64_t value)
+void write_register(struct CPU* cpu, int register_no, uint64_t value, int is_64bit)
 {
-    cpu->registers[register_no] = value;
+    if (!is_64bit) {
+        uint64_t _32bit_mask = build_mask(0, 31);
+        uint64_t inverse_mask = ~_32bit_mask;
+        uint64_t register_value = read_register(cpu, register_no, 1);
+        uint64_t top_bits = inverse_mask & register_value;
+
+        cpu->registers[register_no] = top_bits | value;
+    }else {
+        cpu->registers[register_no] = value;
+    }
 }
 
-uint64_t read_register(struct CPU* cpu, int register_no)
+uint64_t read_register(struct CPU* cpu, int register_no, int is_64bit)
 {
-    return cpu->registers[register_no];
+    uint64_t register_value = cpu->registers[register_no];
+
+    if (!is_64bit) {
+        uint64_t _32bit_mask = build_mask(0, 31);
+        return register_value & _32bit_mask;
+    }
+
+    return register_value;
 }
 
 void write_byte_memory(struct CPU* cpu, int address, uint8_t byte)
@@ -77,7 +94,7 @@ void print_registers(struct CPU* cpu, FILE* out)
     for (int register_no = 0; register_no < REGISTER_COUNT; register_no++) {
         fprintf(out, "X%02d = ", register_no);
         
-        uint64_t reg_value = read_register(cpu, register_no);
+        uint64_t reg_value = read_register(cpu, register_no, 1);
         fprintf(out, "%016lx\n", reg_value);
     }
 
