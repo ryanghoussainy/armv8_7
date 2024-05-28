@@ -4,6 +4,7 @@
 #include "cpu.h"
 #include "loader.h"
 #include "masks.h"
+#include "dp-imm.h"
 
 int main(int argc, char **argv) {
 
