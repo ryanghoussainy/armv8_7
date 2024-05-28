@@ -5,6 +5,21 @@ uint32_t parse_ins(uint32_t instr, int start, int end) {
     return build_mask(start, end) & instr >> start;
 }
 
+uint64_t indexed(struct CPU* cpu, uint16_t offset, uint8_t xn) {
+    int simm9 = parse_ins(offset, 2, 10);
+    uint64_t xn_val = read_register(cpu, xn, 1);
+    uint64_t address;
+    if(parse_ins(offset, 1, 1)) {
+        // pre-index
+        address = xn_val + simm9;
+    } else {
+        // post-index 
+        address = xn_val;
+    }
+    write_register(cpu, xn, xn_val + simm9, 1);
+    return address;
+}
+
 int single_data(struct CPU* cpu, uint32_t instr) {
     uint8_t rt = parse_ins(instr, 0, 4);
     bool sf = parse_ins(instr, 30, 30);
@@ -46,21 +61,6 @@ int single_data(struct CPU* cpu, uint32_t instr) {
     return 0;
 }
 
-uint64_t indexed(struct CPU* cpu, uint16_t offset, uint8_t xn) {
-    int simm9 = parse_ins(offset, 2, 10);
-    uint64_t xn_val = read_register(cpu, xn, 1);
-    uint64_t address;
-    if(parse_ins(offset, 1, 1)) {
-        // pre-index
-        address = xn_val + simm9;
-    } else {
-        // post-index 
-        address = xn_val;
-    }
-    write_register(cpu, xn, xn_val + simm9, 1);
-    return address;
-}
-
 int load_literal(struct CPU* cpu, uint32_t instr) {
     uint8_t rt = parse_ins(instr, 0, 4);
     bool sf = parse_ins(instr, 30, 30);
@@ -81,4 +81,3 @@ int transfer_instruction(struct CPU* cpu, uint32_t instr){
         return load_literal(cpu, instr);
     }
 }
-
