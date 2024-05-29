@@ -18,16 +18,35 @@ int execute_instruction(struct CPU* cpu, uint32_t instruction)
     }
 
     if (op0_bits[0] == 1 && op0_bits[1] == 0 && op0_bits[2] == 0) {
-        return dp_imm_instruction(cpu, instruction);
-    }else if (op0_bits[1] == 1 && op0_bits[2] == 0 && op0_bits[3] == 1) {
-        // dp register instruction
+        int ret = dp_imm_instruction(cpu, instruction);
+        cpu->PC += 4;
+        return ret;
+
+    } else if (op0_bits[1] == 1 && op0_bits[2] == 0 && op0_bits[3] == 1) {
+        // int ret = {dp register instruction};
+        cpu->PC += 4;
+        // return ret;
         return 1;
-    }else if (op0_bits[1] == 1 && op0_bits[3] == 0) {
-        return single_data(cpu, instruction);
-    }else if (op0_bits[0] == 1 && op0_bits[1] == 0 && op0_bits[2] == 1) {
+        
+    } else if (op0_bits[1] == 1 && op0_bits[3] == 0) {
+        int ret = transfer_instruction(cpu, instruction);
+        cpu->PC += 4;
+        return ret;
+
+    } else if (op0_bits[0] == 1 && op0_bits[1] == 0 && op0_bits[2] == 1) {
         return branch_instruction(cpu, instruction);
     }
 
     printf("Invalid instruction\n");
     return 0;
+}
+
+void cycle(struct CPU* cpu) {
+
+  int isRunning = 1;
+
+  while (isRunning) {
+    uint32_t instruction = read_bytes_memory(cpu, cpu->PC, 4);
+    isRunning = execute_instruction(cpu, instruction);
+  }
 }

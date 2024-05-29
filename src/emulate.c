@@ -5,6 +5,7 @@
 #include "loader.h"
 #include "masks.h"
 #include "dp-imm.h"
+#include "execute.h"
 
 int main(int argc, char **argv) {
 
@@ -37,6 +38,8 @@ int main(int argc, char **argv) {
   if (!loadBinary(FILE_IN, cpu.memory)) {
     return EXIT_FAILURE;
   }
+
+  cycle(&cpu);
 
   print_cpu(&cpu, stdout);
 
