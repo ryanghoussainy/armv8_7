@@ -15,5 +15,5 @@ struct DPImmComponents {
 
 struct DPImmComponents get_components(uint32_t instruction);
 void dp_imm_instruction(struct CPU* cpu, uint32_t instruction);
-void do_arithmetic(struct CPU* cpu, struct DPImmComponents components);
-void do_wide_move(struct CPU* cpu, struct DPImmComponents components);
+void do_arithmetic(struct CPU* cpu, struct DPImmComponents* components);
+void do_wide_move(struct CPU* cpu, struct DPImmComponents* components);

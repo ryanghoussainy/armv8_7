@@ -42,50 +42,51 @@ struct DPImmComponents get_components(uint32_t instruction)
 void dp_imm_instruction(struct CPU* cpu, uint32_t instruction)
 {
     struct DPImmComponents components = get_components(instruction);
+    struct DPImmComponents* components_ptr = &components;
 
     if (components.opi == 2) {
-        do_arithmetic(cpu, components);
+        do_arithmetic(cpu, components_ptr);
     }else if (components.opi == 5) {
-        do_wide_move(cpu, components);
+        do_wide_move(cpu, components_ptr);
     }
 }
 
-void do_arithmetic(struct CPU* cpu, struct DPImmComponents components)
+void do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
 {
-    int imm = components.imm12;
+    int imm = components->imm12;
 
-    if (components.sh == 1) {
+    if (components->sh == 1) {
         imm <<= 12;
     }
 
     uint64_t result;
-    uint64_t register_value = read_register(cpu, components.rn, components.sf);
+    uint64_t register_value = read_register(cpu, components->rn, components->sf);
     int C_flag = 0;
 
-    if (components.opc <= 1) {
+    if (components->opc <= 1) {
         result = register_value + imm;
         
-        if (components.sf) {
+        if (components->sf) {
             C_flag = result < register_value || result < imm;
         }else {
             C_flag = result > build_mask(0, 31);
         }
 
-        write_register(cpu, components.rd, result, components.sf);
-    }else if (components.opc <= 3) {
+        write_register(cpu, components->rd, result, components->sf);
+    }else if (components->opc <= 3) {
         result = register_value - imm;
         C_flag = imm > register_value ? 0 : 1;
 
-        write_register(cpu, components.rd, result, components.sf);
+        write_register(cpu, components->rd, result, components->sf);
     }
 
-    if (components.sf == 1) {
+    if (components->sf == 1) {
         result = result & build_mask(0, 31);
     }
 
-    if (components.opc != 1 && components.opc != 3) return;
+    if (components->opc != 1 && components->opc != 3) return;
 
-    int sign_bit = 1 & (result >> (components.sf == 1 ? 63 : 31));
+    int sign_bit = 1 & (result >> (components->sf == 1 ? 63 : 31));
     set_flag(cpu, N, sign_bit);
 
     if (result == 0) {
@@ -96,10 +97,10 @@ void do_arithmetic(struct CPU* cpu, struct DPImmComponents components)
 
     set_flag(cpu, C, C_flag);
 
-    int max_int = components.sf ? INT64_MAX : INT32_MAX;
-    int min_int = components.sf ? INT64_MIN : INT32_MIN;
+    int max_int = components->sf ? INT64_MAX : INT32_MAX;
+    int min_int = components->sf ? INT64_MIN : INT32_MIN;
 
-    if (components.sf) {
+    if (components->sf) {
         int64_t signed_result = result;
         set_flag(cpu, C, signed_result > max_int || signed_result < min_int);
     }else {
@@ -108,19 +109,19 @@ void do_arithmetic(struct CPU* cpu, struct DPImmComponents components)
     }
 }
 
-void do_wide_move(struct CPU* cpu, struct DPImmComponents components)
+void do_wide_move(struct CPU* cpu, struct DPImmComponents* components)
 {
-    uint64_t operand_value = components.imm16 << (components.hw * 16);
+    uint64_t operand_value = components->imm16 << (components->hw * 16);
 
-    if (components.opc == 0b00) {
-        write_register(cpu, components.rd, ~operand_value, components.sf);
-    }else if (components.opc == 0b10) {
-        write_register(cpu, components.rd, operand_value, components.sf);
-    }else if (components.opc == 0b11) {
-        uint64_t register_value = read_register(cpu, components.rd, 1);
-        uint64_t keep_mask = ~build_mask(components.hw*16, components.hw*16 + 15);
+    if (components->opc == 0) {
+        write_register(cpu, components->rd, ~operand_value, components->sf);
+    }else if (components->opc == 2) {
+        write_register(cpu, components->rd, operand_value, components->sf);
+    }else if (components->opc == 3) {
+        uint64_t register_value = read_register(cpu, components->rd, 1);
+        uint64_t keep_mask = ~build_mask(components->hw*16, components->hw*16 + 15);
         uint64_t new_rd_value = (register_value & keep_mask) | operand_value;
 
-        write_register(cpu, components.rd, new_rd_value, components.sf);
+        write_register(cpu, components->rd, new_rd_value, components->sf);
     }
 }
