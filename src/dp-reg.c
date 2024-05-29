@@ -58,14 +58,157 @@ void dp_reg_instruction(struct CPU* cpu, uint32_t instr) {
         } else {
             // Invalid instruction
         }
-    } else if (components.M == 1) {
+    } else if (components.opr == 8 && components.opc == 0) {
         reg_multiply(cpu, &components);
     } else {
         // Invalid instruction
     }
 }
 
-uint32_t perform_shift(uint32_t shift, uint32_t rm, uint32_t operand) {
+void reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components) {
+    if (components->shift == 3) {
+        // Invalid instruction
+    }
+    uint64_t op2 = perform_shift(components->shift, components->rm, components->operand);
+    uint64_t Rn = read_register(cpu, components->rn, components->sf);
+    uint64_t Rd = arithmetic_operation(cpu, components->sf, components->opc, Rn, op2);
+    write_register(cpu, components->rd, Rd, components->sf);
+}
+
+uint64_t arithmetic_operation(
+    struct CPU* cpu,
+    uint64_t sf, 
+    uint64_t opc,
+    uint64_t Rn, 
+    uint64_t op2
+) {
+    switch (opc) {
+        case 0: // Add
+            return Rn + op2;
+        case 1: // Add, set flags
+            uint64_t result = Rn + op2;
+
+            uint64_t msb_result = sf ? result >> 63 : result >> 31;
+            uint64_t msb_Rn = sf ? Rn >> 63 : Rn >> 31;
+            uint64_t msb_op2 = sf ? op2 >> 63 : op2 >> 31;
+
+            // N flag
+            set_flag(cpu, N, msb_result);
+            // Z flag
+            set_flag(cpu, Z, result == 0);
+            // C flag
+            set_flag(cpu, C, result < Rn || result < op2);
+            // V flag
+            set_flag(cpu, V, msb_Rn == msb_op2 && msb_Rn != msb_result);
+
+            return result;
+        case 2: // Subtract
+            return Rn - op2;
+        case 3: // Subtract, set flags
+            uint64_t result = Rn - op2;
+
+            uint64_t msb_result = sf ? result >> 63 : result >> 31;
+            uint64_t msb_Rn = sf ? Rn >> 63 : Rn >> 31;
+            uint64_t msb_op2 = sf ? op2 >> 63 : op2 >> 31;
+
+            // N flag
+            set_flag(cpu, N, msb_result);
+            // Z flag
+            set_flag(cpu, Z, result == 0);
+            // C flag
+            set_flag(cpu, C, op2 > Rn);
+            // V flag
+            set_flag(cpu, V, msb_Rn == msb_op2 && msb_Rn != msb_result);
+
+            return result;
+    }
+}
+
+void reg_logical(struct CPU* cpu, struct DPRegComponents* components) {
+    uint64_t op2 = perform_shift(components->shift, components->rm, components->operand);
+    uint64_t Rn = read_register(cpu, components->rn, components->sf);
+    uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
+}
+
+uint64_t logical_operation(
+    struct CPU* cpu, 
+    uint64_t sf, 
+    uint64_t opc, 
+    uint64_t N, 
+    uint64_t Rn, 
+    uint64_t op2
+) {
+    switch (N) {
+        case 0:
+            switch (opc) {
+                case 0: // Bitwise AND
+                    return Rn & op2;
+                case 1: // Bitwise inclusive OR
+                    return Rn | op2;
+                case 2: // Bitwise exclusive OR
+                    return Rn ^ op2;
+                case 3: // Bitwise AND, setting flags
+                    uint64_t result = Rn & op2;
+
+                    // N flag
+                    set_flag(cpu, N, sf ? result >> 63 : result >> 31);
+                    // Z flag
+                    set_flag(cpu, Z, result == 0);
+                    // C flag
+                    set_flag(cpu, C, 0);
+                    // V flag
+                    set_flag(cpu, V, 0);
+                    
+                    return result;
+            }
+        case 1:
+            switch (opc) {
+                case 0: // Bitwise bit clear
+                    return Rn & ~op2;
+                case 1: // Bitwise inclusive OR NOT
+                    return Rn | ~op2;
+                case 2: // Bitwise exclusive OR NOT
+                    return Rn ^ ~op2;
+                case 3: // Bitwise bit clear, setting flags 
+                    uint64_t result = Rn & ~op2;
+                    
+                    // N flag
+                    set_flag(cpu, N, sf ? result >> 63 : result >> 31);
+                    // Z flag
+                    set_flag(cpu, Z, result == 0);
+                    // C flag
+                    set_flag(cpu, C, 0);
+                    // V flag
+                    set_flag(cpu, V, 0);
+                    
+                    return result;
+            }
+    }
+}
+
+void reg_multiply(struct CPU* cpu, struct DPRegComponents* components) {
+    uint64_t Ra = read_register(cpu, components->ra, components->sf);
+    uint64_t Rn = read_register(cpu, components->rn, components->sf);
+    uint64_t Rm = read_register(cpu, components->rm, components->sf);
+    uint64_t Rd = multiply_operation(cpu, components->x, Ra, Rn, Rm);
+}
+
+uint64_t multiply_operation(
+    struct CPU* cpu,
+    uint64_t x,
+    uint64_t Ra,
+    uint64_t Rn,
+    uint64_t Rm
+) {
+    switch (x) {
+        case 0: // Multiply-Add
+            return Ra + Rn * Rm;
+        case 1: // Multiply-Sub
+            return Ra - Rn * Rm;
+    }
+}
+
+uint64_t perform_shift(uint64_t shift, uint64_t rm, uint64_t operand) {
     switch (shift) {
         case 0:
             return lsl(rm, operand);
@@ -75,23 +218,21 @@ uint32_t perform_shift(uint32_t shift, uint32_t rm, uint32_t operand) {
             return asr(rm, operand);
         case 3:
             return ror(rm, operand);
-        default:
-            // Error with shift value
     }
 }
 
-uint32_t lsl(uint32_t val, uint32_t shift_amount) {
+uint64_t lsl(uint64_t val, uint64_t shift_amount) {
     return val << shift_amount;
 }
 
-uint32_t lsr(uint32_t val, uint32_t shift_amount) {
+uint64_t lsr(uint64_t val, uint64_t shift_amount) {
     return val >> shift_amount;
 }
 
-uint32_t asr(uint32_t val, uint32_t shift_amount) {
-    return (int)val >> shift_amount;
+uint64_t asr(uint64_t val, uint64_t shift_amount) {
+    return (int)val >> shift_amount; // Casting to int does a sign extension
 }
 
-uint32_t ror(uint32_t val, uint32_t shift_amount) {
+uint64_t ror(uint64_t val, uint64_t shift_amount) {
     return (val >> shift_amount) | (val << (32 - shift_amount));
 }

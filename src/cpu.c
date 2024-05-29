@@ -23,6 +23,9 @@ void initialise_cpu(struct CPU* cpu)
 
 void write_register(struct CPU* cpu, int register_no, uint64_t value, int is_64bit)
 {
+    if (register_no == 31)
+        return;
+        
     if (!is_64bit) {
         uint64_t _32bit_mask = build_mask(0, 31);
         uint64_t inverse_mask = ~_32bit_mask;
@@ -38,6 +41,9 @@ void write_register(struct CPU* cpu, int register_no, uint64_t value, int is_64b
 
 uint64_t read_register(struct CPU* cpu, int register_no, int is_64bit)
 {
+    if (register_no == 31)
+        return 0;
+
     uint64_t register_value = cpu->registers[register_no];
 
     if (!is_64bit) {
