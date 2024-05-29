@@ -17,12 +17,12 @@ struct DPRegComponents {
 };
 
 struct DPRegComponents get_components(uint32_t instr);
-void dp_reg_instruction(struct CPU* cpu, uint32_t instr);
-void reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components);
+int dp_reg_instruction(struct CPU* cpu, uint32_t instr);
+int reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components);
 uint64_t arithmetic_operation(struct CPU* cpu, uint64_t sf, uint64_t opc, uint64_t Rn, uint64_t op2);
-void reg_logical(struct CPU* cpu, struct DPRegComponents* components);
+int reg_logical(struct CPU* cpu, struct DPRegComponents* components);
 uint64_t logical_operation(struct CPU* cpu, uint64_t sf, uint64_t opc, uint64_t N, uint64_t Rn, uint64_t op2);
-void reg_multiply(struct CPU* cpu, struct DPRegComponents* components);
+int reg_multiply(struct CPU* cpu, struct DPRegComponents* components);
 uint64_t multiply_operation(struct CPU* cpu, uint64_t x, uint64_t Ra, uint64_t Rn, uint64_t Rm);
 uint64_t perform_shift(uint64_t shift, uint64_t rm, uint64_t operand);
 uint64_t lsl(uint64_t rm, uint64_t operand);

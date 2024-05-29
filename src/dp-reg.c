@@ -47,32 +47,36 @@ struct DPRegComponents get_components(uint32_t instr)
     return components;
 }
 
-void dp_reg_instruction(struct CPU* cpu, uint32_t instr) {
+int dp_reg_instruction(struct CPU* cpu, uint32_t instr) {
     struct DPRegComponents components = get_components(instr);
 
     if (components.M == 0) {
         if (components.opr >= 8 && components.opr % 2) {
-            reg_arithmetic(cpu, &components);
+            return reg_arithmetic(cpu, &components);
         } else if (components.opr < 8) {
-            reg_logical(cpu, &components);
+            return reg_logical(cpu, &components);
         } else {
-            // Invalid instruction
+            printf("Invalid instruction\n");
+            return 0;
         }
     } else if (components.opr == 8 && components.opc == 0) {
-        reg_multiply(cpu, &components);
+        return reg_multiply(cpu, &components);
     } else {
-        // Invalid instruction
+        printf("Invalid instruction\n");
+        return 0;
     }
 }
 
-void reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components) {
+int reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components) {
     if (components->shift == 3) {
-        // Invalid instruction
+        printf("Invalid instruction\n");
+        return 0;
     }
     uint64_t op2 = perform_shift(components->shift, components->rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = arithmetic_operation(cpu, components->sf, components->opc, Rn, op2);
     write_register(cpu, components->rd, Rd, components->sf);
+    return 1;
 }
 
 uint64_t arithmetic_operation(
@@ -124,10 +128,11 @@ uint64_t arithmetic_operation(
     }
 }
 
-void reg_logical(struct CPU* cpu, struct DPRegComponents* components) {
+int reg_logical(struct CPU* cpu, struct DPRegComponents* components) {
     uint64_t op2 = perform_shift(components->shift, components->rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
+    return 1;
 }
 
 uint64_t logical_operation(
@@ -186,11 +191,12 @@ uint64_t logical_operation(
     }
 }
 
-void reg_multiply(struct CPU* cpu, struct DPRegComponents* components) {
+int reg_multiply(struct CPU* cpu, struct DPRegComponents* components) {
     uint64_t Ra = read_register(cpu, components->ra, components->sf);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rm = read_register(cpu, components->rm, components->sf);
     uint64_t Rd = multiply_operation(cpu, components->x, Ra, Rn, Rm);
+    return 1;
 }
 
 uint64_t multiply_operation(
