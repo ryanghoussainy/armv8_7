@@ -90,7 +90,7 @@ int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
         result = result & build_mask(0, 31);
     }
 
-    if (components->opc != 1 && components->opc != 3) return;
+    if (components->opc != 1 && components->opc != 3) return 1;
 
     int sign_bit = 1 & (result >> (components->sf == 1 ? 63 : 31));
     set_flag(cpu, N, sign_bit);
