@@ -1,5 +1,6 @@
 #include "dp-reg.h"
 #include "masks.h"
+#include <assert.h>
 
 struct DPRegComponents get_components(uint32_t instr)
 {
@@ -86,15 +87,17 @@ uint64_t arithmetic_operation(
     uint64_t Rn, 
     uint64_t op2
 ) {
+    uint64_t result, msb_result, msb_Rn, msb_op2;
+    
     switch (opc) {
         case 0: // Add
             return Rn + op2;
         case 1: // Add, set flags
-            uint64_t result = Rn + op2;
+            result = Rn + op2;
 
-            uint64_t msb_result = sf ? result >> 63 : result >> 31;
-            uint64_t msb_Rn = sf ? Rn >> 63 : Rn >> 31;
-            uint64_t msb_op2 = sf ? op2 >> 63 : op2 >> 31;
+            msb_result = sf ? result >> 63 : result >> 31;
+            msb_Rn = sf ? Rn >> 63 : Rn >> 31;
+            msb_op2 = sf ? op2 >> 63 : op2 >> 31;
 
             // N flag
             set_flag(cpu, N, msb_result);
@@ -109,11 +112,11 @@ uint64_t arithmetic_operation(
         case 2: // Subtract
             return Rn - op2;
         case 3: // Subtract, set flags
-            uint64_t result = Rn - op2;
+            result = Rn - op2;
 
-            uint64_t msb_result = sf ? result >> 63 : result >> 31;
-            uint64_t msb_Rn = sf ? Rn >> 63 : Rn >> 31;
-            uint64_t msb_op2 = sf ? op2 >> 63 : op2 >> 31;
+            msb_result = sf ? result >> 63 : result >> 31;
+            msb_Rn = sf ? Rn >> 63 : Rn >> 31;
+            msb_op2 = sf ? op2 >> 63 : op2 >> 31;
 
             // N flag
             set_flag(cpu, N, msb_result);
@@ -125,6 +128,9 @@ uint64_t arithmetic_operation(
             set_flag(cpu, V, msb_Rn == msb_op2 && msb_Rn != msb_result);
 
             return result;
+        default:
+            printf("Error occured with value of opc\n");
+            assert(0);
     }
 }
 
@@ -132,6 +138,7 @@ int reg_logical(struct CPU* cpu, struct DPRegComponents* components) {
     uint64_t op2 = perform_shift(components->shift, components->rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
+    write_register(cpu, components->rd, Rd, components->sf);
     return 1;
 }
 
@@ -143,6 +150,7 @@ uint64_t logical_operation(
     uint64_t Rn, 
     uint64_t op2
 ) {
+    uint64_t result;
     switch (N) {
         case 0:
             switch (opc) {
@@ -153,7 +161,7 @@ uint64_t logical_operation(
                 case 2: // Bitwise exclusive OR
                     return Rn ^ op2;
                 case 3: // Bitwise AND, setting flags
-                    uint64_t result = Rn & op2;
+                    result = Rn & op2;
 
                     // N flag
                     set_flag(cpu, N, sf ? result >> 63 : result >> 31);
@@ -165,6 +173,9 @@ uint64_t logical_operation(
                     set_flag(cpu, V, 0);
                     
                     return result;
+                default:
+                    printf("Error occured with value of opc\n");
+                    assert(0);
             }
         case 1:
             switch (opc) {
@@ -175,7 +186,7 @@ uint64_t logical_operation(
                 case 2: // Bitwise exclusive OR NOT
                     return Rn ^ ~op2;
                 case 3: // Bitwise bit clear, setting flags 
-                    uint64_t result = Rn & ~op2;
+                    result = Rn & ~op2;
                     
                     // N flag
                     set_flag(cpu, N, sf ? result >> 63 : result >> 31);
@@ -187,7 +198,13 @@ uint64_t logical_operation(
                     set_flag(cpu, V, 0);
                     
                     return result;
+                default:
+                    printf("Error occured with value of opc\n");
+                    assert(0);
             }
+        default:
+            printf("Error occured with value of N\n");
+            assert(0);
     }
 }
 
@@ -196,6 +213,7 @@ int reg_multiply(struct CPU* cpu, struct DPRegComponents* components) {
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rm = read_register(cpu, components->rm, components->sf);
     uint64_t Rd = multiply_operation(cpu, components->x, Ra, Rn, Rm);
+    write_register(cpu, components->rd, Rd, components->sf);
     return 1;
 }
 
@@ -211,6 +229,9 @@ uint64_t multiply_operation(
             return Ra + Rn * Rm;
         case 1: // Multiply-Sub
             return Ra - Rn * Rm;
+        default:
+            printf("Error occured with value of x\n");
+            assert(0);
     }
 }
 
@@ -224,6 +245,9 @@ uint64_t perform_shift(uint64_t shift, uint64_t rm, uint64_t operand) {
             return asr(rm, operand);
         case 3:
             return ror(rm, operand);
+        default:
+            printf("Error occured with value of shift\n");
+            assert(0);
     }
 }
 
