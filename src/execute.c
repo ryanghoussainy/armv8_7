@@ -17,17 +17,16 @@ int execute_instruction(struct CPU* cpu, uint32_t instruction)
     }
 
     if (op0_bits[0] == 1 && op0_bits[1] == 0 && op0_bits[2] == 0) {
-        dp_imm_instruction(cpu, instruction);
+        return dp_imm_instruction(cpu, instruction);
     }else if (op0_bits[1] == 1 && op0_bits[2] == 0 && op0_bits[3] == 1) {
         // dp register instruction
+        return 1;
     }else if (op0_bits[1] == 1 && op0_bits[3] == 0) {
-        single_data(cpu, instruction);
+        return single_data(cpu, instruction);
     }else if (op0_bits[0] == 1 && op0_bits[1] == 0 && op0_bits[2] == 1) {
-        branch_instruction(cpu, instruction);
-    }else {
-        printf("Invalid instruction\n");
-        return 0;
+        return branch_instruction(cpu, instruction);
     }
 
-    return 1;
+    printf("Invalid instruction\n");
+    return 0;
 }

@@ -39,19 +39,22 @@ struct DPImmComponents get_components(uint32_t instruction)
     return components;
 }
 
-void dp_imm_instruction(struct CPU* cpu, uint32_t instruction)
+int dp_imm_instruction(struct CPU* cpu, uint32_t instruction)
 {
     struct DPImmComponents components = get_components(instruction);
     struct DPImmComponents* components_ptr = &components;
 
     if (components.opi == 2) {
-        do_arithmetic(cpu, components_ptr);
+        return do_arithmetic(cpu, components_ptr);
     }else if (components.opi == 5) {
-        do_wide_move(cpu, components_ptr);
+        return do_wide_move(cpu, components_ptr);
     }
+    
+    printf("Invalud DP Immediate instruction\n");
+    return 0;
 }
 
-void do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
+int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
 {
     int imm = components->imm12;
 
@@ -78,6 +81,9 @@ void do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
         C_flag = imm > register_value ? 0 : 1;
 
         write_register(cpu, components->rd, result, components->sf);
+    }else {
+        printf("Invalid arithmetic instruction\n");
+        return 0;
     }
 
     if (components->sf == 1) {
@@ -107,9 +113,11 @@ void do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
         int32_t signed_result = result;
         set_flag(cpu, Z, signed_result > max_int || signed_result < min_int);
     }
+
+    return 1;
 }
 
-void do_wide_move(struct CPU* cpu, struct DPImmComponents* components)
+int do_wide_move(struct CPU* cpu, struct DPImmComponents* components)
 {
     uint64_t operand_value = components->imm16 << (components->hw * 16);
 
@@ -123,5 +131,10 @@ void do_wide_move(struct CPU* cpu, struct DPImmComponents* components)
         uint64_t new_rd_value = (register_value & keep_mask) | operand_value;
 
         write_register(cpu, components->rd, new_rd_value, components->sf);
+    }else {
+        printf("Invalid wide move instruction\n");
+        return 0;
     }
+
+    return 1;
 }
