@@ -3,6 +3,7 @@
 #include "transfer.h"
 #include "branch.h"
 #include "masks.h"
+#include "dp-reg.h"
 
 #define OP0_BITS 4
 
@@ -23,11 +24,9 @@ int execute_instruction(struct CPU* cpu, uint32_t instruction)
         return ret;
 
     } else if (op0_bits[1] == 1 && op0_bits[2] == 0 && op0_bits[3] == 1) {
-        // int ret = {dp register instruction};
+        int ret = dp_reg_instruction(cpu, instruction);
         cpu->PC += 4;
-        // return ret;
-        return 1;
-        
+        return ret;
     } else if (op0_bits[1] == 1 && op0_bits[3] == 0) {
         int ret = transfer_instruction(cpu, instruction);
         cpu->PC += 4;
