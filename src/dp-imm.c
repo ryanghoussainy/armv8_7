@@ -2,7 +2,7 @@
 #include "masks.h"
 #include <limits.h>
 
-struct DPImmComponents get_components(uint32_t instruction)
+struct DPImmComponents get_dp_imm_components(uint32_t instruction)
 {
     uint64_t sf_mask = build_mask(31, 31);
     uint64_t ofc_mask = build_mask(29, 30);
@@ -41,7 +41,7 @@ struct DPImmComponents get_components(uint32_t instruction)
 
 int dp_imm_instruction(struct CPU* cpu, uint32_t instruction)
 {
-    struct DPImmComponents components = get_components(instruction);
+    struct DPImmComponents components = get_dp_imm_components(instruction);
     struct DPImmComponents* components_ptr = &components;
 
     if (components.opi == 2) {
@@ -68,7 +68,7 @@ int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
 
     if (components->opc <= 1) {
         result = register_value + imm;
-        
+
         if (components->sf) {
             C_flag = result < register_value || result < imm;
         }else {

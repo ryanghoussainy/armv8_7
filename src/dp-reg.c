@@ -2,7 +2,7 @@
 #include "masks.h"
 #include <assert.h>
 
-struct DPRegComponents get_components(uint32_t instr)
+struct DPRegComponents get_dp_reg_components(uint32_t instr)
 {
     uint64_t sf_mask = build_mask(31, 31);
     uint64_t opc_mask = build_mask(29, 30);
@@ -49,7 +49,7 @@ struct DPRegComponents get_components(uint32_t instr)
 }
 
 int dp_reg_instruction(struct CPU* cpu, uint32_t instr) {
-    struct DPRegComponents components = get_components(instr);
+    struct DPRegComponents components = get_dp_reg_components(instr);
 
     if (components.M == 0) {
         if (components.opr >= 8 && components.opr % 2) {

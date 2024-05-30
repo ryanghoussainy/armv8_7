@@ -16,7 +16,7 @@ struct DPRegComponents {
     uint64_t ra;
 };
 
-struct DPRegComponents get_components(uint32_t instr);
+struct DPRegComponents get_dp_reg_components(uint32_t instr);
 int dp_reg_instruction(struct CPU* cpu, uint32_t instr);
 int reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components);
 uint64_t arithmetic_operation(struct CPU* cpu, uint64_t sf, uint64_t opc, uint64_t Rn, uint64_t op2);

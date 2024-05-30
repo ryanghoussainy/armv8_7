@@ -13,7 +13,7 @@ struct DPImmComponents {
     uint64_t imm16;
 };
 
-struct DPImmComponents get_components(uint32_t instruction);
+struct DPImmComponents get_dp_imm_components(uint32_t instruction);
 int dp_imm_instruction(struct CPU* cpu, uint32_t instruction);
 int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components);
 int do_wide_move(struct CPU* cpu, struct DPImmComponents* components);
