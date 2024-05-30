@@ -4,25 +4,25 @@
 
 struct DPImmComponents get_components(uint32_t instruction)
 {
-    uint64_t sfMask = build_mask(31, 31);
-    uint64_t ofcMask = build_mask(29, 30);
-    uint64_t opiMask = build_mask(23, 25);
-    uint64_t rdMask = build_mask(0, 4);
-    uint64_t shMask = build_mask(22, 22);
-    uint64_t imm12Mask = build_mask(10, 21);
-    uint64_t rnMask = build_mask(5, 9);
-    uint64_t hwMask = build_mask(21, 22);
-    uint64_t imm16Mask = build_mask(5, 20);
+    uint64_t sf_mask = build_mask(31, 31);
+    uint64_t ofc_mask = build_mask(29, 30);
+    uint64_t opi_mask = build_mask(23, 25);
+    uint64_t rd_mask = build_mask(0, 4);
+    uint64_t sh_mask = build_mask(22, 22);
+    uint64_t imm12_mask = build_mask(10, 21);
+    uint64_t rn_mask = build_mask(5, 9);
+    uint64_t hw_mask = build_mask(21, 22);
+    uint64_t imm16_mask = build_mask(5, 20);
 
-    uint64_t sf = (instruction & sfMask) >> 31;
-    uint64_t ofc = (instruction & ofcMask) >> 29;
-    uint64_t opi = (instruction & opiMask) >> 23;
-    uint64_t rd = (instruction & rdMask);
-    uint64_t sh = (instruction & shMask) >> 22;
-    uint64_t imm12 = (instruction & imm12Mask) >> 10;
-    uint64_t rn = (instruction & rnMask) >> 5;
-    uint64_t hw = (instruction & hwMask) >> 21;
-    uint64_t imm16 = (instruction & imm16Mask) >> 5;
+    uint64_t sf = (instruction & sf_mask) >> 31;
+    uint64_t ofc = (instruction & ofc_mask) >> 29;
+    uint64_t opi = (instruction & opi_mask) >> 23;
+    uint64_t rd = (instruction & rd_mask);
+    uint64_t sh = (instruction & sh_mask) >> 22;
+    uint64_t imm12 = (instruction & imm12_mask) >> 10;
+    uint64_t rn = (instruction & rn_mask) >> 5;
+    uint64_t hw = (instruction & hw_mask) >> 21;
+    uint64_t imm16 = (instruction & imm16_mask) >> 5;
 
     struct DPImmComponents components = {
         sf,
@@ -50,7 +50,7 @@ int dp_imm_instruction(struct CPU* cpu, uint32_t instruction)
         return do_wide_move(cpu, components_ptr);
     }
     
-    printf("Invalud DP Immediate instruction\n");
+    printf("Invalid DP Immediate instruction\n");
     return 0;
 }
 
@@ -72,7 +72,7 @@ int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
         if (components->sf) {
             C_flag = result < register_value || result < imm;
         }else {
-            C_flag = result > build_mask(0, 31);
+            C_flag = result > INT32_MAX;
         }
 
         write_register(cpu, components->rd, result, components->sf);
@@ -86,21 +86,16 @@ int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
         return 0;
     }
 
-    if (components->sf == 1) {
-        result = result & build_mask(0, 31);
+    if (components->sf == 0) {
+        result = result & INT32_MAX;
     }
 
     if (components->opc != 1 && components->opc != 3) return 1;
 
-    int sign_bit = 1 & (result >> (components->sf == 1 ? 63 : 31));
+    int sign_bit = (result >> (components->sf == 1 ? 63 : 31)) > 0;
+
     set_flag(cpu, N, sign_bit);
-
-    if (result == 0) {
-        set_flag(cpu, Z, 1);
-    }else {
-        set_flag(cpu, Z, 0);
-    }
-
+    set_flag(cpu, Z, result == 0);
     set_flag(cpu, C, C_flag);
 
     int max_int = components->sf ? INT64_MAX : INT32_MAX;
@@ -108,7 +103,7 @@ int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
 
     if (components->sf) {
         int64_t signed_result = result;
-        set_flag(cpu, C, signed_result > max_int || signed_result < min_int);
+        set_flag(cpu, Z, signed_result > max_int || signed_result < min_int);
     }else {
         int32_t signed_result = result;
         set_flag(cpu, Z, signed_result > max_int || signed_result < min_int);
