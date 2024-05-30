@@ -39,14 +39,13 @@ int single_data(struct CPU* cpu, uint32_t instr) {
         uint64_t uoffset = offset << (2 + sf);
         address = base + uoffset;
     } else {
-        int offset;
         if (parse_ins(instr, 21, 21)) {
             // register offset
             uint8_t xm = parse_ins(instr, 16, 20);
             address = base + read_register(cpu, xm, 1);
         } else {
             // indexed
-            address = indexed(offset, offset, xn);
+            address = indexed(cpu, offset, xn);
         }
     }
 
