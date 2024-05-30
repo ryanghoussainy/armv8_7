@@ -9,6 +9,7 @@
 
 int execute_instruction(struct CPU* cpu, uint32_t instruction)
 {
+
     uint64_t op0 = (build_mask(25, 28) & instruction) >> 25;
     uint64_t op0_bits[OP0_BITS];
 
@@ -46,6 +47,7 @@ void cycle(struct CPU* cpu) {
 
   while (isRunning) {
     uint32_t instruction = read_bytes_memory(cpu, cpu->PC, 4);
+    printf("Current instruction: %d\n",instruction);
     isRunning = execute_instruction(cpu, instruction);
   }
 }
