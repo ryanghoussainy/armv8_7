@@ -3,6 +3,9 @@
 #include "masks.h"
 #include "cpu.h"
 
+int conditional_branch(struct CPU* cpu, uint32_t instr);
+int register_branch(struct CPU* cpu, uint32_t instr);
+int unconditional_branch(struct CPU* cpu, uint32_t instr);
 int branch_instruction(struct CPU* cpu, uint32_t instr);
 
 uint64_t sign_extend(uint32_t num, int num_bits);
