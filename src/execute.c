@@ -41,13 +41,45 @@ int execute_instruction(struct CPU* cpu, uint32_t instruction)
     return 0;
 }
 
+uint32_t flip_endian(uint32_t instruction) {
+
+    // need to flip instruction to little endian
+    // chaos below is my attempt to do that
+
+    uint32_t bit_num = 2147483648; // Value of the 32nd bit
+
+    uint32_t flipped = (instruction & bit_num) >> 31;
+
+    for (int i = 0; i < 30; i++) {
+        bit_num = bit_num / 2;
+
+        if (i <= 14) {
+            flipped += (instruction & bit_num) >> (29 - (2 * i));
+        } else {
+            flipped += (instruction & bit_num) << ((2 * (i - 15)) + 1);
+        }
+    }
+    
+    bit_num = bit_num / 2;
+    
+    flipped += (instruction & bit_num) << 31;
+
+    return flipped;
+}
+
 void cycle(struct CPU* cpu) {
 
-  int isRunning = 1;
+  int is_running = 1;
 
-  while (isRunning) {
-    uint32_t instruction = read_bytes_memory(cpu, cpu->PC, 4);
-    printf("Current instruction: %d\n",instruction);
-    isRunning = execute_instruction(cpu, instruction);
+  while (is_running) {
+    uint32_t instruction = flip_endian(read_bytes_memory(cpu, cpu->PC, 4));
+
+    printf("Current instruction: %u\n",instruction);
+
+    if (instruction == 0) { // For testing purposes terminate if 0 instruction
+        is_running = 0;
+    } else {
+        is_running = execute_instruction(cpu, instruction);
+    }
   }
 }

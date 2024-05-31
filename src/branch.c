@@ -5,6 +5,11 @@ int branch_instruction(struct CPU* cpu, uint32_t instr) {
     // Large numbers in conditions (5, 508160, 84) correspond to opcode in spec
     // Identify correct branch through isolating relevant bits w/ masks
 
+    if (cpu == NULL) {
+        printf("Cpu parameter is null.\n");
+        return 1;
+    }
+
     uint32_t uncon_mask = build_mask(26, 31);
     uint32_t reg_mask_one = build_mask(0, 4);
     uint32_t reg_mask_two = build_mask(10, 31);
