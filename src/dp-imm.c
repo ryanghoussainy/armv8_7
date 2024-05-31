@@ -2,7 +2,7 @@
 #include "masks.h"
 #include <limits.h>
 
-struct DPImmComponents get_dp_imm_components(uint32_t instruction)
+DPImmComponents get_dp_imm_components(uint32_t instruction)
 {
     uint64_t sf_mask = build_mask(31, 31);
     uint64_t ofc_mask = build_mask(29, 30);
@@ -24,7 +24,7 @@ struct DPImmComponents get_dp_imm_components(uint32_t instruction)
     uint64_t hw = (instruction & hw_mask) >> 21;
     uint64_t imm16 = (instruction & imm16_mask) >> 5;
 
-    struct DPImmComponents components = {
+    DPImmComponents components = {
         sf,
         ofc,
         opi,
@@ -39,10 +39,10 @@ struct DPImmComponents get_dp_imm_components(uint32_t instruction)
     return components;
 }
 
-int dp_imm_instruction(struct CPU* cpu, uint32_t instruction)
+int dp_imm_instruction(CPU* cpu, uint32_t instruction)
 {
-    struct DPImmComponents components = get_dp_imm_components(instruction);
-    struct DPImmComponents* components_ptr = &components;
+    DPImmComponents components = get_dp_imm_components(instruction);
+    DPImmComponents* components_ptr = &components;
 
     if (components.opi == 2) {
         return do_arithmetic(cpu, components_ptr);
@@ -54,7 +54,7 @@ int dp_imm_instruction(struct CPU* cpu, uint32_t instruction)
     return 0;
 }
 
-int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
+int do_arithmetic(CPU* cpu, DPImmComponents* components)
 {
     int imm = components->imm12;
 
@@ -112,7 +112,7 @@ int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
     return 1;
 }
 
-int do_wide_move(struct CPU* cpu, struct DPImmComponents* components)
+int do_wide_move(CPU* cpu, DPImmComponents* components)
 {
     uint64_t operand_value = components->imm16 << (components->hw * 16);
 

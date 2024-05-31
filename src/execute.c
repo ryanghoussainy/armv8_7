@@ -7,7 +7,7 @@
 
 #define OP0_BITS 4
 
-int execute_instruction(struct CPU* cpu, uint32_t instruction)
+int execute_instruction(CPU* cpu, uint32_t instruction)
 {
     uint64_t op0 = (build_mask(25, 28) & instruction) >> 25;
     uint64_t op0_bits[OP0_BITS];
@@ -40,7 +40,7 @@ int execute_instruction(struct CPU* cpu, uint32_t instruction)
     return 0;
 }
 
-void cycle(struct CPU* cpu) {
+void cycle(CPU* cpu) {
 
   int isRunning = 1;
 

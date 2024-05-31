@@ -1,6 +1,6 @@
 #include "branch.h"
 
-int branch_instruction(struct CPU* cpu, uint32_t instr) {
+int branch_instruction(CPU* cpu, uint32_t instr) {
 
     // Large numbers in conditions (5, 508160, 84) correspond to opcode in spec
 
@@ -39,7 +39,7 @@ int branch_instruction(struct CPU* cpu, uint32_t instr) {
     return 1;
 }
 
-int unconditional_branch(struct CPU* cpu, uint32_t instr) {
+int unconditional_branch(CPU* cpu, uint32_t instr) {
     
     uint32_t mask = build_mask(0, 25);
 
@@ -52,7 +52,7 @@ int unconditional_branch(struct CPU* cpu, uint32_t instr) {
     return 1;
 }
 
-int register_branch(struct CPU* cpu, uint32_t instr) {
+int register_branch(CPU* cpu, uint32_t instr) {
 
     uint32_t mask = build_mask(5, 9);
 
@@ -62,7 +62,7 @@ int register_branch(struct CPU* cpu, uint32_t instr) {
     return 1;
 }
 
-int conditional_branch(struct CPU* cpu, uint32_t instr) {
+int conditional_branch(CPU* cpu, uint32_t instr) {
 
     uint32_t mask_index = build_mask(5, 23);
     uint32_t mask_cond = build_mask(0, 3);

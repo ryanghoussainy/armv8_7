@@ -2,7 +2,7 @@
 #include "masks.h"
 #include <assert.h>
 
-struct DPRegComponents get_dp_reg_components(uint32_t instr)
+DPRegComponents get_dp_reg_components(uint32_t instr)
 {
     uint64_t sf_mask = build_mask(31, 31);
     uint64_t opc_mask = build_mask(29, 30);
@@ -30,7 +30,7 @@ struct DPRegComponents get_dp_reg_components(uint32_t instr)
     uint64_t x = (instr & x_mask) >> 15;
     uint64_t ra = (instr & ra_mask) >> 10;
 
-    struct DPRegComponents components = {
+    DPRegComponents components = {
         sf,
         opc,
         M,
@@ -48,8 +48,8 @@ struct DPRegComponents get_dp_reg_components(uint32_t instr)
     return components;
 }
 
-int dp_reg_instruction(struct CPU* cpu, uint32_t instr) {
-    struct DPRegComponents components = get_dp_reg_components(instr);
+int dp_reg_instruction(CPU* cpu, uint32_t instr) {
+    DPRegComponents components = get_dp_reg_components(instr);
 
     if (components.M == 0) {
         if (components.opr >= 8 && components.opr % 2) {
@@ -68,7 +68,7 @@ int dp_reg_instruction(struct CPU* cpu, uint32_t instr) {
     }
 }
 
-int reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components) {
+int reg_arithmetic(CPU* cpu, DPRegComponents* components) {
     if (components->shift == 3) {
         printf("Invalid instruction\n");
         return 0;
@@ -81,7 +81,7 @@ int reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components) {
 }
 
 uint64_t arithmetic_operation(
-    struct CPU* cpu,
+    CPU* cpu,
     uint64_t sf, 
     uint64_t opc,
     uint64_t Rn, 
@@ -134,7 +134,7 @@ uint64_t arithmetic_operation(
     }
 }
 
-int reg_logical(struct CPU* cpu, struct DPRegComponents* components) {
+int reg_logical(CPU* cpu, DPRegComponents* components) {
     uint64_t op2 = perform_shift(components->shift, components->rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
@@ -143,7 +143,7 @@ int reg_logical(struct CPU* cpu, struct DPRegComponents* components) {
 }
 
 uint64_t logical_operation(
-    struct CPU* cpu, 
+    CPU* cpu, 
     uint64_t sf, 
     uint64_t opc, 
     uint64_t N, 
@@ -208,7 +208,7 @@ uint64_t logical_operation(
     }
 }
 
-int reg_multiply(struct CPU* cpu, struct DPRegComponents* components) {
+int reg_multiply(CPU* cpu, DPRegComponents* components) {
     uint64_t Ra = read_register(cpu, components->ra, components->sf);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rm = read_register(cpu, components->rm, components->sf);
@@ -218,7 +218,7 @@ int reg_multiply(struct CPU* cpu, struct DPRegComponents* components) {
 }
 
 uint64_t multiply_operation(
-    struct CPU* cpu,
+    CPU* cpu,
     uint64_t x,
     uint64_t Ra,
     uint64_t Rn,

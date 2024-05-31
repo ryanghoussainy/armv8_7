@@ -5,7 +5,7 @@ uint32_t parse_ins(uint32_t instr, int start, int end) {
     return build_mask(start, end) & instr >> start;
 }
 
-uint64_t indexed(struct CPU* cpu, uint16_t offset, uint8_t xn) {
+uint64_t indexed(CPU* cpu, uint16_t offset, uint8_t xn) {
     int simm9 = parse_ins(offset, 2, 10);
     uint64_t xn_val = read_register(cpu, xn, 1);
     uint64_t address;
@@ -20,7 +20,7 @@ uint64_t indexed(struct CPU* cpu, uint16_t offset, uint8_t xn) {
     return address;
 }
 
-int single_data(struct CPU* cpu, uint32_t instr) {
+int single_data(CPU* cpu, uint32_t instr) {
     uint8_t rt = parse_ins(instr, 0, 4);
     bool sf = parse_ins(instr, 30, 30);
     bool u = parse_ins(instr, 24, 24);
@@ -60,7 +60,7 @@ int single_data(struct CPU* cpu, uint32_t instr) {
     return 0;
 }
 
-int load_literal(struct CPU* cpu, uint32_t instr) {
+int load_literal(CPU* cpu, uint32_t instr) {
     uint8_t rt = parse_ins(instr, 0, 4);
     bool sf = parse_ins(instr, 30, 30);
     uint32_t simm19 = parse_ins(instr, 5, 23);
@@ -71,7 +71,7 @@ int load_literal(struct CPU* cpu, uint32_t instr) {
     return 0;
 }
 
-int transfer_instruction(struct CPU* cpu, uint32_t instr){
+int transfer_instruction(CPU* cpu, uint32_t instr){
     if(parse_ins(instr, 31, 31)) {
         // single data transfer
         return single_data(cpu, instr);
