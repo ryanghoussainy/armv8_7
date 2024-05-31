@@ -238,31 +238,15 @@ uint64_t multiply_operation(
 uint64_t perform_shift(uint64_t shift, uint64_t rm, uint64_t operand) {
     switch (shift) {
         case 0:
-            return lsl(rm, operand);
+            return rm << operand;
         case 1:
-            return lsr(rm, operand);
+            return rm >> operand;
         case 2:
-            return asr(rm, operand);
+            return (int)rm >> operand; // Casting to int does a sign extension
         case 3:
-            return ror(rm, operand);
+            return (rm >> operand) | (rm << (32 - operand));
         default:
             printf("Error occured with value of shift\n");
             assert(0);
     }
-}
-
-uint64_t lsl(uint64_t val, uint64_t shift_amount) {
-    return val << shift_amount;
-}
-
-uint64_t lsr(uint64_t val, uint64_t shift_amount) {
-    return val >> shift_amount;
-}
-
-uint64_t asr(uint64_t val, uint64_t shift_amount) {
-    return (int)val >> shift_amount; // Casting to int does a sign extension
-}
-
-uint64_t ror(uint64_t val, uint64_t shift_amount) {
-    return (val >> shift_amount) | (val << (32 - shift_amount));
 }
