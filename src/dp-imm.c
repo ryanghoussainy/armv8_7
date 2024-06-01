@@ -103,10 +103,10 @@ int do_arithmetic(CPU* cpu, DPImmComponents* components)
 
     if (components->sf) {
         int64_t signed_result = result;
-        set_flag(cpu, Z, signed_result > max_int || signed_result < min_int);
+        set_flag(cpu, V, signed_result > max_int || signed_result < min_int);
     }else {
         int32_t signed_result = result;
-        set_flag(cpu, Z, signed_result > max_int || signed_result < min_int);
+        set_flag(cpu, V, signed_result > max_int || signed_result < min_int);
     }
 
     return 1;
