@@ -2,7 +2,7 @@
 #include <stdbool.h>
 
 uint32_t parse_ins(uint32_t instr, int start, int end) {
-    return build_mask(start, end) & instr >> start;
+    return (build_mask(start, end) & instr) >> start;
 }
 
 uint64_t indexed(CPU* cpu, uint16_t offset, uint8_t xn) {
@@ -57,18 +57,18 @@ int single_data(CPU* cpu, uint32_t instr) {
         write_bytes_memory(cpu, address, read_register(cpu, rt, sf), 4 + 4 * sf);
     }
 
-    return 0;
+    return 1;
 }
 
-int load_literal(CPU* cpu, uint32_t instr) {
-    uint8_t rt = parse_ins(instr, 0, 4);
+int load_literal(struct CPU* cpu, uint32_t instr) {
+    uint32_t rt = parse_ins(instr, 0, 4);
     bool sf = parse_ins(instr, 30, 30);
     uint32_t simm19 = parse_ins(instr, 5, 23);
     uint32_t offset = simm19 * 4;
     uint64_t address = cpu->PC + offset;
 
     write_register(cpu, rt, read_bytes_memory(cpu, address, 4 + 4 * sf), sf);
-    return 0;
+    return 1;
 }
 
 int transfer_instruction(CPU* cpu, uint32_t instr){

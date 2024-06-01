@@ -83,7 +83,18 @@ uint64_t read_bytes_memory(CPU* cpu, int start_addr, int bytes)
     return result;
 }
 
-void set_flag(CPU* cpu, enum PSTATE_flag flag, int value)
+uint64_t read_bytes_memory_reverse(struct CPU* cpu, int start_addr, int bytes)
+{
+    int64_t result = 0;
+    for (int byte = bytes - 1; byte >= 0; byte--) {
+        int64_t curr_byte = read_byte_memory(cpu, start_addr + byte);
+        result = (result << 8) | curr_byte;
+    }
+
+    return result;
+}
+
+void set_flag(struct CPU* cpu, enum PSTATE_flag flag, int value)
 {
     switch(flag) {
         case N:
@@ -152,13 +163,13 @@ void print_non_zero_memory(CPU* cpu, FILE* out)
     fprintf(out, "Non-zero memory: \n");
 
     for (int address = 0; address < MEM_ADDRESSES; address += 4) {
-        uint64_t mem_value = read_bytes_memory(cpu, address, 4);
+        uint64_t mem_value = read_bytes_memory_reverse(cpu, address, 4);
 
         if (mem_value == 0)
             continue;
         
-        fprintf(out, "0x%08x = ", address);
-        fprintf(out, "0x%08lx\n", mem_value);
+        fprintf(out, "0x%08x : ", address);
+        fprintf(out, "%08lx\n", mem_value);
     }
 }
 

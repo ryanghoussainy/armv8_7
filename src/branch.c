@@ -3,29 +3,37 @@
 int branch_instruction(CPU* cpu, uint32_t instr) {
 
     // Large numbers in conditions (5, 508160, 84) correspond to opcode in spec
+    // Identify correct branch through isolating relevant bits w/ masks
+
+    if (cpu == NULL) {
+        printf("Cpu parameter is null.\n");
+        return 1;
+    }
 
     uint32_t uncon_mask = build_mask(26, 31);
     uint32_t reg_mask_one = build_mask(0, 4);
     uint32_t reg_mask_two = build_mask(10, 31);
     uint32_t cond_mask = build_mask(24, 31);
 
-    int isUncon = (((uncon_mask & instr) >> 26) == 5);
+    int is_uncon = (((uncon_mask & instr) >> 26) == 5);
 
-    if (isUncon) {
+    if (is_uncon) {
+
         return unconditional_branch(cpu, instr);
+
     } else {
 
-        int isReg = ((reg_mask_one & instr) == 0) && (((reg_mask_two & instr) >> 10) == 3508160);
+        int is_reg = ((reg_mask_one & instr) == 0) && (((reg_mask_two & instr) >> 10) == 3508160);
 
-        if (isReg) {
+        if (is_reg) {
 
             return register_branch(cpu, instr);
 
         } else {
 
-            int isCond = (((cond_mask & instr) >> 24) == 84) && (((instr >> 4) & 1) == 0);
+            int is_cond = (((cond_mask & instr) >> 24) == 84) && (((instr >> 4) & 1) == 0);
 
-            if (isCond) {
+            if (is_cond) {
                 return conditional_branch(cpu, instr);
             } else {
 
@@ -109,13 +117,20 @@ int conditional_branch(CPU* cpu, uint32_t instr) {
 }
 
 uint64_t sign_extend(uint32_t num, int num_bits) {
+    // If positive pad with 0's until 64 bits
+    // If negative pad with 1's until 64 bits
+
     int MSB = (num >> (num_bits - 1)) & 1;
 
     if (MSB) {
+
         uint64_t neg_mask = build_mask(num_bits, 63);
         return neg_mask | num;
+
     } else {
+
         return (uint64_t) num;
+        
     }
 
     return 0;

@@ -9,24 +9,48 @@
 
 int main(int argc, char **argv) {
 
-  char FILE_IN[20];
-  char FILE_OUT[20] = "stdout";
+  char *FILE_IN = malloc(20 * sizeof(char));
+  char *FILE_OUT = malloc(20 * sizeof(char));
 
-  if (argc == 2) {
+  // Need to dynamically allocate memory for large filenames
+
+  if (argc == 2 || argc == 3) {
+
+    if (strlen(argv[1]) >= (20 * sizeof(char))) {
+
+      // If the filename is larger than 20 characters then reallocate to accommodate
+
+      FILE_IN = (char *) realloc(FILE_IN, (strlen(argv[1]) + 1) * sizeof(char));
+
+    }
+
     strcpy(FILE_IN, argv[1]);
     printf("Input file is %s\n", FILE_IN);
-    // Put code to run with 1 argument here
-    
-  } else if (argc == 3) {
-    strcpy(FILE_IN, argv[1]);
-    strcpy(FILE_OUT, argv[2]);
-    printf("Input file is %s\n", FILE_IN);
-    printf("Output file is %s\n", FILE_OUT);
-    // Put code to run with 2 arguments here
+
+    if (argc == 3) {
+
+      if (strlen(argv[2]) >= (20 * sizeof(char))) {
+
+        FILE_OUT = (char *) realloc(FILE_OUT, (strlen(argv[2]) + 1) * sizeof(char));
+
+      }
+
+      strcpy(FILE_OUT, argv[2]);
+      printf("Output file is %s\n", FILE_OUT);
+
+    } else {
+
+      strcpy(FILE_OUT, "stdout");
+
+    }
 
   } else {
-    printf("Wrong number of arguments supplied");
+
+    printf("Wrong number of arguments supplied\n");
+    free(FILE_IN);
+    free(FILE_OUT);
     return EXIT_FAILURE;
+
   }
 
   
@@ -36,12 +60,27 @@ int main(int argc, char **argv) {
 
   // Load binary file into memory
   if (!loadBinary(FILE_IN, cpu.memory)) {
+    free(FILE_IN);
+    free(FILE_OUT);
     return EXIT_FAILURE;
   }
 
   cycle(&cpu);
 
-  print_cpu(&cpu, stdout);
+  if (strcmp(FILE_OUT, "stdout") == 0) {
+
+    print_cpu(&cpu, stdout);
+
+  } else {
+
+    FILE* out = fopen(FILE_OUT, "w");
+
+    print_cpu(&cpu, out);
+
+  }
+
+  free(FILE_IN);
+  free(FILE_OUT);
 
   return EXIT_SUCCESS;
 }
