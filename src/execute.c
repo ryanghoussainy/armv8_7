@@ -9,6 +9,7 @@
 
 int execute_instruction(CPU* cpu, uint32_t instruction)
 {
+
     uint64_t op0 = (build_mask(25, 28) & instruction) >> 25;
     uint64_t op0_bits[OP0_BITS];
 
@@ -36,16 +37,34 @@ int execute_instruction(CPU* cpu, uint32_t instruction)
         return branch_instruction(cpu, instruction);
     }
 
-    printf("Invalid instruction\n");
+    printf("Invalid instruction (invalid op0) \n");
     return 0;
+}
+
+uint32_t flip_endian(uint32_t instruction) {
+
+    // need to flip instruction to little endian
+    // chaos below is my attempt to do that
+
+    return ((instruction >> 24) & 255) |
+           ((instruction >> 8) & 65280) |
+           ((instruction << 8) & 16711680) |
+           ((instruction << 24) & 4278190080);
 }
 
 void cycle(CPU* cpu) {
 
-  int isRunning = 1;
+  int is_running = 1;
 
-  while (isRunning) {
-    uint32_t instruction = read_bytes_memory(cpu, cpu->PC, 4);
-    isRunning = execute_instruction(cpu, instruction);
+  while (is_running) {
+    uint32_t instruction = read_bytes_memory_reverse(cpu, cpu->PC, 4);
+
+    printf("Current instruction: %u\n",instruction);
+
+    if (instruction == 2315255808) {
+        is_running = 0;
+    } else {
+        execute_instruction(cpu, instruction);
+    }
   }
 }

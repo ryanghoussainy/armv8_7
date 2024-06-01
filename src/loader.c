@@ -8,12 +8,12 @@ long getFileSize(FILE *fptr) {
   return fileSize;
 }
 
-int loadBinary(char fileName[20], uint8_t *memory) {
+int loadBinary(char *file_name, uint8_t *memory) {
   FILE *fptr;
-  fptr = fopen(fileName, "rb");
+  fptr = fopen(file_name, "rb");
 
   if (fptr == NULL) {
-    printf("Unable to read file: %s\n", fileName);
+    printf("Unable to read file: %s\n", file_name);
     return 0;
   }
   
@@ -21,7 +21,7 @@ int loadBinary(char fileName[20], uint8_t *memory) {
   
   for (int i = 0; i < nbytes; i++) {
     if (fread(memory + i, 1, 1, fptr) != 1) {
-        printf("Error reading file: %s\n", fileName);
+        printf("Error reading file: %s\n", file_name);
         return 0;
     }
   }

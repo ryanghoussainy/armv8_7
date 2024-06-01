@@ -53,6 +53,12 @@ int dp_reg_instruction(CPU* cpu, uint32_t instr) {
         if (components.opr >= 8 && components.opr % 2) {
             return reg_arithmetic(cpu, &components);
         } else if (components.opr < 8) {
+
+            if (instr == 2315255808) {
+                // Halting condition
+                return 0;
+            }
+            
             return reg_logical(cpu, &components);
         } else {
             printf("Invalid instruction\n");
