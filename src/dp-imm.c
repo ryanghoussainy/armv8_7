@@ -56,59 +56,10 @@ int dp_imm_instruction(CPU* cpu, uint32_t instruction)
 
 int do_arithmetic(CPU* cpu, DPImmComponents* components)
 {
-    int imm = components->imm12;
-
-    if (components->sh == 1) {
-        imm <<= 12;
-    }
-
-    uint64_t result;
-    uint64_t register_value = read_register(cpu, components->rn, components->sf);
-    int C_flag = 0;
-
-    if (components->opc <= 1) {
-        result = register_value + imm;
-
-        if (components->sf) {
-            C_flag = result < register_value || result < imm;
-        }else {
-            C_flag = result > INT32_MAX;
-        }
-
-        write_register(cpu, components->rd, result, components->sf);
-    }else if (components->opc <= 3) {
-        result = register_value - imm;
-        C_flag = imm > register_value ? 0 : 1;
-
-        write_register(cpu, components->rd, result, components->sf);
-    }else {
-        printf("Invalid arithmetic instruction\n");
-        return 0;
-    }
-
-    if (components->sf == 0) {
-        result = result & INT32_MAX;
-    }
-
-    if (components->opc != 1 && components->opc != 3) return 1;
-
-    int sign_bit = (result >> (components->sf == 1 ? 63 : 31)) > 0;
-
-    set_flag(cpu, N, sign_bit);
-    set_flag(cpu, Z, result == 0);
-    set_flag(cpu, C, C_flag);
-
-    int max_int = components->sf ? INT64_MAX : INT32_MAX;
-    int min_int = components->sf ? INT64_MIN : INT32_MIN;
-
-    if (components->sf) {
-        int64_t signed_result = result;
-        set_flag(cpu, V, signed_result > max_int || signed_result < min_int);
-    }else {
-        int32_t signed_result = result;
-        set_flag(cpu, V, signed_result > max_int || signed_result < min_int);
-    }
-
+    uint64_t op2 = components->sf ? components->imm12 << 12 : components->imm12;
+    uint64_t Rn = read_register(cpu, components->rn, components->sf);
+    uint64_t Rd = arithmetic_operation(cpu, components->sf, components->opc, Rn, op2);
+    write_register(cpu, components->rd, Rd, components->sf);
     return 1;
 }
 
