@@ -52,7 +52,7 @@ int dp_reg_instruction(struct CPU* cpu, uint32_t instr) {
     struct DPRegComponents components = get_dp_reg_components(instr);
 
     if (components.M == 0) {
-        if (components.opr >= 8 && components.opr % 2) {
+        if (components.opr >= 8 && (components.opr % 2 == 0)) {
             return reg_arithmetic(cpu, &components);
         } else if (components.opr < 8) {
 
