@@ -111,6 +111,8 @@ int conditional_branch(CPU* cpu, uint32_t instr) {
         uint64_t offset = sign_extend(masked, 19) * 4;
 
         cpu->PC += offset;
+    }else {
+        cpu->PC += 4;
     }
 
     return 1;
