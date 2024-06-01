@@ -26,13 +26,15 @@ void write_register(struct CPU* cpu, int register_no, uint64_t value, int is_64b
     if (register_no == 31)
         return;
         
-    if (!is_64bit) {
+    if (is_64bit == 0) {
         uint64_t _32bit_mask = build_mask(0, 31);
         uint64_t inverse_mask = ~_32bit_mask;
         uint64_t register_value = read_register(cpu, register_no, 1);
         uint64_t top_bits = inverse_mask & register_value;
 
-        cpu->registers[register_no] = top_bits | (value & _32bit_mask);
+        uint64_t lower_bits = value & _32bit_mask;
+
+        cpu->registers[register_no] = top_bits | lower_bits;
     }else {
         cpu->registers[register_no] = value;
     }
@@ -45,7 +47,7 @@ uint64_t read_register(struct CPU* cpu, int register_no, int is_64bit)
 
     uint64_t register_value = cpu->registers[register_no];
 
-    if (!is_64bit) {
+    if (is_64bit == 0) {
         uint64_t _32bit_mask = build_mask(0, 31);
         return register_value & _32bit_mask;
     }

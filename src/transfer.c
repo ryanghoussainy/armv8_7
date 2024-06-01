@@ -22,7 +22,7 @@ uint64_t indexed(struct CPU* cpu, uint16_t offset, uint8_t xn) {
 
 int single_data(struct CPU* cpu, uint32_t instr) {
     uint8_t rt = parse_ins(instr, 0, 4);
-    bool sf = parse_ins(instr, 30, 30);
+    bool sf = parse_ins(instr, 30, 30); // 0 is 32-bit, 1 is 64-bit
     bool u = parse_ins(instr, 24, 24);
     bool l = parse_ins(instr, 22, 22);
     uint16_t offset = parse_ins(instr, 10, 21);
@@ -51,10 +51,10 @@ int single_data(struct CPU* cpu, uint32_t instr) {
 
     if (l) {
         // load
-        write_register(cpu, rt, read_bytes_memory(cpu, address, 4 + 4 * sf), sf);
+        write_register(cpu, rt, read_bytes_memory(cpu, address, 4 + (4 * sf)), sf);
     } else {
         // store
-        write_bytes_memory(cpu, address, read_register(cpu, rt, sf), 4 + 4 * sf);
+        write_bytes_memory(cpu, address, read_register(cpu, rt, sf), 4 + (4 * sf));
     }
 
     return 1;
@@ -72,7 +72,7 @@ int load_literal(struct CPU* cpu, uint32_t instr) {
 }
 
 int transfer_instruction(struct CPU* cpu, uint32_t instr){
-    if(parse_ins(instr, 31, 31)) {
+    if(parse_ins(instr, 31, 31) == 1) {
         // single data transfer
         return single_data(cpu, instr);
     } else {

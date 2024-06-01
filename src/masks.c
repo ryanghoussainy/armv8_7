@@ -6,7 +6,7 @@ uint64_t build_mask(int start_bit, int end_bit)
 
     for (int bit = start_bit; bit <= end_bit; bit++)
     {
-        mask |= 1 << bit;
+        mask |= 1ull << bit;
     }
 
     return mask;
