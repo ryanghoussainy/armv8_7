@@ -78,7 +78,7 @@ int reg_arithmetic(CPU* cpu, DPRegComponents* components) {
         return 0;
     }
     uint64_t Rm = read_register(cpu, components->rm, components->sf);
-    uint64_t op2 = perform_shift(components->shift, Rm, components->operand);
+    uint64_t op2 = perform_shift(components->sf, components->shift, Rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = arithmetic_operation(cpu, components->sf, components->opc, Rn, op2);
     write_register(cpu, components->rd, Rd, components->sf);
@@ -87,7 +87,7 @@ int reg_arithmetic(CPU* cpu, DPRegComponents* components) {
 
 int reg_logical(CPU* cpu, DPRegComponents* components) {
     uint64_t Rm = read_register(cpu, components->rm, components->sf);
-    uint64_t op2 = perform_shift(components->shift, Rm, components->operand);
+    uint64_t op2 = perform_shift(components->sf, components->shift, Rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
     write_register(cpu, components->rd, Rd, components->sf);
@@ -187,16 +187,20 @@ uint64_t multiply_operation(
     }
 }
 
-uint64_t perform_shift(uint64_t shift, uint64_t rm, uint64_t operand) {
+uint64_t perform_shift(uint64_t sf, uint64_t shift, uint64_t Rm, uint64_t operand) {
     switch (shift) {
         case 0:
-            return rm << operand;
+            return Rm << operand;
         case 1:
-            return rm >> operand;
-        case 2:
-            return (int)rm >> operand; // Casting to int does a sign extension
+            return Rm >> operand;
+        case 2: // Casting to the signed version and shifting does a sign extension
+            if (sf) {
+                return (int64_t)Rm >> operand;
+            } else {
+                return (int32_t)Rm >> operand;
+            }
         case 3:
-            return (rm >> operand) | (rm << (32 - operand));
+            return (Rm >> operand) | (Rm << (32 - operand));
         default:
             printf("Error occured with value of shift\n");
             assert(0);
