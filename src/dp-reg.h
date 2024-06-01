@@ -1,5 +1,7 @@
 #pragma once
 #include "cpu.h"
+#include "masks.h"
+#include "arithmetic-op.h"
 
 typedef struct {
     uint64_t sf;
@@ -19,7 +21,6 @@ typedef struct {
 DPRegComponents get_dp_reg_components(uint32_t instr);
 int dp_reg_instruction(CPU* cpu, uint32_t instr);
 int reg_arithmetic(CPU* cpu, DPRegComponents* components);
-uint64_t arithmetic_operation(CPU* cpu, uint64_t sf, uint64_t opc, uint64_t Rn, uint64_t op2);
 int reg_logical(CPU* cpu, DPRegComponents* components);
 uint64_t logical_operation(CPU* cpu, uint64_t sf, uint64_t opc, uint64_t N, uint64_t Rn, uint64_t op2);
 int reg_multiply(CPU* cpu, DPRegComponents* components);
