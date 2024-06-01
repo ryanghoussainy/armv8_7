@@ -36,6 +36,7 @@ uint64_t read_register(struct CPU* cpu, int register_no, int is64_bit);
 void write_byte_memory(struct CPU* cpu, int address, uint8_t byte);
 uint8_t read_byte_memory(struct CPU* cpu, int address);
 uint64_t read_bytes_memory(struct CPU* cpu, int address, int bytes);
+uint64_t read_bytes_memory_reverse(struct CPU* cpu, int start_addr, int bytes);
 void write_bytes_memory(struct CPU* cpu, int address, uint64_t value, int bytes);
 
 void set_flag(struct CPU* cpu, enum PSTATE_flag flag, int value);
