@@ -77,7 +77,8 @@ int reg_arithmetic(CPU* cpu, DPRegComponents* components) {
         printf("Invalid instruction\n");
         return 0;
     }
-    uint64_t op2 = perform_shift(components->shift, components->rm, components->operand);
+    uint64_t Rm = read_register(cpu, components->rm, components->sf);
+    uint64_t op2 = perform_shift(components->shift, Rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = arithmetic_operation(cpu, components->sf, components->opc, Rn, op2);
     write_register(cpu, components->rd, Rd, components->sf);
@@ -85,7 +86,8 @@ int reg_arithmetic(CPU* cpu, DPRegComponents* components) {
 }
 
 int reg_logical(CPU* cpu, DPRegComponents* components) {
-    uint64_t op2 = perform_shift(components->shift, components->rm, components->operand);
+    uint64_t Rm = read_register(cpu, components->rm, components->sf);
+    uint64_t op2 = perform_shift(components->shift, Rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
     write_register(cpu, components->rd, Rd, components->sf);
