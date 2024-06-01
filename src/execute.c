@@ -52,7 +52,7 @@ uint32_t flip_endian(uint32_t instruction) {
            ((instruction << 24) & 4278190080);
 }
 
-void cycle(struct CPU* cpu) {
+void cycle(CPU* cpu) {
 
   int is_running = 1;
 

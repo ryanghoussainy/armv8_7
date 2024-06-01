@@ -83,7 +83,7 @@ uint64_t read_bytes_memory(CPU* cpu, int start_addr, int bytes)
     return result;
 }
 
-uint64_t read_bytes_memory_reverse(struct CPU* cpu, int start_addr, int bytes)
+uint64_t read_bytes_memory_reverse(CPU* cpu, int start_addr, int bytes)
 {
     int64_t result = 0;
     for (int byte = bytes - 1; byte >= 0; byte--) {
@@ -94,7 +94,7 @@ uint64_t read_bytes_memory_reverse(struct CPU* cpu, int start_addr, int bytes)
     return result;
 }
 
-void set_flag(struct CPU* cpu, enum PSTATE_flag flag, int value)
+void set_flag(CPU* cpu, enum PSTATE_flag flag, int value)
 {
     switch(flag) {
         case N:

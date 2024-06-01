@@ -60,7 +60,7 @@ int single_data(CPU* cpu, uint32_t instr) {
     return 1;
 }
 
-int load_literal(struct CPU* cpu, uint32_t instr) {
+int load_literal(CPU* cpu, uint32_t instr) {
     uint32_t rt = parse_ins(instr, 0, 4);
     bool sf = parse_ins(instr, 30, 30);
     uint32_t simm19 = parse_ins(instr, 5, 23);
