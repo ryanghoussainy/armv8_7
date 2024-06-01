@@ -1,7 +1,7 @@
 #include "cpu.h"
 #include "masks.h"
 
-void initialise_cpu(struct CPU* cpu)
+void initialise_cpu(CPU* cpu)
 {
     for (int register_no = 0; register_no < REGISTER_COUNT; register_no++) {
         cpu->registers[register_no] = 0;
@@ -21,7 +21,7 @@ void initialise_cpu(struct CPU* cpu)
     cpu->ZR = 0;
 }
 
-void write_register(struct CPU* cpu, int register_no, uint64_t value, int is_64bit)
+void write_register(CPU* cpu, int register_no, uint64_t value, int is_64bit)
 {
     if (register_no == 31)
         return;
@@ -40,7 +40,7 @@ void write_register(struct CPU* cpu, int register_no, uint64_t value, int is_64b
     }
 }
 
-uint64_t read_register(struct CPU* cpu, int register_no, int is_64bit)
+uint64_t read_register(CPU* cpu, int register_no, int is_64bit)
 {
     if (register_no == 31)
         return 0;
@@ -55,12 +55,12 @@ uint64_t read_register(struct CPU* cpu, int register_no, int is_64bit)
     return register_value;
 }
 
-void write_byte_memory(struct CPU* cpu, int address, uint8_t byte)
+void write_byte_memory(CPU* cpu, int address, uint8_t byte)
 {
     cpu->memory[address] = byte;
 }
 
-void write_bytes_memory(struct CPU* cpu, int address, uint64_t value, int bytes) {
+void write_bytes_memory(CPU* cpu, int address, uint64_t value, int bytes) {
     uint64_t mask = 255;  // set lowest 8 bits all to 1
     for (int byte = 0; byte < bytes; byte++) {
         mask <<= (byte * 8);
@@ -69,12 +69,12 @@ void write_bytes_memory(struct CPU* cpu, int address, uint64_t value, int bytes)
     }
 }
 
-uint8_t read_byte_memory(struct CPU* cpu, int address)
+uint8_t read_byte_memory(CPU* cpu, int address)
 {
     return cpu->memory[address];
 }
 
-uint64_t read_bytes_memory(struct CPU* cpu, int start_addr, int bytes)
+uint64_t read_bytes_memory(CPU* cpu, int start_addr, int bytes)
 {
     int64_t result = 0;
     for (int byte = 0; byte < bytes; byte++) {
@@ -85,7 +85,7 @@ uint64_t read_bytes_memory(struct CPU* cpu, int start_addr, int bytes)
     return result;
 }
 
-uint64_t read_bytes_memory_reverse(struct CPU* cpu, int start_addr, int bytes)
+uint64_t read_bytes_memory_reverse(CPU* cpu, int start_addr, int bytes)
 {
     int64_t result = 0;
     for (int byte = bytes - 1; byte >= 0; byte--) {
@@ -96,7 +96,7 @@ uint64_t read_bytes_memory_reverse(struct CPU* cpu, int start_addr, int bytes)
     return result;
 }
 
-void set_flag(struct CPU* cpu, enum PSTATE_flag flag, int value)
+void set_flag(CPU* cpu, enum PSTATE_flag flag, int value)
 {
     switch(flag) {
         case N:
@@ -115,7 +115,7 @@ void set_flag(struct CPU* cpu, enum PSTATE_flag flag, int value)
 }
 
 
-void print_registers(struct CPU* cpu, FILE* out)
+void print_registers(CPU* cpu, FILE* out)
 {
     fprintf(out, "Registers: \n");
 
@@ -129,7 +129,7 @@ void print_registers(struct CPU* cpu, FILE* out)
     fprintf(out, "PC = %016lx\n", cpu->PC);
 }
 
-void print_pstate(struct CPU* cpu, FILE* out)
+void print_pstate(CPU* cpu, FILE* out)
 {
     fprintf(out, "PSTATE : ");
 
@@ -160,7 +160,7 @@ void print_pstate(struct CPU* cpu, FILE* out)
     fprintf(out, "\n");
 }
 
-void print_non_zero_memory(struct CPU* cpu, FILE* out)
+void print_non_zero_memory(CPU* cpu, FILE* out)
 {
     fprintf(out, "Non-zero memory: \n");
 
@@ -175,7 +175,7 @@ void print_non_zero_memory(struct CPU* cpu, FILE* out)
     }
 }
 
-void print_cpu(struct CPU* cpu, FILE* out)
+void print_cpu(CPU* cpu, FILE* out)
 {
     print_registers(cpu, out);
     print_pstate(cpu, out);

@@ -1,8 +1,6 @@
 #include "dp-reg.h"
-#include "masks.h"
-#include <assert.h>
 
-struct DPRegComponents get_dp_reg_components(uint32_t instr)
+DPRegComponents get_dp_reg_components(uint32_t instr)
 {
     uint64_t sf_mask = build_mask(31, 31);
     uint64_t opc_mask = build_mask(29, 30);
@@ -30,7 +28,7 @@ struct DPRegComponents get_dp_reg_components(uint32_t instr)
     uint64_t x = (instr & x_mask) >> 15;
     uint64_t ra = (instr & ra_mask) >> 10;
 
-    struct DPRegComponents components = {
+    DPRegComponents components = {
         sf,
         opc,
         M,
@@ -48,11 +46,11 @@ struct DPRegComponents get_dp_reg_components(uint32_t instr)
     return components;
 }
 
-int dp_reg_instruction(struct CPU* cpu, uint32_t instr) {
-    struct DPRegComponents components = get_dp_reg_components(instr);
+int dp_reg_instruction(CPU* cpu, uint32_t instr) {
+    DPRegComponents components = get_dp_reg_components(instr);
 
     if (components.M == 0) {
-        if (components.opr >= 8 && (components.opr % 2 == 0)) {
+        if (components.opr >= 8 && components.opr % 2 == 0) {
             return reg_arithmetic(cpu, &components);
         } else if (components.opr < 8) {
 
@@ -74,7 +72,7 @@ int dp_reg_instruction(struct CPU* cpu, uint32_t instr) {
     }
 }
 
-int reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components) {
+int reg_arithmetic(CPU* cpu, DPRegComponents* components) {
     if (components->shift == 3) {
         printf("Invalid instruction\n");
         return 0;
@@ -86,61 +84,7 @@ int reg_arithmetic(struct CPU* cpu, struct DPRegComponents* components) {
     return 1;
 }
 
-uint64_t arithmetic_operation(
-    struct CPU* cpu,
-    uint64_t sf, 
-    uint64_t opc,
-    uint64_t Rn, 
-    uint64_t op2
-) {
-    uint64_t result, msb_result, msb_Rn, msb_op2;
-    
-    switch (opc) {
-        case 0: // Add
-            return Rn + op2;
-        case 1: // Add, set flags
-            result = Rn + op2;
-
-            msb_result = sf ? result >> 63 : result >> 31;
-            msb_Rn = sf ? Rn >> 63 : Rn >> 31;
-            msb_op2 = sf ? op2 >> 63 : op2 >> 31;
-
-            // N flag
-            set_flag(cpu, N, msb_result);
-            // Z flag
-            set_flag(cpu, Z, result == 0);
-            // C flag
-            set_flag(cpu, C, result < Rn || result < op2);
-            // V flag
-            set_flag(cpu, V, msb_Rn == msb_op2 && msb_Rn != msb_result);
-
-            return result;
-        case 2: // Subtract
-            return Rn - op2;
-        case 3: // Subtract, set flags
-            result = Rn - op2;
-
-            msb_result = sf ? result >> 63 : result >> 31;
-            msb_Rn = sf ? Rn >> 63 : Rn >> 31;
-            msb_op2 = sf ? op2 >> 63 : op2 >> 31;
-
-            // N flag
-            set_flag(cpu, N, msb_result);
-            // Z flag
-            set_flag(cpu, Z, result == 0);
-            // C flag
-            set_flag(cpu, C, op2 > Rn);
-            // V flag
-            set_flag(cpu, V, msb_Rn == msb_op2 && msb_Rn != msb_result);
-
-            return result;
-        default:
-            printf("Error occured with value of opc\n");
-            assert(0);
-    }
-}
-
-int reg_logical(struct CPU* cpu, struct DPRegComponents* components) {
+int reg_logical(CPU* cpu, DPRegComponents* components) {
     uint64_t op2 = perform_shift(components->shift, components->rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
@@ -149,7 +93,7 @@ int reg_logical(struct CPU* cpu, struct DPRegComponents* components) {
 }
 
 uint64_t logical_operation(
-    struct CPU* cpu, 
+    CPU* cpu, 
     uint64_t sf, 
     uint64_t opc, 
     uint64_t N, 
@@ -214,7 +158,7 @@ uint64_t logical_operation(
     }
 }
 
-int reg_multiply(struct CPU* cpu, struct DPRegComponents* components) {
+int reg_multiply(CPU* cpu, DPRegComponents* components) {
     uint64_t Ra = read_register(cpu, components->ra, components->sf);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rm = read_register(cpu, components->rm, components->sf);
@@ -224,7 +168,7 @@ int reg_multiply(struct CPU* cpu, struct DPRegComponents* components) {
 }
 
 uint64_t multiply_operation(
-    struct CPU* cpu,
+    CPU* cpu,
     uint64_t x,
     uint64_t Ra,
     uint64_t Rn,
@@ -244,31 +188,15 @@ uint64_t multiply_operation(
 uint64_t perform_shift(uint64_t shift, uint64_t rm, uint64_t operand) {
     switch (shift) {
         case 0:
-            return lsl(rm, operand);
+            return rm << operand;
         case 1:
-            return lsr(rm, operand);
+            return rm >> operand;
         case 2:
-            return asr(rm, operand);
+            return (int)rm >> operand; // Casting to int does a sign extension
         case 3:
-            return ror(rm, operand);
+            return (rm >> operand) | (rm << (32 - operand));
         default:
             printf("Error occured with value of shift\n");
             assert(0);
     }
-}
-
-uint64_t lsl(uint64_t val, uint64_t shift_amount) {
-    return val << shift_amount;
-}
-
-uint64_t lsr(uint64_t val, uint64_t shift_amount) {
-    return val >> shift_amount;
-}
-
-uint64_t asr(uint64_t val, uint64_t shift_amount) {
-    return (int)val >> shift_amount; // Casting to int does a sign extension
-}
-
-uint64_t ror(uint64_t val, uint64_t shift_amount) {
-    return (val >> shift_amount) | (val << (32 - shift_amount));
 }

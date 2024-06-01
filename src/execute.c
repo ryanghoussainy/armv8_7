@@ -7,7 +7,7 @@
 
 #define OP0_BITS 4
 
-int execute_instruction(struct CPU* cpu, uint32_t instruction)
+int execute_instruction(CPU* cpu, uint32_t instruction)
 {
 
     uint64_t op0 = (build_mask(25, 28) & instruction) >> 25;
@@ -41,30 +41,20 @@ int execute_instruction(struct CPU* cpu, uint32_t instruction)
     return 0;
 }
 
-uint32_t flip_endian(uint32_t instruction) {
-
-    // need to flip instruction to little endian
-    // chaos below is my attempt to do that
-
-    return ((instruction >> 24) & 255) |
-           ((instruction >> 8) & 65280) |
-           ((instruction << 8) & 16711680) |
-           ((instruction << 24) & 4278190080);
-}
-
-void cycle(struct CPU* cpu) {
+void cycle(CPU* cpu) {
 
   int is_running = 1;
+  uint32_t HALT_INSTR = 2315255808;
 
   while (is_running) {
     uint32_t instruction = read_bytes_memory_reverse(cpu, cpu->PC, 4);
 
     printf("Current instruction: %u\n",instruction);
 
-    if (instruction == 2315255808) {
+    if (instruction == HALT_INSTR) {
         is_running = 0;
     } else {
-        execute_instruction(cpu, instruction);
+        is_running = execute_instruction(cpu, instruction);
     }
   }
 }

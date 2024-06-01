@@ -2,7 +2,7 @@
 #include "masks.h"
 #include <limits.h>
 
-struct DPImmComponents get_dp_imm_components(uint32_t instruction)
+DPImmComponents get_dp_imm_components(uint32_t instruction)
 {
     uint64_t sf_mask = build_mask(31, 31);
     uint64_t ofc_mask = build_mask(29, 30);
@@ -24,7 +24,7 @@ struct DPImmComponents get_dp_imm_components(uint32_t instruction)
     uint64_t hw = (instruction & hw_mask) >> 21;
     uint64_t imm16 = (instruction & imm16_mask) >> 5;
 
-    struct DPImmComponents components = {
+    DPImmComponents components = {
         sf,
         ofc,
         opi,
@@ -39,10 +39,10 @@ struct DPImmComponents get_dp_imm_components(uint32_t instruction)
     return components;
 }
 
-int dp_imm_instruction(struct CPU* cpu, uint32_t instruction)
+int dp_imm_instruction(CPU* cpu, uint32_t instruction)
 {
-    struct DPImmComponents components = get_dp_imm_components(instruction);
-    struct DPImmComponents* components_ptr = &components;
+    DPImmComponents components = get_dp_imm_components(instruction);
+    DPImmComponents* components_ptr = &components;
 
     if (components.opi == 2) {
         return do_arithmetic(cpu, components_ptr);
@@ -54,65 +54,16 @@ int dp_imm_instruction(struct CPU* cpu, uint32_t instruction)
     return 0;
 }
 
-int do_arithmetic(struct CPU* cpu, struct DPImmComponents* components)
+int do_arithmetic(CPU* cpu, DPImmComponents* components)
 {
-    int imm = components->imm12;
-
-    if (components->sh == 1) {
-        imm <<= 12;
-    }
-
-    uint64_t result;
-    uint64_t register_value = read_register(cpu, components->rn, components->sf);
-    int C_flag = 0;
-
-    if (components->opc <= 1) {
-        result = register_value + imm;
-
-        if (components->sf) {
-            C_flag = result < register_value || result < imm;
-        }else {
-            C_flag = result > INT32_MAX;
-        }
-
-        write_register(cpu, components->rd, result, components->sf);
-    }else if (components->opc <= 3) {
-        result = register_value - imm;
-        C_flag = imm > register_value ? 0 : 1;
-
-        write_register(cpu, components->rd, result, components->sf);
-    }else {
-        printf("Invalid arithmetic instruction\n");
-        return 0;
-    }
-
-    if (components->sf == 0) {
-        result = result & INT32_MAX;
-    }
-
-    if (components->opc != 1 && components->opc != 3) return 1;
-
-    int sign_bit = (result >> (components->sf == 1 ? 63 : 31)) > 0;
-
-    set_flag(cpu, N, sign_bit);
-    set_flag(cpu, Z, result == 0);
-    set_flag(cpu, C, C_flag);
-
-    int max_int = components->sf ? INT64_MAX : INT32_MAX;
-    int min_int = components->sf ? INT64_MIN : INT32_MIN;
-
-    if (components->sf) {
-        int64_t signed_result = result;
-        set_flag(cpu, Z, signed_result > max_int || signed_result < min_int);
-    }else {
-        int32_t signed_result = result;
-        set_flag(cpu, Z, signed_result > max_int || signed_result < min_int);
-    }
-
+    uint64_t op2 = components->sh ? components->imm12 << 12 : components->imm12;
+    uint64_t Rn = read_register(cpu, components->rn, components->sf);
+    uint64_t Rd = arithmetic_operation(cpu, components->sf, components->opc, Rn, op2);
+    write_register(cpu, components->rd, Rd, components->sf);
     return 1;
 }
 
-int do_wide_move(struct CPU* cpu, struct DPImmComponents* components)
+int do_wide_move(CPU* cpu, DPImmComponents* components)
 {
     uint64_t operand_value = components->imm16 << (components->hw * 16);
 

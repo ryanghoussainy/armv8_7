@@ -3,4 +3,4 @@
 #include "masks.h"
 #include "cpu.h"
 
-int transfer_instruction(struct CPU* cpu, uint32_t instr);
+int transfer_instruction(CPU* cpu, uint32_t instr);

@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
   }
 
   
-  struct CPU cpu;
+  CPU cpu;
 
   initialise_cpu(&cpu);
 
