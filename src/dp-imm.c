@@ -56,7 +56,7 @@ int dp_imm_instruction(CPU* cpu, uint32_t instruction)
 
 int do_arithmetic(CPU* cpu, DPImmComponents* components)
 {
-    uint64_t op2 = components->sf ? components->imm12 << 12 : components->imm12;
+    uint64_t op2 = components->sh ? components->imm12 << 12 : components->imm12;
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
     uint64_t Rd = arithmetic_operation(cpu, components->sf, components->opc, Rn, op2);
     write_register(cpu, components->rd, Rd, components->sf);

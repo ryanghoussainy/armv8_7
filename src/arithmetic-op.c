@@ -15,6 +15,10 @@ uint64_t arithmetic_operation(
         case 1: // Add, set flags
             result = Rn + op2;
 
+            if (sf == 0) {
+                result = result & INT32_MAX;
+            }
+            
             msb_result = sf ? result >> 63 : result >> 31;
             msb_Rn = sf ? Rn >> 63 : Rn >> 31;
             msb_op2 = sf ? op2 >> 63 : op2 >> 31;
