@@ -106,7 +106,7 @@ int conditional_branch(CPU* cpu, uint32_t instr) {
 
     if (cond_holds) {
 
-        uint32_t masked = mask_index & instr;
+        uint32_t masked = (mask_index & instr) >> 5;
 
         uint64_t offset = sign_extend(masked, 19) * 4;
 

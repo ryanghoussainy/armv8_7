@@ -67,7 +67,7 @@ int load_literal(CPU* cpu, uint32_t instr) {
     uint32_t offset = simm19 * 4;
     uint64_t address = cpu->PC + offset;
 
-    write_register(cpu, rt, read_bytes_memory(cpu, address, 4 + 4 * sf), sf);
+    write_register(cpu, rt, read_bytes_memory_reverse(cpu, address, 4 + 4 * sf), sf);
     return 1;
 }
 
