@@ -75,7 +75,7 @@ int do_wide_move(CPU* cpu, DPImmComponents* components)
         uint64_t register_value = read_register(cpu, components->rd, components->sf);
         uint64_t keep_mask = ~build_mask(components->hw*16, components->hw*16 + 15);
         uint64_t new_rd_value = (register_value & keep_mask) | operand_value;
-        
+
         write_register(cpu, components->rd, new_rd_value, components->sf);
     }else {
         printf("Invalid wide move instruction\n");
