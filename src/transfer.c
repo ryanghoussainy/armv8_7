@@ -1,4 +1,5 @@
 #include "transfer.h"
+#include "branch.h"
 #include <stdbool.h>
 
 uint32_t parse_ins(uint32_t instr, int start, int end) {
@@ -51,7 +52,7 @@ int single_data(CPU* cpu, uint32_t instr) {
 
     if (l) {
         // load
-        write_register(cpu, rt, read_bytes_memory(cpu, address, 4 + (4 * sf)), sf);
+        write_register(cpu, rt, read_bytes_memory_reverse(cpu, address, 4 + (4 * sf)), sf);
     } else {
         // store
         write_bytes_memory(cpu, address, read_register(cpu, rt, sf), 4 + (4 * sf));
@@ -64,7 +65,7 @@ int load_literal(CPU* cpu, uint32_t instr) {
     uint32_t rt = parse_ins(instr, 0, 4);
     bool sf = parse_ins(instr, 30, 30);
     uint32_t simm19 = parse_ins(instr, 5, 23);
-    uint32_t offset = simm19 * 4;
+    uint32_t offset = sign_extend(simm19 * 4, 21);
     uint64_t address = cpu->PC + offset;
 
     write_register(cpu, rt, read_bytes_memory_reverse(cpu, address, 4 + 4 * sf), sf);

@@ -98,6 +98,7 @@ int conditional_branch(CPU* cpu, uint32_t instr) {
             cond_holds = !((cpu->PSTATE.N == cpu->PSTATE.V) && (cpu->PSTATE.Z == 0));
             break;
         case 14: // always
+            cond_holds = 1;
             break;
         default:
             printf("Invalid condition");

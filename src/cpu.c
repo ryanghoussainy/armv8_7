@@ -63,9 +63,9 @@ void write_byte_memory(CPU* cpu, int address, uint8_t byte)
 void write_bytes_memory(CPU* cpu, int address, uint64_t value, int bytes) {
     uint64_t mask = 255;  // set lowest 8 bits all to 1
     for (int byte = 0; byte < bytes; byte++) {
-        mask <<= (byte * 8);
-        uint8_t current_byte = value & mask >> (byte * 8);
+        uint8_t current_byte = (value & mask) >> (byte * 8);
         write_byte_memory(cpu, address + byte, current_byte);
+        mask <<= 8;
     }
 }
 
