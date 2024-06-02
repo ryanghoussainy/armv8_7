@@ -87,8 +87,8 @@ int reg_arithmetic(CPU* cpu, DPRegComponents* components) {
 
 int reg_logical(CPU* cpu, DPRegComponents* components) {
     uint64_t Rm = read_register(cpu, components->rm, components->sf);
-    uint64_t op2 = perform_shift(components->sf, components->shift, Rm, components->operand);
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
+    uint64_t op2 = perform_shift(components->sf, components->shift, Rm, components->operand);
     uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
     write_register(cpu, components->rd, Rd, components->sf);
     return 1;
@@ -200,7 +200,11 @@ uint64_t perform_shift(uint64_t sf, uint64_t shift, uint64_t Rm, uint64_t operan
                 return (int32_t)Rm >> operand;
             }
         case 3:
-            return (Rm >> operand) | (Rm << (32 - operand));
+            if (sf) {
+                return (Rm >> operand) | (Rm << (64 - operand));
+            }else {
+                return (Rm >> operand) | (Rm << (32 - operand));
+            }
         default:
             printf("Error occured with value of shift\n");
             assert(0);
