@@ -98,12 +98,12 @@ uint64_t logical_operation(
     CPU* cpu, 
     uint64_t sf, 
     uint64_t opc, 
-    uint64_t N, 
+    uint64_t N_bit, 
     uint64_t Rn, 
     uint64_t op2
 ) {
     uint64_t result;
-    switch (N) {
+    switch (N_bit) {
         case 0:
             switch (opc) {
                 case 0: // Bitwise AND
@@ -114,9 +114,8 @@ uint64_t logical_operation(
                     return Rn ^ op2;
                 case 3: // Bitwise AND, setting flags
                     result = Rn & op2;
-
                     // N flag
-                    set_flag(cpu, N, sf ? result >> 63 : result >> 31);
+                    set_flag(cpu, N, sf ? result >> 63 : (result & UINT32_MAX) >> 31);
                     // Z flag
                     set_flag(cpu, Z, result == 0);
                     // C flag
@@ -139,9 +138,8 @@ uint64_t logical_operation(
                     return Rn ^ ~op2;
                 case 3: // Bitwise bit clear, setting flags 
                     result = Rn & ~op2;
-                    
                     // N flag
-                    set_flag(cpu, N, sf ? result >> 63 : result >> 31);
+                    set_flag(cpu, N, sf ? result >> 63 : (result & UINT32_MAX) >> 31);
                     // Z flag
                     set_flag(cpu, Z, result == 0);
                     // C flag
