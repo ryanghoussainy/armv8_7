@@ -45,13 +45,7 @@ uint64_t arithmetic_operation(
             // C flag
             set_flag(cpu, C, op2 <= Rn);
             // V flag
-            if (sf) {
-                int64_t signed_result = (int64_t) result;
-                set_flag(cpu, V, signed_result > INT64_MAX || signed_result < INT64_MIN);
-            }else {
-                int32_t signed_result = (int32_t) result;
-                set_flag(cpu, V, signed_result > INT32_MAX || signed_result < INT32_MIN);
-            }
+            set_flag(cpu, V, (msb_Rn && !msb_op2 && !msb_result) || (!msb_Rn && msb_op2 && msb_result));
 
             return result;
         default:
