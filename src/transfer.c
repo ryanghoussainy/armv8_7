@@ -1,11 +1,11 @@
 #include "transfer.h"
 #include <stdbool.h>
 
-uint32_t parse_ins(uint32_t instr, int start, int end) {
+static uint32_t parse_ins(uint32_t instr, int start, int end) {
     return build_mask(start, end) & instr >> start;
 }
 
-uint64_t indexed(struct CPU* cpu, uint16_t offset, uint8_t xn) {
+static uint64_t indexed(struct CPU* cpu, uint16_t offset, uint8_t xn) {
     int simm9 = parse_ins(offset, 2, 10);
     uint64_t xn_val = read_register(cpu, xn, 1);
     uint64_t address;
@@ -20,7 +20,7 @@ uint64_t indexed(struct CPU* cpu, uint16_t offset, uint8_t xn) {
     return address;
 }
 
-int single_data(struct CPU* cpu, uint32_t instr) {
+static int single_data(struct CPU* cpu, uint32_t instr) {
     uint8_t rt = parse_ins(instr, 0, 4);
     bool sf = parse_ins(instr, 30, 30);
     bool u = parse_ins(instr, 24, 24);
@@ -60,7 +60,7 @@ int single_data(struct CPU* cpu, uint32_t instr) {
     return 0;
 }
 
-int load_literal(struct CPU* cpu, uint32_t instr) {
+static int load_literal(struct CPU* cpu, uint32_t instr) {
     uint8_t rt = parse_ins(instr, 0, 4);
     bool sf = parse_ins(instr, 30, 30);
     uint32_t simm19 = parse_ins(instr, 5, 23);
