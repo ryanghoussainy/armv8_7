@@ -43,9 +43,9 @@ uint64_t arithmetic_operation(
             // Z flag
             set_flag(cpu, Z, result == 0);
             // C flag
-            set_flag(cpu, C, op2 > Rn);
+            set_flag(cpu, C, op2 <= Rn);
             // V flag
-            set_flag(cpu, V, msb_Rn == msb_op2 && msb_Rn != msb_result);
+            set_flag(cpu, V, msb_Rn && msb_op2 && !msb_result);
 
             return result;
         default:
