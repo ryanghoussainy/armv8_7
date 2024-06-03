@@ -1,14 +1,14 @@
 #include "loader.h"
 
 
-long getFileSize(FILE *fptr) {
+long get_file_size(FILE *fptr) {
   fseek(fptr, 0L, SEEK_END);
-  long fileSize = ftell(fptr);
+  long file_size = ftell(fptr);
   rewind(fptr);
-  return fileSize;
+  return file_size;
 }
 
-int loadBinary(char *file_name, uint8_t *memory) {
+int load_binary(char *file_name, uint8_t *memory) {
   FILE *fptr;
   fptr = fopen(file_name, "rb");
 
@@ -17,7 +17,7 @@ int loadBinary(char *file_name, uint8_t *memory) {
     return 0;
   }
   
-  long nbytes = getFileSize(fptr);
+  long nbytes = get_file_size(fptr);
   
   for (int i = 0; i < nbytes; i++) {
     if (fread(memory + i, 1, 1, fptr) != 1) {
