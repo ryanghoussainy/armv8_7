@@ -103,12 +103,11 @@ enum OPERAND_TYPE classify_operand(char* operand) {
     // classify the different types of operands
     if (operand[0] == '#') {
         return LITERAL;
-    } else if(is_regsiter(operand)) {
+    } else if(is_register(operand)) {
         return REGISTER;
     } else {
         return ADDRESS;
     }
-    return NULL;
 }
 
 
@@ -122,7 +121,7 @@ enum OPERAND_TYPE convert_address_to_literal(enum OPERAND_TYPE type) {
 
 union Operand build_operand(char* str, Entry* map, uint64_t address) {
     union Operand new_operand;
-    switch(classify_instruction(str)){
+    switch(classify_operand(str)){
         case LITERAL:
             new_operand.literal = atoi(str + 1) - address;
             break;
@@ -131,7 +130,10 @@ union Operand build_operand(char* str, Entry* map, uint64_t address) {
             break;
         case ADDRESS:
             new_operand.literal = get_value(map, str) - address;
-            break;
+            break;      
+        case NONE:
+            // error, should not have been called
+            break;      
     }
     return new_operand;
 }
@@ -140,8 +142,11 @@ union Operand build_operand(char* str, Entry* map, uint64_t address) {
 Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     Instruction new_ins;
 
+    char* str_copy = malloc(sizeof(str));
+    strcpy(str_copy, str);
+
     size_t word_count;
-    char** ins = split_string(str, " ", &word_count);
+    char** ins = split_string(str_copy, " ", &word_count);
     strcpy(new_ins.operation, ins[0]);
 
     // get the rest of instruction
@@ -149,7 +154,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
 
     // TODO: Handle case where there is no operand
 
-    int operand_count;
+    size_t operand_count;
     char** operands = split_string(str + len + 1, ",", &operand_count);
 
     // clear white spaces in front of operand
@@ -175,7 +180,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
             break;
         default:
             // error
-            return;
+            return new_ins;
     }
 
     return new_ins;
