@@ -1,46 +1,26 @@
 #include "dp-imm.h"
 #include <limits.h>
 
-DPImmComponents get_dp_imm_components(uint32_t instruction)
+DPImmComponents get_dp_imm_components(uint32_t instr)
 {
-    uint64_t sf_mask = build_mask(31, 31);
-    uint64_t opc_mask = build_mask(29, 30);
-    uint64_t opi_mask = build_mask(23, 25);
-    uint64_t rd_mask = build_mask(0, 4);
-    uint64_t sh_mask = build_mask(22, 22);
-    uint64_t imm12_mask = build_mask(10, 21);
-    uint64_t rn_mask = build_mask(5, 9);
-    uint64_t hw_mask = build_mask(21, 22);
-    uint64_t imm16_mask = build_mask(5, 20);
-
-    uint64_t sf = (instruction & sf_mask) >> 31;
-    uint64_t opc = (instruction & opc_mask) >> 29;
-    uint64_t opi = (instruction & opi_mask) >> 23;
-    uint64_t rd = (instruction & rd_mask);
-    uint64_t sh = (instruction & sh_mask) >> 22;
-    uint64_t imm12 = (instruction & imm12_mask) >> 10;
-    uint64_t rn = (instruction & rn_mask) >> 5;
-    uint64_t hw = (instruction & hw_mask) >> 21;
-    uint64_t imm16 = (instruction & imm16_mask) >> 5;
-
     DPImmComponents components = {
-        sf,
-        opc,
-        opi,
-        rd,
-        sh,
-        imm12,
-        rn,
-        hw,
-        imm16
+        parse_ins(instr, 31, 31), // sf
+        parse_ins(instr, 29, 30), // opc
+        parse_ins(instr, 23, 25), // opi
+        parse_ins(instr, 0, 4),   // rd
+        parse_ins(instr, 22, 22), // sh
+        parse_ins(instr, 10, 21), // imm12
+        parse_ins(instr, 5, 9),   // rn
+        parse_ins(instr, 21, 22), // hw
+        parse_ins(instr, 5, 20)   // imm16
     };
 
     return components;
 }
 
-int dp_imm_instruction(CPU* cpu, uint32_t instruction)
+int dp_imm_instruction(CPU* cpu, uint32_t instr)
 {
-    DPImmComponents components = get_dp_imm_components(instruction);
+    DPImmComponents components = get_dp_imm_components(instr);
     DPImmComponents* components_ptr = &components;
 
     if (components.opi == 2) {
