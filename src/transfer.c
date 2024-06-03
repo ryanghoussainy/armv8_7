@@ -7,11 +7,7 @@ uint32_t parse_ins(uint32_t instr, int start, int end) {
 }
 
 static uint64_t indexed(CPU* cpu, uint16_t offset, uint8_t xn) {
-    int simm9 = parse_ins(offset, 2, 10);
-    int simm9_signbit = parse_ins(offset, 10, 10);
-    int sign_mask = UINT32_MAX & ~build_mask(0, 8);
-
-    simm9 = simm9_signbit ? sign_mask | simm9 : simm9;
+    signed int simm9 = sign_extend(parse_ins(offset, 2, 10), 9);
 
     uint64_t xn_val = read_register(cpu, xn, 1);
     uint64_t address;
