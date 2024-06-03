@@ -5,7 +5,7 @@
 DPImmComponents get_dp_imm_components(uint32_t instruction)
 {
     uint64_t sf_mask = build_mask(31, 31);
-    uint64_t ofc_mask = build_mask(29, 30);
+    uint64_t opc_mask = build_mask(29, 30);
     uint64_t opi_mask = build_mask(23, 25);
     uint64_t rd_mask = build_mask(0, 4);
     uint64_t sh_mask = build_mask(22, 22);
@@ -15,7 +15,7 @@ DPImmComponents get_dp_imm_components(uint32_t instruction)
     uint64_t imm16_mask = build_mask(5, 20);
 
     uint64_t sf = (instruction & sf_mask) >> 31;
-    uint64_t ofc = (instruction & ofc_mask) >> 29;
+    uint64_t opc = (instruction & opc_mask) >> 29;
     uint64_t opi = (instruction & opi_mask) >> 23;
     uint64_t rd = (instruction & rd_mask);
     uint64_t sh = (instruction & sh_mask) >> 22;
@@ -26,7 +26,7 @@ DPImmComponents get_dp_imm_components(uint32_t instruction)
 
     DPImmComponents components = {
         sf,
-        ofc,
+        opc,
         opi,
         rd,
         sh,
