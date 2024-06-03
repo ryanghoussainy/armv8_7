@@ -5,7 +5,7 @@
 static int execute_instruction(CPU* cpu, uint32_t instruction)
 {
 
-    uint64_t op0 = (build_mask(25, 28) & instruction) >> 25;
+    uint64_t op0 = parse_ins(instruction, 25, 28);
     uint64_t op0_bits[OP0_BITS];
 
     for (int bit = OP0_BITS - 1; bit >= 0; bit--) {
