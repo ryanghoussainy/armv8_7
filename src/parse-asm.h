@@ -26,7 +26,9 @@ enum INSTRUCTION_TYPE {
 enum OPERAND_TYPE {
     REGISTER,
     LITERAL,
-    ADDRESS
+    ADDRESS,
+    // used to indicate operand is not in use
+    NONE
 };
 
 union Operand {
