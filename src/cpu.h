@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdio.h>
+#include "instr-utils.h"
 
 #define REGISTER_COUNT 31
 #define MEM_ADDRESSES 2097152

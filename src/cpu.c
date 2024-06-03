@@ -1,5 +1,4 @@
 #include "cpu.h"
-#include "masks.h"
 
 void initialise_cpu(CPU* cpu)
 {

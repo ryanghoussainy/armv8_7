@@ -1,6 +1,6 @@
 #pragma once
 #include "cpu.h"
-#include "masks.h"
+#include "instr-utils.h"
 #include "arithmetic-op.h"
 
 typedef struct {

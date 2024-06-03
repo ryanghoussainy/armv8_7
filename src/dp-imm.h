@@ -1,6 +1,7 @@
 #pragma once
 #include "cpu.h"
 #include "arithmetic-op.h"
+#include "instr-utils.h"
 
 typedef struct {
     uint64_t sf;

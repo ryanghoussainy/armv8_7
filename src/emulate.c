@@ -3,7 +3,7 @@
 #include <string.h>
 #include "cpu.h"
 #include "loader.h"
-#include "masks.h"
+#include "instr-utils.h"
 #include "dp-imm.h"
 #include "execute.h"
 
