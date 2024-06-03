@@ -1,7 +1,7 @@
 #include "dp-imm.h"
 #include <limits.h>
 
-DPImmComponents get_dp_imm_components(uint32_t instr)
+static DPImmComponents get_dp_imm_components(uint32_t instr)
 {
     DPImmComponents components = {
         parse_ins(instr, 31, 31), // sf
@@ -18,22 +18,7 @@ DPImmComponents get_dp_imm_components(uint32_t instr)
     return components;
 }
 
-int dp_imm_instruction(CPU* cpu, uint32_t instr)
-{
-    DPImmComponents components = get_dp_imm_components(instr);
-    DPImmComponents* components_ptr = &components;
-
-    if (components.opi == 2) {
-        return do_arithmetic(cpu, components_ptr);
-    }else if (components.opi == 5) {
-        return do_wide_move(cpu, components_ptr);
-    }
-    
-    printf("Invalid DP Immediate instruction\n");
-    return 0;
-}
-
-int do_arithmetic(CPU* cpu, DPImmComponents* components)
+static int do_arithmetic(CPU* cpu, DPImmComponents* components)
 {
     uint64_t op2 = components->sh ? components->imm12 << 12 : components->imm12;
     uint64_t Rn = read_register(cpu, components->rn, components->sf);
@@ -42,7 +27,7 @@ int do_arithmetic(CPU* cpu, DPImmComponents* components)
     return 1;
 }
 
-int do_wide_move(CPU* cpu, DPImmComponents* components)
+static int do_wide_move(CPU* cpu, DPImmComponents* components)
 {
     uint64_t operand_value = components->imm16 << (components->hw * 16);
 
@@ -62,4 +47,19 @@ int do_wide_move(CPU* cpu, DPImmComponents* components)
     }
 
     return 1;
+}
+
+int dp_imm_instruction(CPU* cpu, uint32_t instr)
+{
+    DPImmComponents components = get_dp_imm_components(instr);
+    DPImmComponents* components_ptr = &components;
+
+    if (components.opi == 2) {
+        return do_arithmetic(cpu, components_ptr);
+    }else if (components.opi == 5) {
+        return do_wide_move(cpu, components_ptr);
+    }
+    
+    printf("Invalid DP Immediate instruction\n");
+    return 0;
 }

@@ -1,53 +1,7 @@
 #include "branch.h"
 
-int branch_instruction(CPU* cpu, uint32_t instr) {
 
-    // Large numbers in conditions (5, 508160, 84) correspond to opcode in spec
-    // Identify correct branch through isolating relevant bits w/ masks
-
-    if (cpu == NULL) {
-        printf("Cpu parameter is null.\n");
-        return 1;
-    }
-
-    uint32_t uncon_mask = build_mask(26, 31);
-    uint32_t reg_mask_one = build_mask(0, 4);
-    uint32_t reg_mask_two = build_mask(10, 31);
-    uint32_t cond_mask = build_mask(24, 31);
-
-    int is_uncon = (((uncon_mask & instr) >> 26) == 5);
-
-    if (is_uncon) {
-
-        return unconditional_branch(cpu, instr);
-
-    } else {
-
-        int is_reg = ((reg_mask_one & instr) == 0) && (((reg_mask_two & instr) >> 10) == 3508160);
-
-        if (is_reg) {
-
-            return register_branch(cpu, instr);
-
-        } else {
-
-            int is_cond = (((cond_mask & instr) >> 24) == 84) && (((instr >> 4) & 1) == 0);
-
-            if (is_cond) {
-                return conditional_branch(cpu, instr);
-            } else {
-
-                printf("Invalid branch instruction format");
-
-                return 0;
-            }
-        }
-    }
-
-    return 1;
-}
-
-int unconditional_branch(CPU* cpu, uint32_t instr) {
+static int unconditional_branch(CPU* cpu, uint32_t instr) {
     
     uint32_t mask = build_mask(0, 25);
 
@@ -60,7 +14,7 @@ int unconditional_branch(CPU* cpu, uint32_t instr) {
     return 1;
 }
 
-int register_branch(CPU* cpu, uint32_t instr) {
+static int register_branch(CPU* cpu, uint32_t instr) {
 
     uint32_t mask = build_mask(5, 9);
 
@@ -70,7 +24,7 @@ int register_branch(CPU* cpu, uint32_t instr) {
     return 1;
 }
 
-int conditional_branch(CPU* cpu, uint32_t instr) {
+static int conditional_branch(CPU* cpu, uint32_t instr) {
 
     uint32_t mask_index = build_mask(5, 23);
     uint32_t mask_cond = build_mask(0, 3);
@@ -114,6 +68,53 @@ int conditional_branch(CPU* cpu, uint32_t instr) {
         cpu->PC += offset;
     }else {
         cpu->PC += 4;
+    }
+
+    return 1;
+}
+
+int branch_instruction(CPU* cpu, uint32_t instr) {
+
+    // Large numbers in conditions (5, 508160, 84) correspond to opcode in spec
+    // Identify correct branch through isolating relevant bits w/ masks
+
+    if (cpu == NULL) {
+        printf("Cpu parameter is null.\n");
+        return 1;
+    }
+
+    uint32_t uncon_mask = build_mask(26, 31);
+    uint32_t reg_mask_one = build_mask(0, 4);
+    uint32_t reg_mask_two = build_mask(10, 31);
+    uint32_t cond_mask = build_mask(24, 31);
+
+    int is_uncon = (((uncon_mask & instr) >> 26) == 5);
+
+    if (is_uncon) {
+
+        return unconditional_branch(cpu, instr);
+
+    } else {
+
+        int is_reg = ((reg_mask_one & instr) == 0) && (((reg_mask_two & instr) >> 10) == 3508160);
+
+        if (is_reg) {
+
+            return register_branch(cpu, instr);
+
+        } else {
+
+            int is_cond = (((cond_mask & instr) >> 24) == 84) && (((instr >> 4) & 1) == 0);
+
+            if (is_cond) {
+                return conditional_branch(cpu, instr);
+            } else {
+
+                printf("Invalid branch instruction format");
+
+                return 0;
+            }
+        }
     }
 
     return 1;

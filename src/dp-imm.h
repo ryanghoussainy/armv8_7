@@ -15,7 +15,4 @@ typedef struct {
     uint64_t imm16;
 } DPImmComponents;
 
-DPImmComponents get_dp_imm_components(uint32_t instruction);
 int dp_imm_instruction(CPU* cpu, uint32_t instruction);
-int do_arithmetic(CPU* cpu, DPImmComponents* components);
-int do_wide_move(CPU* cpu, DPImmComponents* components);

@@ -6,7 +6,7 @@
 
 #define OP0_BITS 4
 
-int execute_instruction(CPU* cpu, uint32_t instruction)
+static int execute_instruction(CPU* cpu, uint32_t instruction)
 {
 
     uint64_t op0 = (build_mask(25, 28) & instruction) >> 25;

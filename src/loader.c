@@ -1,7 +1,7 @@
 #include "loader.h"
 
 
-long get_file_size(FILE *fptr) {
+static long get_file_size(FILE *fptr) {
   fseek(fptr, 0L, SEEK_END);
   long file_size = ftell(fptr);
   rewind(fptr);

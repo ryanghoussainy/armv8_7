@@ -16,7 +16,6 @@ uint64_t arithmetic_operation(
     
     switch (opc) {
         case 0: // Add
-            printf("%lx %lx %lx\n", Rn, op2, Rn + op2);
             return Rn + op2;
         case 1: // Add, set flags
             result = Rn + op2;

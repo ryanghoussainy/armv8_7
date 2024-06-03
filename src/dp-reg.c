@@ -1,6 +1,6 @@
 #include "dp-reg.h"
 
-DPRegComponents get_dp_reg_components(uint32_t instr)
+static DPRegComponents get_dp_reg_components(uint32_t instr)
 {
     DPRegComponents components = {
         parse_ins(instr, 31, 31), // sf
@@ -20,55 +20,7 @@ DPRegComponents get_dp_reg_components(uint32_t instr)
     return components;
 }
 
-int dp_reg_instruction(CPU* cpu, uint32_t instr) {
-    DPRegComponents components = get_dp_reg_components(instr);
-
-    if (components.M == 0) {
-        if (components.opr >= 8 && components.opr % 2 == 0) {
-            return reg_arithmetic(cpu, &components);
-        } else if (components.opr < 8) {
-
-            if (instr == 2315255808) {
-                // Halting condition
-                return 0;
-            }
-            
-            return reg_logical(cpu, &components);
-        } else {
-            printf("Invalid instruction\n");
-            return 0;
-        }
-    } else if (components.opr == 8 && components.opc == 0) {
-        return reg_multiply(cpu, &components);
-    } else {
-        printf("Invalid instruction\n");
-        return 0;
-    }
-}
-
-int reg_arithmetic(CPU* cpu, DPRegComponents* components) {
-    if (components->shift == 3) {
-        printf("Invalid instruction\n");
-        return 0;
-    }
-    uint64_t Rm = read_register(cpu, components->rm, components->sf);
-    uint64_t op2 = perform_shift(components->sf, components->shift, Rm, components->operand);
-    uint64_t Rn = read_register(cpu, components->rn, components->sf);
-    uint64_t Rd = arithmetic_operation(cpu, components->sf, components->opc, Rn, op2);
-    write_register(cpu, components->rd, Rd, components->sf);
-    return 1;
-}
-
-int reg_logical(CPU* cpu, DPRegComponents* components) {
-    uint64_t Rm = read_register(cpu, components->rm, components->sf);
-    uint64_t Rn = read_register(cpu, components->rn, components->sf);
-    uint64_t op2 = perform_shift(components->sf, components->shift, Rm, components->operand);
-    uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
-    write_register(cpu, components->rd, Rd, components->sf);
-    return 1;
-}
-
-uint64_t logical_operation(
+static uint64_t logical_operation(
     CPU* cpu, 
     uint64_t sf, 
     uint64_t opc, 
@@ -132,16 +84,7 @@ uint64_t logical_operation(
     }
 }
 
-int reg_multiply(CPU* cpu, DPRegComponents* components) {
-    uint64_t Ra = read_register(cpu, components->ra, components->sf);
-    uint64_t Rn = read_register(cpu, components->rn, components->sf);
-    uint64_t Rm = read_register(cpu, components->rm, components->sf);
-    uint64_t Rd = multiply_operation(cpu, components->x, Ra, Rn, Rm);
-    write_register(cpu, components->rd, Rd, components->sf);
-    return 1;
-}
-
-uint64_t multiply_operation(
+static uint64_t multiply_operation(
     CPU* cpu,
     uint64_t x,
     uint64_t Ra,
@@ -159,7 +102,7 @@ uint64_t multiply_operation(
     }
 }
 
-uint64_t perform_shift(uint64_t sf, uint64_t shift, uint64_t Rm, uint64_t operand) {
+static uint64_t perform_shift(uint64_t sf, uint64_t shift, uint64_t Rm, uint64_t operand) {
     switch (shift) {
         case 0:
             return Rm << operand;
@@ -180,5 +123,62 @@ uint64_t perform_shift(uint64_t sf, uint64_t shift, uint64_t Rm, uint64_t operan
         default:
             printf("Error occured with value of shift\n");
             assert(0);
+    }
+}
+
+static int reg_arithmetic(CPU* cpu, DPRegComponents* components) {
+    if (components->shift == 3) {
+        printf("Invalid instruction\n");
+        return 0;
+    }
+    uint64_t Rm = read_register(cpu, components->rm, components->sf);
+    uint64_t op2 = perform_shift(components->sf, components->shift, Rm, components->operand);
+    uint64_t Rn = read_register(cpu, components->rn, components->sf);
+    uint64_t Rd = arithmetic_operation(cpu, components->sf, components->opc, Rn, op2);
+    write_register(cpu, components->rd, Rd, components->sf);
+    return 1;
+}
+
+static int reg_logical(CPU* cpu, DPRegComponents* components) {
+    uint64_t Rm = read_register(cpu, components->rm, components->sf);
+    uint64_t Rn = read_register(cpu, components->rn, components->sf);
+    uint64_t op2 = perform_shift(components->sf, components->shift, Rm, components->operand);
+    uint64_t Rd = logical_operation(cpu, components->sf, components->opc, components->N, Rn, op2);
+    write_register(cpu, components->rd, Rd, components->sf);
+    return 1;
+}
+
+static int reg_multiply(CPU* cpu, DPRegComponents* components) {
+    uint64_t Ra = read_register(cpu, components->ra, components->sf);
+    uint64_t Rn = read_register(cpu, components->rn, components->sf);
+    uint64_t Rm = read_register(cpu, components->rm, components->sf);
+    uint64_t Rd = multiply_operation(cpu, components->x, Ra, Rn, Rm);
+    write_register(cpu, components->rd, Rd, components->sf);
+    return 1;
+}
+
+int dp_reg_instruction(CPU* cpu, uint32_t instr) {
+    DPRegComponents components = get_dp_reg_components(instr);
+
+    if (components.M == 0) {
+        if (components.opr >= 8 && components.opr % 2 == 0) {
+            return reg_arithmetic(cpu, &components);
+        } else if (components.opr < 8) {
+
+            if (instr == 2315255808) {
+                // Halting condition
+                return 0;
+            }
+            
+            return reg_logical(cpu, &components);
+        } else {
+            printf("Invalid instruction\n");
+            return 0;
+        }
+    } else if (components.opr == 8 && components.opc == 0) {
+        return reg_multiply(cpu, &components);
+    } else {
+        printf("Invalid instruction\n");
+        return 0;
     }
 }
