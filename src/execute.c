@@ -1,8 +1,4 @@
 #include "execute.h"
-#include "dp-imm.h"
-#include "transfer.h"
-#include "branch.h"
-#include "dp-reg.h"
 
 #define OP0_BITS 4
 

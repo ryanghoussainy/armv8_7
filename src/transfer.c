@@ -1,6 +1,4 @@
 #include "transfer.h"
-#include "branch.h"
-#include <stdbool.h>
 
 static uint64_t indexed(CPU* cpu, uint16_t offset, uint8_t xn) {
     signed int simm9 = sign_extend(parse_ins(offset, 2, 10), 9);

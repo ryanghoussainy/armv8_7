@@ -1,5 +1,4 @@
 #include "dp-imm.h"
-#include <limits.h>
 
 static DPImmComponents get_dp_imm_components(uint32_t instr)
 {

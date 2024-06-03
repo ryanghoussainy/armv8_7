@@ -1,6 +1,6 @@
 #pragma once
-#include "cpu.h"
 #include <assert.h>
+#include "cpu.h"
 
 uint64_t arithmetic_operation(
     CPU* cpu,
