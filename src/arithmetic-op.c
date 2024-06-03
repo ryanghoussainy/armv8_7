@@ -16,6 +16,7 @@ uint64_t arithmetic_operation(
     
     switch (opc) {
         case 0: // Add
+            printf("%lx %lx %lx\n", Rn, op2, Rn + op2);
             return Rn + op2;
         case 1: // Add, set flags
             result = Rn + op2;
@@ -48,7 +49,7 @@ uint64_t arithmetic_operation(
             // Z flag
             set_flag(cpu, Z, result == 0);
             // C flag
-            int carry = op2 > Rn && !msb_Rn;
+            int carry = op2 > Rn;
             set_flag(cpu, C, !carry);
             // V flag
             set_flag(cpu, V, (msb_Rn && !msb_op2 && !msb_result) || (!msb_Rn && msb_op2 && msb_result));
