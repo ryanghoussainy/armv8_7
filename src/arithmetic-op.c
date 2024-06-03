@@ -9,12 +9,17 @@ uint64_t arithmetic_operation(
 ) {
     uint64_t result, msb_result, msb_Rn, msb_op2;
     
+    if (!sf) {
+        Rn = UINT32_MAX & Rn;
+        op2 = UINT32_MAX & op2;
+    }
+    
     switch (opc) {
         case 0: // Add
             return Rn + op2;
         case 1: // Add, set flags
             result = Rn + op2;
-            
+
             msb_result = sf ? result >> 63 : (result & UINT32_MAX) >> 31;
             msb_Rn = sf ? Rn >> 63 : Rn >> 31;
             msb_op2 = sf ? op2 >> 63 : op2 >> 31;
@@ -33,7 +38,7 @@ uint64_t arithmetic_operation(
             return Rn - op2;
         case 3: // Subtract, set flags
             result = Rn - op2;
-
+            
             msb_result = sf ? result >> 63 : (result & UINT32_MAX) >> 31;
             msb_Rn = sf ? Rn >> 63 : Rn >> 31;
             msb_op2 = sf ? op2 >> 63 : op2 >> 31;
@@ -43,15 +48,10 @@ uint64_t arithmetic_operation(
             // Z flag
             set_flag(cpu, Z, result == 0);
             // C flag
-            set_flag(cpu, C, op2 <= Rn);
+            int carry = op2 > Rn;
+            set_flag(cpu, C, !carry);
             // V flag
-            if (sf) {
-                int64_t signed_result = (int64_t) result;
-                set_flag(cpu, V, signed_result > INT64_MAX || signed_result < INT64_MIN);
-            }else {
-                int32_t signed_result = (int32_t) result;
-                set_flag(cpu, V, signed_result > INT32_MAX || signed_result < INT32_MIN);
-            }
+            set_flag(cpu, V, (msb_Rn && !msb_op2 && !msb_result) || (!msb_Rn && msb_op2 && msb_result));
 
             return result;
         default:

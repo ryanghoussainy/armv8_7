@@ -1,23 +1,20 @@
 #include "transfer.h"
-#include "branch.h"
-#include <stdbool.h>
-
-uint32_t parse_ins(uint32_t instr, int start, int end) {
-    return (build_mask(start, end) & instr) >> start;
-}
 
 static uint64_t indexed(CPU* cpu, uint16_t offset, uint8_t xn) {
-    int simm9 = parse_ins(offset, 2, 10);
+    signed int simm9 = sign_extend(parse_ins(offset, 2, 10), 9);
+
     uint64_t xn_val = read_register(cpu, xn, 1);
     uint64_t address;
     if(parse_ins(offset, 1, 1)) {
         // pre-index
         address = xn_val + simm9;
+        write_register(cpu, xn, address, 1);
     } else {
         // post-index 
         address = xn_val;
+        write_register(cpu, xn, xn_val + simm9, 1);
     }
-    write_register(cpu, xn, xn_val + simm9, 1);
+    
     return address;
 }
 

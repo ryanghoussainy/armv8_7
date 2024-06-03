@@ -1,5 +1,4 @@
 #include "cpu.h"
-#include "masks.h"
 
 void initialise_cpu(CPU* cpu)
 {
@@ -111,7 +110,7 @@ void set_flag(CPU* cpu, enum PSTATE_flag flag, int value)
 }
 
 
-void print_registers(CPU* cpu, FILE* out)
+static void print_registers(CPU* cpu, FILE* out)
 {
     fprintf(out, "Registers: \n");
 
@@ -125,7 +124,7 @@ void print_registers(CPU* cpu, FILE* out)
     fprintf(out, "PC = %016lx\n", cpu->PC);
 }
 
-void print_pstate(CPU* cpu, FILE* out)
+static void print_pstate(CPU* cpu, FILE* out)
 {
     fprintf(out, "PSTATE : ");
 
@@ -156,7 +155,7 @@ void print_pstate(CPU* cpu, FILE* out)
     fprintf(out, "\n");
 }
 
-void print_non_zero_memory(CPU* cpu, FILE* out)
+static void print_non_zero_memory(CPU* cpu, FILE* out)
 {
     fprintf(out, "Non-zero memory: \n");
 

@@ -3,5 +3,4 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-long getFileSize(FILE *fptr);
-int loadBinary(char *file_name, uint8_t *memory);
+int load_binary(char *file_name, uint8_t *memory);

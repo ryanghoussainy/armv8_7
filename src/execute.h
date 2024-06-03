@@ -1,7 +1,8 @@
 #pragma once
 #include "cpu.h"
-#include <stdint.h>
+#include "dp-imm.h"
+#include "dp-reg.h"
+#include "transfer.h"
 
-int execute_instruction(CPU* cpu, uint32_t instruction);
 
 void cycle(CPU* cpu);

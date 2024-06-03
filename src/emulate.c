@@ -1,10 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include "cpu.h"
 #include "loader.h"
-#include "masks.h"
-#include "dp-imm.h"
 #include "execute.h"
 
 int main(int argc, char **argv) {
@@ -59,7 +54,7 @@ int main(int argc, char **argv) {
   initialise_cpu(&cpu);
 
   // Load binary file into memory
-  if (!loadBinary(FILE_IN, cpu.memory)) {
+  if (!load_binary(FILE_IN, cpu.memory)) {
     free(FILE_IN);
     free(FILE_OUT);
     return EXIT_FAILURE;
