@@ -112,27 +112,71 @@ enum OPERAND_TYPE classify_operand(char* operand) {
 }
 
 
-union Operand build_operand(char* str, Entry* map) {
+enum OPERAND_TYPE convert_address_to_literal(enum OPERAND_TYPE type) {
+    /* This function is needed as address is no longer needed when forming struct instruction */
+    if (type == ADDRESS) {
+        return LITERAL;
+    } else return type;
+}
+
+
+union Operand build_operand(char* str, Entry* map, uint64_t address) {
     union Operand new_operand;
     switch(classify_instruction(str)){
         case LITERAL:
-            new_operand.literal = atoi(str + 1);
+            new_operand.literal = atoi(str + 1) - address;
             break;
         case REGISTER:
             strcpy(new_operand.reg, str);
             break;
         case ADDRESS:
-            new_operand.literal = get_value(map, str);
+            new_operand.literal = get_value(map, str) - address;
             break;
     }
     return new_operand;
 }
 
 
-Instruction build_instruction(char* str, Entry* map) {
-    Instruction new_str;
+Instruction build_instruction(char* str, Entry* map, uint64_t address) {
+    Instruction new_ins;
 
-    /* TODO: Implement this  */
+    size_t word_count;
+    char** ins = split_string(str, " ", &word_count);
+    strcpy(new_ins.operation, ins[0]);
 
-    return new_str;
+    // get the rest of instruction
+    size_t len = strlen(new_ins.operation);
+
+    // TODO: Handle case where there is no operand
+
+    int operand_count;
+    char** operands = split_string(str + len + 1, ",", &operand_count);
+
+    // clear white spaces in front of operand
+    for (int i = 0; i < operand_count; i++) {
+        remove_leading_spaces(operands[i]);
+    }
+
+
+    // fall-through switch statements
+    switch (operand_count) {
+        case 4:
+            new_ins.o4_type = convert_address_to_literal(classify_operand((operands[3])));
+            new_ins.o4 = build_operand(operands[3], map, address);
+        case 3:
+            new_ins.o3_type = convert_address_to_literal(classify_operand((operands[2])));
+            new_ins.o3 = build_operand(operands[2], map, address);
+        case 2:
+            new_ins.o2_type = convert_address_to_literal(classify_operand((operands[1])));
+            new_ins.o2 = build_operand(operands[1], map, address);
+        case 1:
+            new_ins.o1_type = convert_address_to_literal(classify_operand((operands[0])));
+            new_ins.o1 = build_operand(operands[0], map, address);
+            break;
+        default:
+            // error
+            return;
+    }
+
+    return new_ins;
 }

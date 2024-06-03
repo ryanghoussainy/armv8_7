@@ -40,9 +40,6 @@ union Operand {
 };
 
 typedef struct {
-    // the memory this instruction is stored in
-    uint64_t memory;
-
     // length could be set to 5
     char operation[8];
     
@@ -66,5 +63,5 @@ void remove_last_character(char* str);
 char** split_string(char str[], const char* sep, size_t* word_count);
 uint64_t register_number(const char* str, bool* is_64_bit);
 enum LINE_TYPE classify_line(char str[]);
-union Operand build_operand(char* str, Entry* map);
-Instruction build_instruction(char* str, Entry* map);
+union Operand build_operand(char* str, Entry* map, uint64_t address);
+Instruction build_instruction(char* str, Entry* map, uint64_t address);
