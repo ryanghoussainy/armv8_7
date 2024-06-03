@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
 #include "symbol-table.h"
 
-#define ZR 1
-
+#define ZR 31
+#define PC 32
 
 enum LINE_TYPE {
     INSTRUCTION,
@@ -26,6 +28,7 @@ enum INSTRUCTION_TYPE {
 enum OPERAND_TYPE {
     REGISTER,
     LITERAL,
+    // only used to map the integer value back into the operand
     ADDRESS,
     // used to indicate operand is not in use
     NONE
@@ -34,10 +37,12 @@ enum OPERAND_TYPE {
 union Operand {
     char reg[4];
     int literal;
-    uint64_t address;
 };
 
 typedef struct {
+    // the memory this instruction is stored in
+    uint64_t memory;
+
     // length could be set to 5
     char operation[8];
     
@@ -55,9 +60,11 @@ typedef struct {
 
 } Instruction;
 
-
+void remove_leading_spaces(char* str);
 char last_character(const char* str);
 void remove_last_character(char* str);
 char** split_string(char str[], const char* sep, size_t* word_count);
 uint64_t register_number(const char* str, bool* is_64_bit);
 enum LINE_TYPE classify_line(char str[]);
+union Operand build_operand(char* str, Entry* map);
+Instruction build_instruction(char* str, Entry* map);
