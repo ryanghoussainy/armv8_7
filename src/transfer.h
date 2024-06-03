@@ -1,6 +1,5 @@
-#include <stdint.h>
-#include <stdio.h>
-#include "masks.h"
-#include "cpu.h"
+#pragma once
+#include <stdbool.h>
+#include "branch.h"
 
 int transfer_instruction(CPU* cpu, uint32_t instr);

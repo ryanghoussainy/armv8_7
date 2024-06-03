@@ -1,10 +1,5 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#include "cpu.h"
 #include "loader.h"
-#include "masks.h"
-#include "dp-imm.h"
 #include "execute.h"
 
 int main(int argc, char **argv) {

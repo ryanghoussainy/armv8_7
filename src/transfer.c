@@ -1,10 +1,4 @@
 #include "transfer.h"
-#include "branch.h"
-#include <stdbool.h>
-
-uint32_t parse_ins(uint32_t instr, int start, int end) {
-    return (build_mask(start, end) & instr) >> start;
-}
 
 static uint64_t indexed(CPU* cpu, uint16_t offset, uint8_t xn) {
     signed int simm9 = sign_extend(parse_ins(offset, 2, 10), 9);
