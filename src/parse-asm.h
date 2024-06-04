@@ -28,6 +28,11 @@ enum INSTRUCTION_TYPE {
 enum OPERAND_TYPE {
     REGISTER,
     LITERAL,
+    // 4 different types of shifts
+    LSL,
+    LSR,
+    ASR,
+    ROR,
     // only used to map the integer value back into the operand
     ADDRESS,
     // used to indicate operand is not in use
@@ -36,12 +41,12 @@ enum OPERAND_TYPE {
 
 union Operand {
     char reg[4];
-    int literal;
+    // represents either a literal or a shift
+    int number;
 };
 
 typedef struct {
-    // length could be set to 5
-    char operation[8];
+    char operation[16];
     
     union Operand o1;
     enum OPERAND_TYPE o1_type;
@@ -57,6 +62,7 @@ typedef struct {
 
 } Instruction;
 
+uint64_t string_to_int(char* str);
 void remove_leading_spaces(char* str);
 char last_character(const char* str);
 void remove_last_character(char* str);
