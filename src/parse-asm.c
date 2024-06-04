@@ -141,10 +141,14 @@ enum LINE_TYPE classify_line(char str[]) {
     }
 }
 
-
 enum INSTRUCTION_TYPE classify_instruction(char* operation)  {
-    // TODO: classify the different types of instructions
-    return NULL;
+    if (operation[0] == 'b') {
+        return BRANCH;
+    } else if (strcmp(operation, "ldr") == 0 || strcmp(operation, "str") == 0) {
+        return TRANSFER;
+    } else {
+        return DP;
+    }
 }
 
 
@@ -229,6 +233,10 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
 
 
     // TODO: Separate handling for load and store as syntax is different
+
+    if (classify_instruction(new_ins.operation) == TRANSFER) {
+        // do something else
+    }
 
 
     // clear white spaces in front of operand

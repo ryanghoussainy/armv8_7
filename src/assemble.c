@@ -30,7 +30,18 @@ int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
       case INSTRUCTION:
         ins = build_instruction(instructions[line], map, line);
 
-        // TODO: Classify type of instruction then pass in respective functions 
+        // TODO: Classify type of instruction then pass in respective functions
+        switch(classify_instruction(instructions[line])) {
+          case DP:
+            // call DP function
+            break;
+          case TRANSFER:
+            // call transfer function
+            break;
+          case BRANCH:
+            // call branch function
+            break;
+        }
 
         break;
       case DIRECTIVE:
@@ -68,6 +79,6 @@ int main(int argc, char **argv) {
 
   // write array of uint32_t into bin file
   write_bin(argv[2], output, file_size - label_count);
-
+  
   return EXIT_SUCCESS;
 }
