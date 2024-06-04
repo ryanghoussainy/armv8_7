@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "assemble-rw.h"
 #include "parse-asm.h"
+#include "directives.h"
 
 
 size_t pass_one(char* instructions[], Entry* map, size_t size) {
@@ -24,24 +25,24 @@ int pass_two(char* instructions[], Entry* map, size_t size, uint32_t* output)  {
   int label_count = 0;
   for (int line = 0; line < size; line++) {
     uint32_t word;
+   
     switch(classify_line(instructions[line])) {
+      Instruction ins;
       case INSTRUCTION:
-        Instruction ins = build_instruction(instructions[line], map, line);
+        ins = build_instruction(instructions[line], map, line);
 
-        /* TODO: Classify type of instruction then pass in respective functions */
+        // TODO: Classify type of instruction then pass in respective functions 
 
-        output[line-label_count] = word;
         break;
       case DIRECTIVE:
-
-        /* TODO: Deal with directives */
-      
-        output[line-label_count] = word;
+        word = directive_binary(instructions[line]);
         break;
       case LABEL:
         label_count++;
         continue;
+        break;
     }
+    output[line-label_count] = word;
   }
   return 1;
 }
