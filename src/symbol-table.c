@@ -30,5 +30,6 @@ int get_value(Entry* map, char* label) {
             map = map->next;
         }
     }
+    // not found
     return -1;
 }

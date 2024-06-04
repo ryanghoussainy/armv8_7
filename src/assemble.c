@@ -20,9 +20,8 @@ size_t pass_one(char* instructions[], Entry* map, size_t size) {
   return count;
 }
 
-int pass_two(char* instructions[], Entry* map, size_t size, uint32_t* output)  {
-  output = malloc(sizeof(uint32_t) * size);
-  int label_count = 0;
+int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
+  size_t label_count = 0;
   for (int line = 0; line < size; line++) {
     uint32_t word;
    
@@ -50,13 +49,25 @@ int pass_two(char* instructions[], Entry* map, size_t size, uint32_t* output)  {
 
 int main(int argc, char **argv) {
 
+  if (argc < 3) {
+    // error
+    return EXIT_FAILURE;
+  } 
+
   // read from file, store into array of strings
+  char** all_lines;
+  size_t file_size = read_asm(argv[1], &all_lines);
 
   // pass one, store symbol table in map
+  Entry map = {NULL, 0, NULL};
+  size_t label_count = pass_one(all_lines, &map, file_size);
 
   // pass two, store result in array of uint32_t
+  uint32_t* output = malloc(sizeof(uint32_t) * (file_size - label_count));
+  pass_two(all_lines, map.next, output, file_size);
 
   // write array of uint32_t into bin file
+  write_bin(argv[2], output, file_size - label_count);
 
   return EXIT_SUCCESS;
 }

@@ -2,6 +2,7 @@
 
 
 uint64_t string_to_int(char* str) {
+    // turns a string into int, handles both denary and hexadecimal
     if (strlen(str) == 1) {
         return atoi(str);
     } else if (strncmp(str, "0x", 2) == 0) {
@@ -10,42 +11,6 @@ uint64_t string_to_int(char* str) {
     } else {
         return atoi(str);
     }
-}
-
-
-enum OPERAND_TYPE extract_shift_type(char* str) {
-    size_t word_count;
-    char* str_copy = malloc(sizeof(str));
-    strcpy(str_copy, str);
-    char** operand = split_string(str_copy, " ", &word_count);
-    if (word_count != 2) {
-        // not a shift
-        return NONE;
-    }
-    if (strcmp(operand[0], "lsl") == 0) {
-        return LSL;
-    } else if (strcmp(operand[0], "lsr") == 0) {
-        return LSR;
-    } else if (strcmp(operand[0], "asr") == 0) {
-        return ASR;
-    } else if (strcmp(operand[0], "ror") == 0) {
-        return ROR;
-    } else {
-        // not a shift
-        return NONE;
-    }
-}
-
-int extract_shift_bits(char* str) {
-    size_t word_count;
-    char* str_copy = malloc(sizeof(str));
-    strcpy(str_copy, str);
-    char** operand = split_string(str_copy, " ", &word_count);
-    if (word_count != 2) {
-        // error
-        return -1;
-    }
-    return string_to_int(operand[1] + 1);
 }
 
 
@@ -101,7 +66,53 @@ char** split_string(char str[], const char* sep, size_t* word_count) {
 }
 
 
+enum OPERAND_TYPE extract_shift_type(char* str) {
+    size_t word_count;
+    char* str_copy = malloc(sizeof(str));
+    strcpy(str_copy, str);
+    char** operand = split_string(str_copy, " ", &word_count);
+    if (word_count != 2) {
+        // not a shift
+        return NONE;
+    }
+    if (strcmp(operand[0], "lsl") == 0) {
+        return LSL;
+    } else if (strcmp(operand[0], "lsr") == 0) {
+        return LSR;
+    } else if (strcmp(operand[0], "asr") == 0) {
+        return ASR;
+    } else if (strcmp(operand[0], "ror") == 0) {
+        return ROR;
+    } else {
+        // not a shift
+        return NONE;
+    }
+}
+
+int extract_shift_bits(char* str) {
+    size_t word_count;
+    char* str_copy = malloc(sizeof(str));
+    strcpy(str_copy, str);
+    char** operand = split_string(str_copy, " ", &word_count);
+    if (word_count != 2) {
+        // error
+        return -1;
+    }
+    return string_to_int(operand[1] + 1);
+}
+
+
 uint64_t register_number(const char* str, bool* is_64_bit) {
+    // An example of how to call the function
+
+    /*
+        char example[] = "x13";
+        bool is_64_bit;
+        int example_reg = register_number(example, &is_64_bit);
+        printf("%lu", example_reg); // 13
+        printf("%d", is_64_bit); // 1 (true)
+    */
+
     if (strcmp(str, "xzr")) {
         *is_64_bit = true;
         // ZR set to 31
@@ -117,7 +128,7 @@ uint64_t register_number(const char* str, bool* is_64_bit) {
     }
 
     *is_64_bit = str[0] == 'x';
-    return string_to_int(str + 1);
+    return atoi(str + 1);
 }
 
 enum LINE_TYPE classify_line(char str[]) {
@@ -151,7 +162,6 @@ bool is_register(char* str) {
 enum OPERAND_TYPE classify_operand(char* operand) {
     // classify the different types of operands
 
-    // TODO: Deal with shifts
     if (operand[0] == '#') {
         return LITERAL;
     } else if(is_register(operand)) {
@@ -248,6 +258,8 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     }
 
     free(str_copy);
+
+    // TODO: free the 2D arrays
     free(ins);
     free(operands);
 
