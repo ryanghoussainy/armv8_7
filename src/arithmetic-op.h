@@ -2,6 +2,8 @@
 #include <assert.h>
 #include "cpu.h"
 
+#define num_bits(sf) (sf ? 64 : 32)
+
 uint64_t arithmetic_operation(
     CPU* cpu,
     uint64_t sf, 

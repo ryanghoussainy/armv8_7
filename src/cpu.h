@@ -4,6 +4,9 @@
 
 #define REGISTER_COUNT 31
 #define MEM_ADDRESSES 2097152
+#define BYTE_SIZE 8
+#define MASK32 0xFFFFFFFF
+#define ZR_NO 31
 
 
 enum PSTATE_flag {

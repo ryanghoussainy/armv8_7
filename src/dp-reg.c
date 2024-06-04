@@ -3,18 +3,18 @@
 static DPRegComponents get_dp_reg_components(uint32_t instr)
 {
     DPRegComponents components = {
-        parse_ins(instr, 31, 31), // sf
-        parse_ins(instr, 29, 30), // opc
-        parse_ins(instr, 28, 28), // M
-        parse_ins(instr, 21, 24), // opr
-        parse_ins(instr, 16, 20), // rm
-        parse_ins(instr, 10, 15), // operand
-        parse_ins(instr, 5, 9),   // rn
-        parse_ins(instr, 0, 4),   // rd
-        parse_ins(instr, 22, 23), // shift
-        parse_ins(instr, 21, 21), // N
-        parse_ins(instr, 15, 15), // x
-        parse_ins(instr, 10, 14)  // ra
+        parse_ins(instr, SF_BITS), // sf
+        parse_ins(instr, OPC_BITS), // opc
+        parse_ins(instr, M_BITS), // M
+        parse_ins(instr, OPR_BITS), // opr
+        parse_ins(instr, RM_BITS), // rm
+        parse_ins(instr, OPERAND_BITS), // operand
+        parse_ins(instr, RN_BITS),   // rn
+        parse_ins(instr, RD_BITS),   // rd
+        parse_ins(instr, SHIFT_BITS), // shift
+        parse_ins(instr, N_BITS), // N
+        parse_ins(instr, X_BITS), // x
+        parse_ins(instr, RA_BITS)  // ra
     };
 
     return components;
@@ -41,7 +41,7 @@ static uint64_t logical_operation(
                 case 3: // Bitwise AND, setting flags
                     result = Rn & op2;
                     // N flag
-                    set_flag(cpu, N, sf ? result >> 63 : (result & UINT32_MAX) >> 31);
+                    set_flag(cpu, N, sf ? result >> (num_bits(sf)-1) : (result & UINT32_MAX) >> (num_bits(sf)-1));
                     // Z flag
                     set_flag(cpu, Z, result == 0);
                     // C flag
@@ -65,7 +65,7 @@ static uint64_t logical_operation(
                 case 3: // Bitwise bit clear, setting flags 
                     result = Rn & ~op2;
                     // N flag
-                    set_flag(cpu, N, sf ? result >> 63 : (result & UINT32_MAX) >> 31);
+                    set_flag(cpu, N, sf ? result >> (num_bits(sf)-1) : (result & UINT32_MAX) >> (num_bits(sf)-1));
                     // Z flag
                     set_flag(cpu, Z, result == 0);
                     // C flag
@@ -115,11 +115,7 @@ static uint64_t perform_shift(uint64_t sf, uint64_t shift, uint64_t Rm, uint64_t
                 return (int32_t)Rm >> operand;
             }
         case 3:
-            if (sf) {
-                return (Rm >> operand) | (Rm << (64 - operand));
-            }else {
-                return (Rm >> operand) | (Rm << (32 - operand));
-            }
+            return (Rm >> operand) | (Rm << (num_bits(sf) - operand));
         default:
             printf("Error occured with value of shift\n");
             assert(0);
@@ -164,12 +160,6 @@ int dp_reg_instruction(CPU* cpu, uint32_t instr) {
         if (components.opr >= 8 && components.opr % 2 == 0) {
             return reg_arithmetic(cpu, &components);
         } else if (components.opr < 8) {
-
-            if (instr == 2315255808) {
-                // Halting condition
-                return 0;
-            }
-            
             return reg_logical(cpu, &components);
         } else {
             printf("Invalid instruction\n");

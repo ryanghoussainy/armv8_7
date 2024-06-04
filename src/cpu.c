@@ -22,11 +22,11 @@ void initialise_cpu(CPU* cpu)
 
 void write_register(CPU* cpu, int register_no, uint64_t value, int is_64bit)
 {
-    if (register_no == 31)
+    if (register_no == ZR_NO)
         return;
         
-    if (is_64bit == 0) {
-        uint64_t _32bit_mask = build_mask(0, 31);
+    if (!is_64bit) {
+        uint64_t _32bit_mask = MASK32;
         uint64_t lower_bits = value & _32bit_mask;
 
         cpu->registers[register_no] = lower_bits;
@@ -37,13 +37,13 @@ void write_register(CPU* cpu, int register_no, uint64_t value, int is_64bit)
 
 uint64_t read_register(CPU* cpu, int register_no, int is_64bit)
 {
-    if (register_no == 31)
+    if (register_no == ZR_NO)
         return 0;
 
     uint64_t register_value = cpu->registers[register_no];
 
-    if (is_64bit == 0) {
-        uint64_t _32bit_mask = build_mask(0, 31);
+    if (!is_64bit) {
+        uint64_t _32bit_mask = MASK32;
         return register_value & _32bit_mask;
     }
 
@@ -56,11 +56,11 @@ void write_byte_memory(CPU* cpu, int address, uint8_t byte)
 }
 
 void write_bytes_memory(CPU* cpu, int address, uint64_t value, int bytes) {
-    uint64_t mask = 255;  // set lowest 8 bits all to 1
+    uint64_t mask = build_mask(0, 7);  // set lowest 8 bits all to 1
     for (int byte = 0; byte < bytes; byte++) {
-        uint8_t current_byte = (value & mask) >> (byte * 8);
+        uint8_t current_byte = (value & mask) >> (byte * BYTE_SIZE);
         write_byte_memory(cpu, address + byte, current_byte);
-        mask <<= 8;
+        mask <<= BYTE_SIZE;
     }
 }
 
@@ -74,7 +74,7 @@ uint64_t read_bytes_memory(CPU* cpu, int start_addr, int bytes)
     int64_t result = 0;
     for (int byte = 0; byte < bytes; byte++) {
         int64_t curr_byte = read_byte_memory(cpu, start_addr + byte);
-        result = (result << 8) | curr_byte;
+        result = (result << BYTE_SIZE) | curr_byte;
     }
 
     return result;
@@ -85,7 +85,7 @@ uint64_t read_bytes_memory_reverse(CPU* cpu, int start_addr, int bytes)
     int64_t result = 0;
     for (int byte = bytes - 1; byte >= 0; byte--) {
         int64_t curr_byte = read_byte_memory(cpu, start_addr + byte);
-        result = (result << 8) | curr_byte;
+        result = (result << BYTE_SIZE) | curr_byte;
     }
 
     return result;

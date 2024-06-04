@@ -20,9 +20,9 @@ uint64_t arithmetic_operation(
         case 1: // Add, set flags
             result = Rn + op2;
 
-            msb_result = sf ? result >> 63 : (result & UINT32_MAX) >> 31;
-            msb_Rn = sf ? Rn >> 63 : Rn >> 31;
-            msb_op2 = sf ? op2 >> 63 : op2 >> 31;
+            msb_result = sf ? result >> (num_bits(sf)-1) : (result & UINT32_MAX) >> (num_bits(sf)-1);
+            msb_Rn = sf ? Rn >> (num_bits(sf)-1) : Rn >> (num_bits(sf)-1);
+            msb_op2 = sf ? op2 >> (num_bits(sf)-1) : op2 >> (num_bits(sf)-1);
 
             // N flag
             set_flag(cpu, N, msb_result);
@@ -39,9 +39,9 @@ uint64_t arithmetic_operation(
         case 3: // Subtract, set flags
             result = Rn - op2;
             
-            msb_result = sf ? result >> 63 : (result & UINT32_MAX) >> 31;
-            msb_Rn = sf ? Rn >> 63 : Rn >> 31;
-            msb_op2 = sf ? op2 >> 63 : op2 >> 31;
+            msb_result = sf ? result >> (num_bits(sf)-1) : (result & UINT32_MAX) >> (num_bits(sf)-1);
+            msb_Rn = sf ? Rn >> (num_bits(sf)-1) : Rn >> (num_bits(sf)-1);
+            msb_op2 = sf ? op2 >> (num_bits(sf)-1) : op2 >> (num_bits(sf)-1);
 
             // N flag
             set_flag(cpu, N, msb_result);
