@@ -1,16 +1,17 @@
 #include <stdlib.h>
 #include "assemble-rw.h"
 #include "parse-asm.h"
+#include "directives.h"
 
 
-int pass_one(char* instructions[], Entry* map, size_t size) {
+size_t pass_one(char* instructions[], Entry* map, size_t size) {
   size_t count = 0;
   for (int line = 0; line < size; line++) {
     char *ins = strdup(instructions[line]);
     if (classify_line(ins) == LABEL) {
       remove_last_character(ins);
       if (add_entry(map, ins, line - count) == 0) {
-        // error handeling
+        // error handling
         return 0;
       }
       count++;
@@ -19,12 +20,43 @@ int pass_one(char* instructions[], Entry* map, size_t size) {
   return count;
 }
 
+int pass_two(char* instructions[], Entry* map, size_t size, uint32_t* output)  {
+  output = malloc(sizeof(uint32_t) * size);
+  int label_count = 0;
+  for (int line = 0; line < size; line++) {
+    uint32_t word;
+   
+    switch(classify_line(instructions[line])) {
+      Instruction ins;
+      case INSTRUCTION:
+        ins = build_instruction(instructions[line], map, line);
 
-int pass_two(char* instructions[], Entry* map, size_t size) {
+        // TODO: Classify type of instruction then pass in respective functions 
 
+        break;
+      case DIRECTIVE:
+        word = directive_binary(instructions[line]);
+        break;
+      case LABEL:
+        label_count++;
+        continue;
+        break;
+    }
+    output[line-label_count] = word;
+  }
+  return 1;
 }
 
 
 int main(int argc, char **argv) {
+
+  // read from file, store into array of strings
+
+  // pass one, store symbol table in map
+
+  // pass two, store result in array of uint32_t
+
+  // write array of uint32_t into bin file
+
   return EXIT_SUCCESS;
 }
