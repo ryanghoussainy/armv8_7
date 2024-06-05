@@ -221,6 +221,12 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
 
     size_t word_count;
     char** ins = split_string(str_copy, " ", &word_count);
+
+    if (ins == NULL) {
+        printf("Invalid instruction: %s", str);
+        return new_ins;
+    }
+
     strcpy(new_ins.operation, ins[0]);
 
     // get the rest of instruction
@@ -262,6 +268,9 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
             break;
         default:
             // error
+            free(str_copy);
+            free(ins);
+            free(operands);
             return new_ins;
     }
 
@@ -272,4 +281,43 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     free(operands);
 
     return new_ins;
+}
+
+char* print_operand_type(enum OPERAND_TYPE op_type) {
+    switch(op_type) {
+        case REGISTER:
+            return "REGISTER";
+        case LITERAL:
+            return "LITERAL";
+        case LSL:
+            return "LSL";
+        case LSR:
+            return "LSR";
+        case ASR:
+            return "ASR";
+        case ROR:
+            return "ROR";
+        case ADDRESS:
+            return "ADDRESS";
+        case NONE:
+            return "NONE";
+        default:
+            return "";
+    }
+}
+
+void print_instruction(Instruction* instr) {
+    printf("operation: %s\n", instr->operation);
+    printf("o1.reg: %s\n", instr->o1.reg);
+    printf("o1.number: %d\n", instr->o1.number);
+    printf("o1_type: %s\n", print_operand_type(instr->o1_type));
+    printf("o2.reg: %s\n", instr->o2.reg);
+    printf("o2.number: %d\n", instr->o2.number);
+    printf("o2_type: %s\n", print_operand_type(instr->o2_type));
+    printf("o3.reg: %s\n", instr->o3.reg);
+    printf("o3.number: %d\n", instr->o3.number);
+    printf("o3_type: %s\n", print_operand_type(instr->o3_type));
+    printf("o4.reg: %s\n", instr->o4.reg);
+    printf("o4.number: %d\n", instr->o4.number);
+    printf("o4_type: %s\n", print_operand_type(instr->o4_type));
 }

@@ -1,10 +1,7 @@
-#pragma once
 #include <stdlib.h>
 #include "assemble-rw.h"
-#include "parse-asm.h"
 #include "directives.h"
 #include "branch-asm.h"
-
 
 size_t pass_one(char* instructions[], Entry* map, size_t size) {
   size_t count = 0;
@@ -25,7 +22,7 @@ size_t pass_one(char* instructions[], Entry* map, size_t size) {
 int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
   size_t label_count = 0;
   for (int line = 0; line < size; line++) {
-    uint32_t word;
+    uint32_t word = 0;
    
     switch(classify_line(instructions[line])) {
       Instruction ins;
@@ -64,6 +61,7 @@ int main(int argc, char **argv) {
 
   if (argc < 3) {
     // error
+    printf("Need file in and file out arguments");
     return EXIT_FAILURE;
   } 
 

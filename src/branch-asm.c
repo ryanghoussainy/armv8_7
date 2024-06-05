@@ -12,13 +12,13 @@ uint32_t conditional_instruction(Instruction* instr) {
         cond = 1;
     } else if (strcmp(condition,"ge") == 0) {
         cond = 10;
-    } else if (strcmp(condition,"lt")) {
+    } else if (strcmp(condition,"lt") == 0) {
         cond = 11;
-    } else if (strcmp(condition, "gt")) {
+    } else if (strcmp(condition, "gt") == 0) {
         cond = 12;
-    } else if (strcmp(condition, "le")) {
+    } else if (strcmp(condition, "le") == 0) {
         cond = 13;
-    } else if (strcmp(condition, "al")) {
+    } else if (strcmp(condition, "al") == 0) {
         cond = 14;
     } else {
         printf("Invalid branch condition");
@@ -40,6 +40,7 @@ uint32_t unconditional_instruction(Instruction* instr) {
 }
 
 uint32_t branch_assembly(Instruction* instr) {
+    print_instruction(instr); //for debugging
     if (instr->operation[1] == '.') {
         return conditional_instruction(instr);
     } else if (instr->operation[1] == 'r') {
