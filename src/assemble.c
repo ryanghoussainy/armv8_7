@@ -1,4 +1,3 @@
-#pragma once
 #include <stdlib.h>
 #include "assemble-rw.h"
 #include "parse-asm.h"
