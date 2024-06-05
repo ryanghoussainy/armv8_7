@@ -9,11 +9,11 @@ void handle_aliases(Instruction* instr) {
     char* op = instr->operation;
     if (strcmp(op, "cmp") == 0 || strcmp(op, "cmn") == 0 || strcmp(op, "tst") == 0) {
         if (strcmp(op, "cmp") == 0) {
-            strcpy(&op, "subs");
+            strcpy(op, "subs");
         } else if (strcmp(op, "cmn") == 0) {
-            strcpy(&op, "adds");
+            strcpy(op, "adds");
         } else if (strcmp(op, "tst") == 0) {
-            strcpy(&op, "ands");
+            strcpy(op, "ands");
         }
 
         instr->o3 = instr->o2;
@@ -26,13 +26,13 @@ void handle_aliases(Instruction* instr) {
         instr->o1_type = REGISTER;
     } else if (strstr(op, "neg") != NULL || strcmp(op, "mvn") == 0 || strcmp(op, "mov") == 0) {
         if (strcmp(op, "neg") == 0) {
-            strcpy(&op, "sub");
+            strcpy(op, "sub");
         } else if (strcmp(op, "negs") == 0) {
-            strcpy(&op, "subs");
+            strcpy(op, "subs");
         } else if (strcmp(op, "mvn") == 0) {
-            strcpy(&op, "orn");
+            strcpy(op, "orn");
         } else if (strcmp(op, "mov") == 0) {
-            strcpy(&op, "orr");
+            strcpy(op, "orr");
         }
 
         instr->o3 = instr->o2;
@@ -42,9 +42,9 @@ void handle_aliases(Instruction* instr) {
         instr->o2_type = REGISTER;
     } else if (strcmp(op, "mul") == 0 || strcmp(op, "mneg") == 0) {
         if (strcmp(op, "mul") == 0) {
-            strcpy(&op, "madd");
+            strcpy(op, "madd");
         } else if (strcmp(op, "mneg") == 0) {
-            strcpy(&op, "msub");
+            strcpy(op, "msub");
         }
 
         instr->o4 = rzr;

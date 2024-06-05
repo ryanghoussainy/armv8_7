@@ -73,3 +73,5 @@ enum LINE_TYPE classify_line(char str[]);
 enum INSTRUCTION_TYPE classify_instruction(char* operation);
 union Operand build_operand(char* str, Entry* map, uint64_t address);
 Instruction build_instruction(char* str, Entry* map, uint64_t address);
+char* print_operand_type(enum OPERAND_TYPE op_type);
+void print_instruction(Instruction* instr);
