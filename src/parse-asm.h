@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "symbol-table.h"
+#include "alias.h"
 
 #define ZR 31
 #define PC 32

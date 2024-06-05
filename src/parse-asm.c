@@ -142,7 +142,7 @@ enum LINE_TYPE classify_line(char str[]) {
 }
 
 enum INSTRUCTION_TYPE classify_instruction(char* operation)  {
-    if (operation[0] == 'b') {
+    if (strcmp(operation, "b") == 0 || strncmp(operation, "b.", 2) == 0) {
         return BRANCH;
     } else if (strcmp(operation, "ldr") == 0 || strcmp(operation, "str") == 0) {
         return TRANSFER;
@@ -237,41 +237,52 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     size_t operand_count;
     char** operands = split_string(str + len + 1, ",", &operand_count);
 
-
-    // TODO: Separate handling for load and store as syntax is different
-
-    if (classify_instruction(new_ins.operation) == TRANSFER) {
-        // do something else
-    }
-
-
     // clear white spaces in front of operand
     for (int i = 0; i < operand_count; i++) {
         remove_leading_spaces(operands[i]);
     }
 
 
-    // fall-through switch statements
-    switch (operand_count) {
-        case 4:
-            new_ins.o4_type = convert_address_to_literal(classify_operand((operands[3])));
-            new_ins.o4 = build_operand(operands[3], map, address);
-        case 3:
-            new_ins.o3 = build_operand(operands[2], map, address);
-            new_ins.o3_type = convert_address_to_literal(classify_operand((operands[2])));
-        case 2:
-            new_ins.o2_type = convert_address_to_literal(classify_operand((operands[1])));
-            new_ins.o2 = build_operand(operands[1], map, address);
-        case 1:
-            new_ins.o1_type = convert_address_to_literal(classify_operand((operands[0])));
-            new_ins.o1 = build_operand(operands[0], map, address);
-            break;
-        default:
-            // error
-            free(str_copy);
-            free(ins);
-            free(operands);
-            return new_ins;
+    // TODO: Separate handling for load and store as syntax is different
+
+    if (classify_instruction(new_ins.operation) == TRANSFER) {
+        // case 1: load literal
+
+        // case 2: pre-index
+
+        // case 3: post-index
+
+        // case 4: unsigned offset
+
+        // case 5: register offset
+    } else {
+
+        // fall-through switch statements
+        switch (operand_count) {
+            case 4:
+                new_ins.o4_type = convert_address_to_literal(classify_operand((operands[3])));
+                new_ins.o4 = build_operand(operands[3], map, address);
+            case 3:
+                new_ins.o3 = build_operand(operands[2], map, address);
+                new_ins.o3_type = convert_address_to_literal(classify_operand((operands[2])));
+            case 2:
+                new_ins.o2_type = convert_address_to_literal(classify_operand((operands[1])));
+                new_ins.o2 = build_operand(operands[1], map, address);
+            case 1:
+                new_ins.o1_type = convert_address_to_literal(classify_operand((operands[0])));
+                new_ins.o1 = build_operand(operands[0], map, address);
+                break;
+            default:
+                // error
+                free(str_copy);
+
+                // TODO: free the 2D arrays
+                free(ins);
+                free(operands);
+                return new_ins;
+        }
+
+        handle_aliases(new_ins);
     }
 
     free(str_copy);
