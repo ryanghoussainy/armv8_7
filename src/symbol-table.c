@@ -33,3 +33,25 @@ int get_value(Entry* map, char* label) {
     // not found
     return -1;
 }
+
+void print_entry(Entry* map) {
+    if (map != NULL) {
+        printf("label: %s\n", map->label);
+        printf("value: %d\n", map->value);
+    } else {
+        printf("Invalid input - input is NULL\n");
+    }
+}
+
+void print_all_entries(Entry* map) {
+    if (map != NULL) {
+        print_entry(map);
+        Entry* next = map->next;
+        while (next != NULL) {
+            print_entry(next);
+            next = next->next;
+        }
+    } else {
+        printf("Invalid input - input is NULL\n");
+    }
+}
