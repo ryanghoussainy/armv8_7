@@ -1,7 +1,5 @@
 #include "execute.h"
 
-#define OP0_BITS 4
-
 static int execute_instruction(CPU* cpu, uint32_t instruction)
 {
 
@@ -39,7 +37,6 @@ static int execute_instruction(CPU* cpu, uint32_t instruction)
 void cycle(CPU* cpu) {
 
   int is_running = 1;
-  uint32_t HALT_INSTR = 2315255808;
 
   while (is_running) {
     uint32_t instruction = read_bytes_memory_reverse(cpu, cpu->PC, 4);

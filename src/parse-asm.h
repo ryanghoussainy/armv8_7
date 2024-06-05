@@ -18,8 +18,7 @@ enum LINE_TYPE {
 
 
 enum INSTRUCTION_TYPE {
-    DP_IMMEDIATE,
-    DP_REGISTER,
+    DP,
     TRANSFER,
     BRANCH
 };
@@ -69,5 +68,6 @@ void remove_last_character(char* str);
 char** split_string(char str[], const char* sep, size_t* word_count);
 uint64_t register_number(const char* str, bool* is_64_bit);
 enum LINE_TYPE classify_line(char str[]);
+enum INSTRUCTION_TYPE classify_instruction(char* operation);
 union Operand build_operand(char* str, Entry* map, uint64_t address);
 Instruction build_instruction(char* str, Entry* map, uint64_t address);

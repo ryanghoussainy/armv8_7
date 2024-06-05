@@ -3,11 +3,11 @@
 
 static int unconditional_branch(CPU* cpu, uint32_t instr) {
     
-    uint32_t mask = build_mask(0, 25);
+    uint32_t mask = build_mask(UNCOND_BITS);
 
     uint32_t masked = mask & instr;
 
-    uint64_t offset = sign_extend(masked, 26) * 4;
+    uint64_t offset = sign_extend(masked, SIMM26_NUM_BITS) * OFFSET_MULT;
 
     cpu->PC += offset;
 
@@ -16,9 +16,9 @@ static int unconditional_branch(CPU* cpu, uint32_t instr) {
 
 static int register_branch(CPU* cpu, uint32_t instr) {
 
-    uint32_t mask = build_mask(5, 9);
+    uint32_t mask = build_mask(REG_BITS);
 
-    uint32_t reg = (mask & instr) >> 5;
+    uint32_t reg = (mask & instr) >> XN_SHIFT;
 
     cpu->PC = read_register(cpu, reg, 1);
     return 1;
@@ -26,8 +26,8 @@ static int register_branch(CPU* cpu, uint32_t instr) {
 
 static int conditional_branch(CPU* cpu, uint32_t instr) {
 
-    uint32_t mask_index = build_mask(5, 23);
-    uint32_t mask_cond = build_mask(0, 3);
+    uint32_t mask_index = build_mask(COND_INDEX_BITS);
+    uint32_t mask_cond = build_mask(COND_BITS);
 
     uint32_t cond = mask_cond & instr;
     int cond_holds = 0;
@@ -61,9 +61,9 @@ static int conditional_branch(CPU* cpu, uint32_t instr) {
 
     if (cond_holds) {
 
-        uint32_t masked = (mask_index & instr) >> 5;
+        uint32_t masked = (mask_index & instr) >> BRANCH_SIMM19_SHIFT;
 
-        uint64_t offset = sign_extend(masked, 19) * 4;
+        uint64_t offset = sign_extend(masked, SIMM19_NUM_BITS) * OFFSET_MULT;
 
         cpu->PC += offset;
     }else {
@@ -83,12 +83,12 @@ int branch_instruction(CPU* cpu, uint32_t instr) {
         return 1;
     }
 
-    uint32_t uncon_mask = build_mask(26, 31);
-    uint32_t reg_mask_one = build_mask(0, 4);
-    uint32_t reg_mask_two = build_mask(10, 31);
-    uint32_t cond_mask = build_mask(24, 31);
+    uint32_t uncon_mask = build_mask(INSTR_UNCOND_BITS);
+    uint32_t reg_mask_one = build_mask(INSTR_REG_1);
+    uint32_t reg_mask_two = build_mask(INSTR_REG_2);
+    uint32_t cond_mask = build_mask(INSTR_COND_BITS);
 
-    int is_uncon = (((uncon_mask & instr) >> 26) == 5);
+    int is_uncon = (((uncon_mask & instr) >> INSTR_UNCOND_SHIFT) == UNCOND_BRANCH_26TO31);
 
     if (is_uncon) {
 
@@ -96,7 +96,7 @@ int branch_instruction(CPU* cpu, uint32_t instr) {
 
     } else {
 
-        int is_reg = ((reg_mask_one & instr) == 0) && (((reg_mask_two & instr) >> 10) == 3508160);
+        int is_reg = ((reg_mask_one & instr) == 0) && (((reg_mask_two & instr) >> INSTR_10TO31_SHIFT) == REG_BRANCH_10TO31);
 
         if (is_reg) {
 
@@ -104,7 +104,7 @@ int branch_instruction(CPU* cpu, uint32_t instr) {
 
         } else {
 
-            int is_cond = (((cond_mask & instr) >> 24) == 84) && (((instr >> 4) & 1) == 0);
+            int is_cond = (((cond_mask & instr) >> INSTR_24TO31_SHIFT) == COND_BRANCH_24TO31) && (((instr >> INSTR_4_SHIFT) & 1) == 0);
 
             if (is_cond) {
                 return conditional_branch(cpu, instr);
