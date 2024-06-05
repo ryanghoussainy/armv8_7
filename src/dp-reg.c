@@ -52,7 +52,7 @@ static uint64_t logical_operation(
                     return result;
                 default:
                     printf("Error occured with value of opc\n");
-                    assert(0);
+                    exit(1);
             }
         case 1:
             switch (opc) {
@@ -76,11 +76,11 @@ static uint64_t logical_operation(
                     return result;
                 default:
                     printf("Error occured with value of opc\n");
-                    assert(0);
+                    exit(1);
             }
         default:
             printf("Error occured with value of N\n");
-            assert(0);
+            exit(1);
     }
 }
 
@@ -98,7 +98,7 @@ static uint64_t multiply_operation(
             return Ra - Rn * Rm;
         default:
             printf("Error occured with value of x\n");
-            assert(0);
+            exit(1);
     }
 }
 
@@ -118,7 +118,7 @@ static uint64_t perform_shift(uint64_t sf, uint64_t shift, uint64_t Rm, uint64_t
             return (Rm >> operand) | (Rm << (num_bits(sf) - operand));
         default:
             printf("Error occured with value of shift\n");
-            assert(0);
+            exit(1);
     }
 }
 

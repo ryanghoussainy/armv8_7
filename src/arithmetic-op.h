@@ -1,5 +1,5 @@
 #pragma once
-#include <assert.h>
+#include <stdlib.h>
 #include "cpu.h"
 
 #define num_bits(sf) (sf ? 64 : 32)
