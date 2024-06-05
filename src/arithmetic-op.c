@@ -56,6 +56,6 @@ uint64_t arithmetic_operation(
             return result;
         default:
             printf("Error occured with value of opc\n");
-            assert(0);
+            exit(1);
     }
 }
