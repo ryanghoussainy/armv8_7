@@ -1,6 +1,9 @@
+#pragma once
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
+#include "parse-asm.h"
 
 #define MAX_SIZE 100
 
