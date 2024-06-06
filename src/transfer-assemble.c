@@ -81,4 +81,6 @@ uint32_t transfer_assembly(Instruction* ins) {
 
             result = sf << SF_SHIFT + LL_CONSTANT << LL_CONSTANT_SHIFT + ins->o2.number << SIMM19_SHIFT + rt;
     }
+
+    return result;
 }
