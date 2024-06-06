@@ -9,9 +9,9 @@ CFLAGS  ?= -std=c17 -g\
 
 all: assemble emulate
 
-assemble: assemble.o parse-asm.o assemble-rw.o branch-asm.o directives.o instr-utils.o symbol-table.o dp-imm-assemble.o dp-reg-assemble.o transfer-assemble.o
+assemble: assemble.o parse-asm.o assemble-rw.o branch-asm.o directives.o instr-utils.o symbol-table.o dp-imm-assemble.o dp-reg-assemble.o dp-assemble.o transfer-assemble.o
 emulate: emulate.o cpu.o loader.o dp-imm.o dp-reg.o execute.o branch.o transfer.o arithmetic-op.o instr-utils.o
 
 clean:
-	$(RM) *.o assemble emulate cpu loader dp-imm dp-reg execute branch transfer arithmetic-op instr-utils
+	$(RM) *.o assemble emulate cpu loader dp-imm dp-reg execute branch transfer arithmetic-op instr-utils parse-asm assemble-rw branch-asm directives symbol-table dp-imm-assemble dp-reg-assemble dp-assemble transfer-assemble
 	
