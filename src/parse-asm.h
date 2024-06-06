@@ -7,7 +7,6 @@
 #include <ctype.h>
 #include <string.h>
 #include "symbol-table.h"
-#include "alias.h"
 
 #define ZR 31
 #define PC 32
@@ -63,6 +62,7 @@ typedef struct {
 
 } Instruction;
 
+void handle_aliases(Instruction* instr);
 uint64_t string_to_int(char* str);
 void remove_leading_spaces(char* str);
 char last_character(const char* str);
