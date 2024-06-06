@@ -45,6 +45,16 @@ union Operand {
     int number;
 };
 
+
+enum TRANSFER_TYPE {
+    UNSIGNED_OFFSET,
+    REGISTER_OFFSET,
+    PRE_INDEX,
+    POST_INDEX,
+    LOAD_LITERAL,
+};
+
+
 typedef struct {
     char operation[16];
     

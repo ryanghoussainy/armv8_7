@@ -1,56 +1,5 @@
 #include "parse-asm.h"
 
-void handle_aliases(Instruction* instr) {
-    char* rzr_str = instr->o1.reg[0] == 'x' ? "xzr" : "wzr";
-
-    union Operand rzr;
-    strcpy(rzr.reg, rzr_str);
-
-    char* op = instr->operation;
-    if (strcmp(op, "cmp") == 0 || strcmp(op, "cmn") == 0 || strcmp(op, "tst") == 0) {
-        if (strcmp(op, "cmp") == 0) {
-            strcpy(op, "subs");
-        } else if (strcmp(op, "cmn") == 0) {
-            strcpy(op, "adds");
-        } else if (strcmp(op, "tst") == 0) {
-            strcpy(op, "ands");
-        }
-
-        instr->o3 = instr->o2;
-        instr->o3_type = instr->o2_type;
-
-        instr->o2 = instr->o1;
-        instr->o2_type = instr->o1_type;
-
-        instr->o1 = rzr;
-        instr->o1_type = REGISTER;
-    } else if (strstr(op, "neg") != NULL || strcmp(op, "mvn") == 0 || strcmp(op, "mov") == 0) {
-        if (strcmp(op, "neg") == 0) {
-            strcpy(op, "sub");
-        } else if (strcmp(op, "negs") == 0) {
-            strcpy(op, "subs");
-        } else if (strcmp(op, "mvn") == 0) {
-            strcpy(op, "orn");
-        } else if (strcmp(op, "mov") == 0) {
-            strcpy(op, "orr");
-        }
-
-        instr->o3 = instr->o2;
-        instr->o3_type = instr->o2_type;
-
-        instr->o2 = rzr;
-        instr->o2_type = REGISTER;
-    } else if (strcmp(op, "mul") == 0 || strcmp(op, "mneg") == 0) {
-        if (strcmp(op, "mul") == 0) {
-            strcpy(op, "madd");
-        } else if (strcmp(op, "mneg") == 0) {
-            strcpy(op, "msub");
-        }
-
-        instr->o4 = rzr;
-        instr->o4_type = REGISTER;
-    }
-}
 
 uint64_t string_to_int(char* str) {
     // turns a string into int, handles both denary and hexadecimal
@@ -267,6 +216,12 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
 
     Instruction new_ins;
 
+    // set default values to NONE
+    new_ins.o1_type = NONE;
+    new_ins.o2_type = NONE;
+    new_ins.o3_type = NONE;
+    new_ins.o4_type = NONE;
+
     char* str_copy = malloc(sizeof(str));
     strcpy(str_copy, str);
 
@@ -283,8 +238,6 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     // get the rest of instruction
     size_t len = strlen(new_ins.operation);
 
-    // TODO: Handle case where there is no operand
-
     size_t operand_count;
     char** operands = split_string(str + len + 1, ",", &operand_count);
 
@@ -293,19 +246,63 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
         remove_leading_spaces(operands[i]);
     }
 
-
-    // TODO: Separate handling for load and store as syntax is different
-
+    // Separate handling for load and store as syntax is different
     if (classify_instruction(new_ins.operation) == TRANSFER) {
-        // case 1: load literal
 
-        // case 2: pre-index
+        union Operand o4;
 
-        // case 3: post-index
+        new_ins.o1_type = REGISTER;
+        new_ins.o1 = build_operand(operands[0], map, address);
 
-        // case 4: unsigned offset
+        if (classify_operand(operands[1]) == LITERAL)  {
+            // load literal    
+            new_ins.o2_type = LITERAL;
+            new_ins.o2 = build_operand(operands[1], map, address);
+            o4.number = LOAD_LITERAL;
+        } else if (last_character(str) == '!') {
+            // pre-index
+            new_ins.o2_type = REGISTER;
+            new_ins.o2 = build_operand(operands[1] + 1,map,0);
 
-        // case 5: register offset
+            new_ins.o3_type = LITERAL;
+            remove_last_character(operands[2]);  // remove '!'
+            remove_last_character(operands[2]);  // remove ']' 
+            new_ins.o3 = build_operand(operands[2], map, 0);
+
+            o4.number = PRE_INDEX;
+        } else if (last_character(str) != ']') {
+            // post-index 
+            new_ins.o2_type = REGISTER;
+            remove_last_character(operands[1]); // remove ']'
+            new_ins.o2 = build_operand(operands[1] + 1, map, 0);
+
+            new_ins.o3_type = LITERAL;
+            new_ins.o3 = build_operand(operands[2], map, 0) ;
+
+            o4.number = POST_INDEX;
+        } else {
+            // unsigned offset or register offset
+            new_ins.o2_type = REGISTER;
+            new_ins.o2 = build_operand(operands[1], map, address);
+            remove_last_character(operands[2]);  // remove ']'
+            if (is_register(operands[2])) {
+                // register offset
+                new_ins.o3_type = REGISTER;
+                new_ins.o3 = build_operand(operands[2], map, 0);
+                o4.number = REGISTER_OFFSET;
+            } else {
+                // unsigned offset
+                if (operand_count == 3) {
+                    new_ins.o3_type = LITERAL;
+                    new_ins.o3 = build_operand(operands[3], map, 0);
+                }
+                o4.number = UNSIGNED_OFFSET;
+            }
+        }
+        
+        new_ins.o4_type = LITERAL;
+        new_ins.o4 = o4;
+
     } else {
 
         // fall-through switch statements
