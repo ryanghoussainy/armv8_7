@@ -1,16 +1,5 @@
 #include "dp-imm-assemble.h"
 
-uint32_t build_dp_imm(Instruction instruction)
-{
-    char* operation = instruction.operation;
-
-    if (strstr(operation, "add") != NULL  || strstr(operation, "sub") != NULL) {
-        return build_dp_imm_arithmetic(instruction);
-    }else {
-        return build_dp_imm_logical(instruction);
-    }
-}
-
 uint32_t build_dp_imm_arithmetic(Instruction instruction) 
 {
     uint32_t opi = 2;
@@ -71,4 +60,15 @@ uint32_t build_dp_imm_logical(Instruction instruction)
     }
 
     return (sf << 31) | (opc << 29) | (4 << 26) | (opi << 23) | (hw << 21) | (imm16 << 5) | rd;
+}
+
+uint32_t build_dp_imm(Instruction instruction)
+{
+    char* operation = instruction.operation;
+
+    if (strstr(operation, "add") != NULL  || strstr(operation, "sub") != NULL) {
+        return build_dp_imm_arithmetic(instruction);
+    }else {
+        return build_dp_imm_logical(instruction);
+    }
 }
