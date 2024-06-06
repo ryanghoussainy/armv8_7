@@ -40,12 +40,15 @@ uint32_t unconditional_instruction(Instruction* instr) {
 }
 
 uint32_t branch_assembly(Instruction* instr) {
-    print_instruction(instr); //for debugging
+    print_instruction(instr); // for debugging
     if (instr->operation[1] == '.') {
         return conditional_instruction(instr);
     } else if (instr->operation[1] == 'r') {
         return register_instruction(instr);
-    } else {
+    } else if (instr->operation[0] == 'b' && instr->operation[1] == ' ') {
         return unconditional_instruction(instr);
+    } else {
+        printf("Invalid Instruction");
+        return 0;
     }
 }

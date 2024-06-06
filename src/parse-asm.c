@@ -51,7 +51,7 @@ void remove_last_character(char* str) {
 char** split_string(char str[], const char* sep, size_t* word_count) {
     *word_count = 0;
     char* token;
-    char** words = NULL;
+    char** words = malloc(1);
 
     token = strtok(str, sep);
     while (token != NULL) {
@@ -61,7 +61,7 @@ char** split_string(char str[], const char* sep, size_t* word_count) {
         token = strtok(NULL, sep);
         (*word_count)++;
     }
-
+    
     return words;
 }
 
