@@ -3,6 +3,7 @@
 #include "directives.h"
 #include "branch-asm.h"
 #include "transfer-assemble.h"
+#include "dp-assemble.h"
 
 size_t pass_one(char* instructions[], Entry* map, size_t size) {
   size_t count = 0;
@@ -43,6 +44,7 @@ int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
         switch(classify_instruction(instructions[line])) {
           case DP:
             // call DP function
+            word = dp_assembly(&ins);
             break;
           case TRANSFER:
             // call transfer function
