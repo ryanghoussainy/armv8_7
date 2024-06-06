@@ -48,29 +48,29 @@ uint32_t transfer_assembly(Instruction* ins) {
                 // o3_type == NONE
                 imm12 = 0;
             }
-            result = 1 << SDT_INDICATOR_SHIFT + sf << SF_SHIFT + SDT_CONSTANT << SDT_CONSTANT_SHIFT + 
-                    1 << U_SHIFT + L << L_SHIFT + imm12 << OFFSET_SHIFT + xn << XN_SHIFT + rt;
+            result = (1 << SDT_INDICATOR_SHIFT) | (sf << SF_SHIFT) | (SDT_CONSTANT << SDT_CONSTANT_SHIFT) |
+                    (1 << U_SHIFT) | (L << L_SHIFT) | (imm12 << OFFSET_SHIFT) | (xn << XN_SHIFT) | rt;
             break;
         case REGISTER_OFFSET:
             xn = register_number(ins->o2.reg, &xn_64_bit);
             xm = register_number(ins->o2.reg, &xm_64_bit);
-            result = 1 << SDT_INDICATOR_SHIFT + sf << SF_SHIFT + SDT_CONSTANT << SDT_CONSTANT_SHIFT +
-                L << L_SHIFT + xm << XM_SHIFT + REG_OFS_CONSTANT << REG_OFS_CONSTANT_SHIFT + xn << XN_SHIFT + rt;
+            result = (1 << SDT_INDICATOR_SHIFT) | (sf << SF_SHIFT) | (SDT_CONSTANT << SDT_CONSTANT_SHIFT) |
+                (L << L_SHIFT) | (xm << XM_SHIFT) | (REG_OFS_CONSTANT << REG_OFS_CONSTANT_SHIFT) | (xn << XN_SHIFT) | rt;
             break;
         case PRE_INDEX:
             xn = register_number(ins->o2.reg, &xn_64_bit);
             simm9 = ins->o3.number; 
             
-            result = 1 << SDT_INDICATOR_SHIFT + sf << SF_SHIFT + SDT_CONSTANT << SDT_CONSTANT_SHIFT +
-                L << L_SHIFT + (simm9 << SIMM9_SHIFT + 1 << I_SHIFT + 1) << OFFSET_SHIFT + xn << XN_SHIFT + rt;
+            result = (1 << SDT_INDICATOR_SHIFT) | (sf << SF_SHIFT) | (SDT_CONSTANT << SDT_CONSTANT_SHIFT) |
+                (L << L_SHIFT) | ((simm9 << SIMM9_SHIFT) | ((1 << I_SHIFT) | 1) << OFFSET_SHIFT) | (xn << XN_SHIFT) | rt;
 
             break;
         case POST_INDEX:
             xn = register_number(ins->o2.reg, &xn_64_bit);
             simm9 = ins->o3.number;
 
-            result = 1 << SDT_INDICATOR_SHIFT + sf << SF_SHIFT + SDT_CONSTANT << SDT_CONSTANT_SHIFT +
-                L << L_SHIFT + (simm9 << SIMM9_SHIFT + 1) << OFFSET_SHIFT + xn << XN_SHIFT + rt;
+            result = (1 << SDT_INDICATOR_SHIFT) | (sf << SF_SHIFT) | (SDT_CONSTANT << SDT_CONSTANT_SHIFT) |
+                (L << L_SHIFT) | (((simm9 << SIMM9_SHIFT) + 1) << OFFSET_SHIFT) | (xn << XN_SHIFT) | rt;
 
             break;
         case LOAD_LITERAL:
@@ -79,7 +79,7 @@ uint32_t transfer_assembly(Instruction* ins) {
                 return EXIT_FAILURE;
             }
 
-            result = sf << SF_SHIFT + LL_CONSTANT << LL_CONSTANT_SHIFT + ins->o2.number << SIMM19_SHIFT + rt;
+            result = (sf << SF_SHIFT) | (LL_CONSTANT << LL_CONSTANT_SHIFT) | (ins->o2.number << SIMM19_SHIFT) | rt;
     }
 
     return result;

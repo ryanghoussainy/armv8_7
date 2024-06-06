@@ -48,12 +48,15 @@ static uint32_t build_dp_reg_arithmetic(Instruction* instr) {
         case ROR:
             printf("ROR is invalid shift for arithmetic instruction\n");
             exit(1);
+        default:
+            printf("Error operand");
+            exit(1);
     }
 
     // opr - bits 21-24
     uint32_t opr = 8 + (shift << 1);
 
-    return (sf << 31) | (opc << 29) | (5 << 25) | (opr << 21) | (rm << 16) | (rn << 5) | rd;
+    return (sf << 31) | (opc << 29) | (5 << 25) | (opr << 21) | (rm << 16) | (operand << 10) | (rn << 5) | rd;
 }
 
 static uint32_t build_dp_reg_logical(Instruction* instr) {
@@ -122,10 +125,13 @@ static uint32_t build_dp_reg_logical(Instruction* instr) {
         case ROR:
             shift = 3;
             break;
+        default:
+            printf("Error operand");
+            exit(1);
     }
 
     // opr - bits 21-24
-    uint32_t opr = shift << 1 + N;
+    uint32_t opr = (shift << 1) + N;
 
     return (sf << 31) | (opc << 29) | (5 << 25) | (opr << 21) | (rm << 16) | (operand << 10) | (rn << 5) | rd;
 }
