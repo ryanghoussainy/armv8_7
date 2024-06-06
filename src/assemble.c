@@ -2,6 +2,7 @@
 #include "assemble-rw.h"
 #include "directives.h"
 #include "branch-asm.h"
+#include "transfer-assemble.h"
 
 size_t pass_one(char* instructions[], Entry* map, size_t size) {
   size_t count = 0;
@@ -43,12 +44,12 @@ int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
             break;
           case TRANSFER:
             // call transfer function
+            word = transfer_assembly(&ins);
             break;
           case BRANCH:
             word = branch_assembly(&ins);
             break;
         }
-
         break;
       case DIRECTIVE:
         word = directive_binary(instructions[line]);

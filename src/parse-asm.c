@@ -238,8 +238,6 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     // get the rest of instruction
     size_t len = strlen(new_ins.operation);
 
-    // TODO: Handle case where there is no operand
-
     size_t operand_count;
     char** operands = split_string(str + len + 1, ",", &operand_count);
 
@@ -248,9 +246,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
         remove_leading_spaces(operands[i]);
     }
 
-
-    // TODO: Separate handling for load and store as syntax is different
-
+    // Separate handling for load and store as syntax is different
     if (classify_instruction(new_ins.operation) == TRANSFER) {
 
         union Operand o4;
@@ -266,27 +262,40 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
         } else if (last_character(str) == '!') {
             // pre-index
             new_ins.o2_type = REGISTER;
-            char xs[4];
-            
+            new_ins.o2 = build_operand(operands[1] + 1,map,0);
+
+            new_ins.o3_type = LITERAL;
+            remove_last_character(operands[2]);  // remove '!'
+            remove_last_character(operands[2]);  // remove ']' 
+            new_ins.o3 = build_operand(operands[2], map, 0);
 
             o4.number = PRE_INDEX;
         } else if (last_character(str) != ']') {
             // post-index 
             new_ins.o2_type = REGISTER;
+            remove_last_character(operands[1]); // remove ']'
+            new_ins.o2 = build_operand(operands[1] + 1, map, 0);
+
+            new_ins.o3_type = LITERAL;
+            new_ins.o3 = build_operand(operands[2], map, 0) ;
 
             o4.number = POST_INDEX;
         } else {
             // unsigned offset or register offset
             new_ins.o2_type = REGISTER;
             new_ins.o2 = build_operand(operands[1], map, address);
-            remove_last_character(operands[2]);
+            remove_last_character(operands[2]);  // remove ']'
             if (is_register(operands[2])) {
                 // register offset
-
+                new_ins.o3_type = REGISTER;
+                new_ins.o3 = build_operand(operands[2], map, 0);
                 o4.number = REGISTER_OFFSET;
             } else {
                 // unsigned offset
-
+                if (operand_count == 3) {
+                    new_ins.o3_type = LITERAL;
+                    new_ins.o3 = build_operand(operands[3], map, 0);
+                }
                 o4.number = UNSIGNED_OFFSET;
             }
         }
