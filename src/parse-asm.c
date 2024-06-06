@@ -61,7 +61,7 @@ char** split_string(char str[], const char* sep, size_t* word_count) {
         token = strtok(NULL, sep);
         (*word_count)++;
     }
-
+    
     return words;
 }
 
