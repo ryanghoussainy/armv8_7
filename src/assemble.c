@@ -30,7 +30,9 @@ int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
 
         // vv DEBUGGING
         printf("Instruction: %s\n", instructions[line]);
-        print_all_entries(map);
+        if (map != NULL) {
+          print_all_entries(map);
+        }
         printf("size: %zu\n", size);
         // ^^ DEBUGGING
 
