@@ -27,6 +27,13 @@ int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
     switch(classify_line(instructions[line])) {
       Instruction ins;
       case INSTRUCTION:
+
+        // vv DEBUGGING
+        printf("Instruction: %s\n", instructions[line]);
+        print_all_entries(map);
+        printf("size: %zu\n", size);
+        // ^^ DEBUGGING
+
         ins = build_instruction(instructions[line], map, line);
 
         // TODO: Classify type of instruction then pass in respective functions
