@@ -23,3 +23,6 @@
 
 #define SIMM9_SHIFT 2
 #define I_SHIFT 1
+
+
+uint32_t transfer_assembly(Instruction* ins);

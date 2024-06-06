@@ -216,6 +216,12 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
 
     Instruction new_ins;
 
+    // set default values to NONE
+    new_ins.o1_type = NONE;
+    new_ins.o2_type = NONE;
+    new_ins.o3_type = NONE;
+    new_ins.o4_type = NONE;
+
     char* str_copy = malloc(sizeof(str));
     strcpy(str_copy, str);
 
@@ -246,15 +252,48 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     // TODO: Separate handling for load and store as syntax is different
 
     if (classify_instruction(new_ins.operation) == TRANSFER) {
-        // case 1: load literal
 
-        // case 2: pre-index
+        union Operand o4;
 
-        // case 3: post-index
+        new_ins.o1_type = REGISTER;
+        new_ins.o1 = build_operand(operands[0], map, address);
 
-        // case 4: unsigned offset
+        if (classify_operand(operands[1]) == LITERAL)  {
+            // load literal    
+            new_ins.o2_type = LITERAL;
+            new_ins.o2 = build_operand(operands[1], map, address);
+            o4.number = LOAD_LITERAL;
+        } else if (last_character(str) == '!') {
+            // pre-index
+            new_ins.o2_type = REGISTER;
+            char xs[4];
+            
 
-        // case 5: register offset
+            o4.number = PRE_INDEX;
+        } else if (last_character(str) != ']') {
+            // post-index 
+            new_ins.o2_type = REGISTER;
+
+            o4.number = POST_INDEX;
+        } else {
+            // unsigned offset or register offset
+            new_ins.o2_type = REGISTER;
+            new_ins.o2 = build_operand(operands[1], map, address);
+            remove_last_character(operands[2]);
+            if (is_register(operands[2])) {
+                // register offset
+
+                o4.number = REGISTER_OFFSET;
+            } else {
+                // unsigned offset
+
+                o4.number = UNSIGNED_OFFSET;
+            }
+        }
+        
+        new_ins.o4_type = LITERAL;
+        new_ins.o4 = o4;
+
     } else {
 
         // fall-through switch statements
