@@ -20,10 +20,13 @@ size_t read_asm(char* path, char*** all_lines) {
 
     while (fgets(this_line, MAX_SIZE, fptr)) {
         remove_leading_spaces(this_line);
-        strcpy((*all_lines)[counter], this_line);
-        counter++;
-        *all_lines = realloc(*all_lines, sizeof(char*) * (counter + 1));
-        (*all_lines)[counter] = malloc(sizeof(char) * MAX_SIZE);
+        remove_last_character(this_line);  // get rid of newline character
+        if (strcmp(this_line, "")) {
+            strcpy((*all_lines)[counter], this_line);
+            counter++;
+            *all_lines = realloc(*all_lines, sizeof(char*) * (counter + 1));
+            (*all_lines)[counter] = malloc(sizeof(char) * MAX_SIZE);
+        }
     }
 
     fclose(fptr);
