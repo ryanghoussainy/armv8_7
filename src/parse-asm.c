@@ -142,7 +142,7 @@ enum LINE_TYPE classify_line(char str[]) {
 }
 
 enum INSTRUCTION_TYPE classify_instruction(char* operation)  {
-    if (strcmp(operation, "b") == 0 || strncmp(operation, "b.", 2) == 0) {
+    if (strcmp(operation, "b") == 0 || strncmp(operation, "b.", 2) == 0 || strcmp(operation, "br") == 0) {
         return BRANCH;
     } else if (strcmp(operation, "ldr") == 0 || strcmp(operation, "str") == 0) {
         return TRANSFER;

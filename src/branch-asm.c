@@ -3,7 +3,7 @@
 uint32_t conditional_instruction(Instruction* instr) {
     char condition[2] = {instr->operation[2], instr->operation[3]};
 
-    uint8_t cond = 15;
+    uint32_t cond = 15;
     // switch doesn't work on strings in C so confined to ifs
 
     if (strcmp(condition, "ee") == 0) {
@@ -27,20 +27,20 @@ uint32_t conditional_instruction(Instruction* instr) {
 
     uint32_t simm19 = instr->o1.number;
     simm19 = (build_mask(0, 18) & simm19) << 5; // might need to sign de-extend?
-    return (uint32_t) (cond + simm19 + (84 << 24));
+    return (uint32_t) (cond + simm19 + ((uint32_t)84 << 24));
 }
 
 uint32_t register_instruction(Instruction* instr) {
     bool is64Bit;
-    return (uint32_t) ((register_number(instr->o1.reg, &is64Bit) << 5) + (54815 << 16));
+    return (uint32_t) ((register_number(instr->o1.reg, &is64Bit) << 5) + ((uint32_t)54815 << 16));
 }
 
 uint32_t unconditional_instruction(Instruction* instr) {
-    return (uint32_t) ((5 << 26) + (build_mask(0, 25) & instr->o1.number));
+    return (uint32_t) (((uint32_t)5 << 26) + (build_mask(0, 25) & instr->o1.number));
 }
 
 uint32_t branch_assembly(Instruction* instr) {
-    print_instruction(instr); // for debugging
+    // print_instruction(instr); // for debugging
     if (instr->operation[1] == '.') {
         return conditional_instruction(instr);
     } else if (instr->operation[1] == 'r') {
@@ -48,7 +48,7 @@ uint32_t branch_assembly(Instruction* instr) {
     } else if (instr->operation[0] == 'b' && instr->operation[1] == '\0') {
         return unconditional_instruction(instr);
     } else {
-        printf("Invalid Instruction");
+        printf("Invalid Instruction passed into branch");
         return 0;
     }
 }
