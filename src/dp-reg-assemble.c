@@ -173,12 +173,12 @@ static uint32_t build_dp_reg_multiply(Instruction* instr) {
 uint32_t build_dp_reg(Instruction* instr) {
     char* op = instr->operation;
 
-    if (strstr(op, "add") != NULL || strstr(op, "sub") != NULL) {
+    if (strstr(op, "madd") != NULL || strstr(op, "msub") != NULL) {
+        return build_dp_reg_multiply(instr);
+    } else if (strstr(op, "add") != NULL || strstr(op, "sub") != NULL) {
         return build_dp_reg_arithmetic(instr);
     } else if (strstr(op, "and") != NULL || strstr(op, "bic") != NULL || strstr(op, "eo") != NULL || strstr(op, "or") != NULL) {
         return build_dp_reg_logical(instr);
-    } else if (strstr(op, "madd") != NULL || strstr(op, "msub") != NULL) {
-        return build_dp_reg_multiply(instr);
     } else {
         printf("Invalid operation %s for DP register instruction\n", op);
         exit(1);
