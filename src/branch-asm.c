@@ -45,7 +45,7 @@ uint32_t branch_assembly(Instruction* instr) {
         return conditional_instruction(instr);
     } else if (instr->operation[1] == 'r') {
         return register_instruction(instr);
-    } else if (instr->operation[0] == 'b' && instr->operation[1] == ' ') {
+    } else if (instr->operation[0] == 'b' && instr->operation[1] == '\0') {
         return unconditional_instruction(instr);
     } else {
         printf("Invalid Instruction");

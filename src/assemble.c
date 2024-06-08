@@ -41,7 +41,7 @@ int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
         ins = build_instruction(instructions[line], map, line);
 
         // TODO: Classify type of instruction then pass in respective functions
-        switch(classify_instruction(instructions[line])) {
+        switch(classify_instruction(ins.operation)) {
           case DP:
             // call DP function
             word = dp_assembly(&ins);
