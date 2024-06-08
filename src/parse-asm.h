@@ -81,7 +81,7 @@ char** split_string(char str[], const char* sep, size_t* word_count);
 uint64_t register_number(const char* str, bool* is_64_bit);
 enum LINE_TYPE classify_line(char str[]);
 enum INSTRUCTION_TYPE classify_instruction(char* operation);
-union Operand build_operand(char* str, Entry* map, uint64_t address);
+union Operand build_operand(char* str, Entry* map, uint64_t address, int is_offset);
 Instruction build_instruction(char* str, Entry* map, uint64_t address);
 char* print_operand_type(enum OPERAND_TYPE op_type);
 void print_instruction(Instruction* instr);

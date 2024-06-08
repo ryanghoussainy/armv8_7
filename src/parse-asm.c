@@ -186,11 +186,11 @@ enum OPERAND_TYPE convert_address_to_literal(enum OPERAND_TYPE type) {
 }
 
 
-union Operand build_operand(char* str, Entry* map, uint64_t address) {
+union Operand build_operand(char* str, Entry* map, uint64_t address, int is_offset) {
     union Operand new_operand;
     switch(classify_operand(str)){
         case LITERAL:
-            new_operand.number = string_to_int(str + 1) - address;
+            new_operand.number = string_to_int(str + 1) - (address * is_offset);
             break;
         case REGISTER:
             strcpy(new_operand.reg, str);
@@ -299,55 +299,70 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
         remove_leading_spaces(operands[i]);
     }
 
+    enum INSTRUCTION_TYPE in_type = classify_instruction(new_ins.operation);
+    int is_offset = 0;
+
+    switch (in_type)
+    {
+    case TRANSFER:
+        is_offset = 1;
+        break;
+    case BRANCH:
+        is_offset = 1;
+        break;
+    default:
+        break;
+    }
+
     // Separate handling for load and store as syntax is different
-    if (classify_instruction(new_ins.operation) == TRANSFER) {
+    if (in_type == TRANSFER) {
 
         union Operand o4;
 
         new_ins.o1_type = REGISTER;
-        new_ins.o1 = build_operand(operands[0], map, address);
+        new_ins.o1 = build_operand(operands[0], map, address, is_offset);
 
         if (classify_operand(operands[1]) == LITERAL || classify_operand(operands[1]) == ADDRESS)  {
             // load literal    
             new_ins.o2_type = LITERAL;
-            new_ins.o2 = build_operand(operands[1], map, address);
+            new_ins.o2 = build_operand(operands[1], map, address, is_offset);
             o4.number = LOAD_LITERAL;
         } else if (last_character(str) == '!') {
             // pre-index
             new_ins.o2_type = REGISTER;
-            new_ins.o2 = build_operand(operands[1] + 1,map,0);
+            new_ins.o2 = build_operand(operands[1] + 1,map,0, is_offset);
 
             new_ins.o3_type = LITERAL;
             remove_last_character(operands[2]);  // remove '!'
             remove_last_character(operands[2]);  // remove ']' 
-            new_ins.o3 = build_operand(operands[2], map, 0);
+            new_ins.o3 = build_operand(operands[2], map, 0, is_offset);
 
             o4.number = PRE_INDEX;
         } else if (last_character(str) != ']') {
             // post-index 
             new_ins.o2_type = REGISTER;
             remove_last_character(operands[1]); // remove ']'
-            new_ins.o2 = build_operand(operands[1] + 1, map, 0);
+            new_ins.o2 = build_operand(operands[1] + 1, map, 0, is_offset);
 
             new_ins.o3_type = LITERAL;
-            new_ins.o3 = build_operand(operands[2], map, 0) ;
+            new_ins.o3 = build_operand(operands[2], map, 0, is_offset) ;
 
             o4.number = POST_INDEX;
         } else {
             // unsigned offset or register offset
             new_ins.o2_type = REGISTER;
-            new_ins.o2 = build_operand(operands[1], map, address);
+            new_ins.o2 = build_operand(operands[1], map, address, is_offset);
             remove_last_character(operands[2]);  // remove ']'
             if (is_register(operands[2])) {
                 // register offset
                 new_ins.o3_type = REGISTER;
-                new_ins.o3 = build_operand(operands[2], map, 0);
+                new_ins.o3 = build_operand(operands[2], map, 0, is_offset);
                 o4.number = REGISTER_OFFSET;
             } else {
                 // unsigned offset
                 if (operand_count == 3) {
                     new_ins.o3_type = LITERAL;
-                    new_ins.o3 = build_operand(operands[3], map, 0);
+                    new_ins.o3 = build_operand(operands[3], map, 0, is_offset);
                 }
                 o4.number = UNSIGNED_OFFSET;
             }
@@ -357,21 +372,20 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
         new_ins.o4 = o4;
 
     } else {
-
         // fall-through switch statements
         switch (operand_count) {
             case 4:
                 new_ins.o4_type = convert_address_to_literal(classify_operand((operands[3])));
-                new_ins.o4 = build_operand(operands[3], map, address);
+                new_ins.o4 = build_operand(operands[3], map, address, is_offset);
             case 3:
-                new_ins.o3 = build_operand(operands[2], map, address);
+                new_ins.o3 = build_operand(operands[2], map, address, is_offset);
                 new_ins.o3_type = convert_address_to_literal(classify_operand((operands[2])));
             case 2:
                 new_ins.o2_type = convert_address_to_literal(classify_operand((operands[1])));
-                new_ins.o2 = build_operand(operands[1], map, address);
+                new_ins.o2 = build_operand(operands[1], map, address, is_offset);
             case 1:
                 new_ins.o1_type = convert_address_to_literal(classify_operand((operands[0])));
-                new_ins.o1 = build_operand(operands[0], map, address);
+                new_ins.o1 = build_operand(operands[0], map, address, is_offset);
                 break;
             default:
                 // error
