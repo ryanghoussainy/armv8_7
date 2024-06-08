@@ -236,6 +236,15 @@ void handle_aliases(Instruction* instr) {
 
         instr->o1 = rzr;
         instr->o1_type = REGISTER;
+    } else if (strcmp(op, "mul") == 0 || strcmp(op, "mneg") == 0) {
+        if (strcmp(op, "mul") == 0) {
+            strcpy(op, "madd");
+        } else if (strcmp(op, "mneg") == 0) {
+            strcpy(op, "msub");
+        }
+
+        instr->o4 = rzr;
+        instr->o4_type = REGISTER;
     } else if (strstr(op, "neg") != NULL || strcmp(op, "mvn") == 0 || strcmp(op, "mov") == 0) {
         if (strcmp(op, "neg") == 0) {
             strcpy(op, "sub");
@@ -252,16 +261,7 @@ void handle_aliases(Instruction* instr) {
 
         instr->o2 = rzr;
         instr->o2_type = REGISTER;
-    } else if (strcmp(op, "mul") == 0 || strcmp(op, "mneg") == 0) {
-        if (strcmp(op, "mul") == 0) {
-            strcpy(op, "madd");
-        } else if (strcmp(op, "mneg") == 0) {
-            strcpy(op, "msub");
-        }
-
-        instr->o4 = rzr;
-        instr->o4_type = REGISTER;
-    }
+    } 
 }
 
 
