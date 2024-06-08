@@ -51,7 +51,7 @@ void remove_last_character(char* str) {
 char** split_string(char str[], const char* sep, size_t* word_count) {
     *word_count = 0;
     char* token;
-    char** words = malloc(1);
+    char** words = NULL;
 
     token = strtok(str, sep);
     while (token != NULL) {
@@ -68,7 +68,7 @@ char** split_string(char str[], const char* sep, size_t* word_count) {
 
 enum OPERAND_TYPE extract_shift_type(char* str) {
     size_t word_count;
-    char* str_copy = malloc(sizeof(str));
+    char* str_copy = (char*) malloc(strlen(str) + 1);
     strcpy(str_copy, str);
     char** operand = split_string(str_copy, " ", &word_count);
     if (word_count != 2) {
@@ -91,7 +91,7 @@ enum OPERAND_TYPE extract_shift_type(char* str) {
 
 int extract_shift_bits(char* str) {
     size_t word_count;
-    char* str_copy = malloc(sizeof(str));
+    char* str_copy = (char*) malloc(strlen(str) + 1);
     strcpy(str_copy, str);
     char** operand = split_string(str_copy, " ", &word_count);
     if (word_count != 2) {
@@ -275,7 +275,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     new_ins.o3_type = NONE;
     new_ins.o4_type = NONE;
 
-    char* str_copy = malloc(strlen(str) + 1);
+    char* str_copy = (char *) malloc(strlen(str) + 1);
     strcpy(str_copy, str);
 
     size_t word_count;
@@ -307,7 +307,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
         new_ins.o1_type = REGISTER;
         new_ins.o1 = build_operand(operands[0], map, address);
 
-        if (classify_operand(operands[1]) == LITERAL)  {
+        if (classify_operand(operands[1]) == LITERAL || classify_operand(operands[1]) == ADDRESS)  {
             // load literal    
             new_ins.o2_type = LITERAL;
             new_ins.o2 = build_operand(operands[1], map, address);
