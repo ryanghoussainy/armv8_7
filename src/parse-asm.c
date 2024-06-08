@@ -275,7 +275,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     new_ins.o3_type = NONE;
     new_ins.o4_type = NONE;
 
-    char* str_copy = malloc(sizeof(str));
+    char* str_copy = malloc(strlen(str) + 1);
     strcpy(str_copy, str);
 
     size_t word_count;
