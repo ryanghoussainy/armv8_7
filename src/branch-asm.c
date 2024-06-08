@@ -6,7 +6,7 @@ uint32_t conditional_instruction(Instruction* instr) {
     uint32_t cond = 15;
     // switch doesn't work on strings in C so confined to ifs
 
-    if (strcmp(condition, "ee") == 0) {
+    if (strcmp(condition, "eq") == 0) {
         cond = 0;
     } else if (strcmp(condition, "ne") == 0) {
         cond = 1;

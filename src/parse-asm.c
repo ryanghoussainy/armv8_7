@@ -113,15 +113,15 @@ uint64_t register_number(const char* str, bool* is_64_bit) {
         printf("%d", is_64_bit); // 1 (true)
     */
 
-    if (strcmp(str, "xzr")) {
+    if (strcmp(str, "xzr") == 0) {
         *is_64_bit = true;
         // ZR set to 31
         return ZR;
-    } else if (strcmp(str, "wzr")) {
+    } else if (strcmp(str, "wzr") == 0) {
         *is_64_bit = false;
         // ZR set to 31
         return ZR;
-    } else if (strcmp(str, "PC")) {
+    } else if (strcmp(str, "PC") == 0) {
         *is_64_bit = true;
         // PC set to 32
         return PC;

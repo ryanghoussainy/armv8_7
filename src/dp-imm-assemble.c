@@ -17,11 +17,11 @@ uint32_t build_dp_imm_arithmetic(Instruction* instr)
     }
 
     char* rd_str = instr->o1.reg;
-    uint32_t sf = rd_str[0] == 'x';
-    uint32_t rd = atoi(rd_str + 1);
+    bool sf;
+    uint32_t rd = register_number(rd_str, &sf);
 
     char* rn_str = instr->o2.reg;
-    uint32_t rn = atoi(rn_str + 1);
+    uint32_t rn = register_number(rn_str, &sf);
 
     uint32_t imm12 = instr->o3.number;
     uint32_t sh = instr->o4_type == LSL && instr->o4.number == 12;
@@ -44,11 +44,11 @@ uint32_t build_dp_imm_logical(Instruction* instr)
     }
 
     char* rd_str = instr->o1.reg;
-    uint32_t sf = rd_str[0] == 'x';
-    uint32_t rd = atoi(rd_str + 1);
+    bool sf;
+    uint32_t rd = register_number(rd_str, &sf);
 
     uint32_t imm16 = instr->o2.number;
-    uint32_t hw;
+    uint32_t hw = 0;
 
     if (instr->o3_type == LSL) {
         int shift = instr->o3.number;

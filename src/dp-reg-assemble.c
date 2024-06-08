@@ -15,20 +15,20 @@ static uint32_t build_dp_reg_arithmetic(Instruction* instr) {
         opc = 3;
     }
 
+    // sf - bit 31
+    bool sf;
+
     // rd - bits 0-4
     char* rd_str = instr->o1.reg;
-    uint32_t rd = atoi(rd_str + 1);
-
-    // sf - bit 31
-    uint32_t sf = rd_str[0] == 'x';
+    uint32_t rd = register_number(rd_str, &sf);
 
     // rn - bits 5-9
     char* rn_str = instr->o2.reg;
-    uint32_t rn = atoi(rn_str + 1);
+    uint32_t rn = register_number(rn_str, &sf);
 
     // rm - bits 16-20
     char* rm_str = instr->o3.reg;
-    uint32_t rm = atoi(rm_str + 1);
+    uint32_t rm = register_number(rm_str, &sf);
 
     // operand - bits 10-15
     uint32_t operand = instr->o4.number;
@@ -96,20 +96,20 @@ static uint32_t build_dp_reg_logical(Instruction* instr) {
         exit(1);
     }
 
+    // sf - bit 31
+    bool sf;
+
     // rd - bits 0-4
     char* rd_str = instr->o1.reg;
-    uint32_t rd = atoi(rd_str + 1);
-    
-    // sf - bit 31
-    uint32_t sf = rd_str[0] == 'x';
+    uint32_t rd = register_number(rd_str, &sf);
 
     // rn - bits 5-9
     char* rn_str = instr->o2.reg;
-    uint32_t rn = atoi(rn_str + 1);
+    uint32_t rn = register_number(rn_str, &sf);
 
     // rm - bits 16-20
     char* rm_str = instr->o3.reg;
-    uint32_t rm = atoi(rm_str + 1);
+    uint32_t rm = register_number(rm_str, &sf);
 
     // operand - bits 10-15
     uint32_t operand = instr->o4.number;
@@ -145,24 +145,24 @@ static uint32_t build_dp_reg_logical(Instruction* instr) {
 }
 
 static uint32_t build_dp_reg_multiply(Instruction* instr) {
+    // sf - bit 31
+    bool sf;
+
     // rd - bits 0-4
     char* rd_str = instr->o1.reg;
-    uint32_t rd = atoi(rd_str + 1);
-
-    // sf - bit 31
-    uint32_t sf = rd_str[0] == 'x';
+    uint32_t rd = register_number(rd_str, &sf);
 
     // ra - bits 5-9
     char* rn_str = instr->o2.reg;
-    uint32_t rn = atoi(rn_str + 1);
+    uint32_t rn = register_number(rn_str, &sf);
 
     // rm - bits 16-20
     char* rm_str = instr->o3.reg;
-    uint32_t rm = atoi(rm_str + 1);
+    uint32_t rm = register_number(rm_str, &sf);
 
     // ra - bits 10-14
     char* ra_str = instr->o4.reg;
-    uint32_t ra = atoi(ra_str + 1);
+    uint32_t ra = register_number(ra_str, &sf);
 
     // x - bit 15
     uint32_t x = strcmp(instr->operation, "msub") == 0;
