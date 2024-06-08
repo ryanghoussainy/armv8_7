@@ -202,7 +202,7 @@ union Operand build_operand(char* str, Entry* map, uint64_t address, int is_offs
         case LSR:
         case ASR:
         case ROR:
-            new_operand.number = string_to_int(str + 1);
+            new_operand.number = string_to_int(str + 5);
             break;
         case NONE:
             // error, should not have been called

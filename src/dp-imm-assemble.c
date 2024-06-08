@@ -24,18 +24,14 @@ uint32_t build_dp_imm_arithmetic(Instruction* instr)
     uint32_t rn = atoi(rn_str + 1);
 
     uint32_t imm12 = instr->o3.number;
-    uint32_t sh = 0;
-
-    if (instr->o4_type == LSL) {
-        sh = instr->o4.number;
-    }
+    uint32_t sh = instr->o4_type == LSL && instr->o4.number == 12;
 
     return (sf << 31) | (opc << 29) | (4 << 26) | (opi << 23) | (sh << 22) | (imm12 << 10) | (rn << 5) | rd;
 }
 
 uint32_t build_dp_imm_logical(Instruction* instr)
 {
-    uint32_t opi = 3;
+    uint32_t opi = 5;
     uint32_t opc;
     char* operation = instr->operation;
 
