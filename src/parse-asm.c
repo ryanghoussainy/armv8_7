@@ -32,6 +32,19 @@ void remove_leading_spaces(char* str) {
     } 
 }
 
+void remove_trailing_spaces(char* str) {
+    int len = strlen(str);
+    int i;
+
+    for (i = len - 1; i >= 0; i--) {
+        if (!isspace((unsigned char)str[i])) {
+            break;
+        }
+    }
+    
+    str[i + 1] = '\0'; 
+}
+
 
 char last_character(const char* str) {
     /* Gets the last character from a string, assumes str is not empty */
@@ -132,6 +145,7 @@ uint64_t register_number(const char* str, bool* is_64_bit) {
 }
 
 enum LINE_TYPE classify_line(char str[]) {
+    remove_trailing_spaces(str);
     if (str[0] == '.') {
         return DIRECTIVE;
     } else if (last_character(str) == ':') {
@@ -269,6 +283,8 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
 
     Instruction new_ins;
 
+    remove_trailing_spaces(str);
+
     // set default values to NONE
     new_ins.o1_type = NONE;
     new_ins.o2_type = NONE;
@@ -280,6 +296,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
 
     size_t word_count;
     char** ins = split_string(str_copy, " ", &word_count);
+    free(str_copy);
 
     if (ins == NULL) {
         printf("Invalid instruction: %s", str);
@@ -291,8 +308,12 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     // get the rest of instruction
     size_t len = strlen(new_ins.operation);
 
+    char* str_copy2 = (char *) malloc(strlen(str) + 1);
+    strcpy(str_copy2, str);
+
     size_t operand_count;
-    char** operands = split_string(str + len + 1, ",", &operand_count);
+    char** operands = split_string(str_copy2 + len + 1, ",", &operand_count);
+    free(str_copy2);
 
     // clear white spaces in front of operand
     for (int i = 0; i < operand_count; i++) {
@@ -322,11 +343,31 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
         new_ins.o1_type = REGISTER;
         new_ins.o1 = build_operand(operands[0], map, address, is_offset);
 
-        if (classify_operand(operands[1]) == LITERAL || classify_operand(operands[1]) == ADDRESS)  {
-            // load literal    
-            new_ins.o2_type = LITERAL;
-            new_ins.o2 = build_operand(operands[1], map, address, is_offset);
-            o4.number = LOAD_LITERAL;
+        if (last_character(str) == ']' && operands[1][0] == '[') {
+            // unsigned offset or register offset
+            new_ins.o2_type = REGISTER;
+
+            if (operand_count == 2) {
+                // zero unsigned offset
+                remove_last_character(operands[1]);
+                // +1 to remove ']'
+                new_ins.o2 = build_operand(operands[1] + 1, map, address, is_offset);
+                o4.number = UNSIGNED_OFFSET;
+            } else {
+                new_ins.o2 = build_operand(operands[1] + 1, map, address, is_offset);
+                remove_last_character(operands[2]);  // remove ']'
+
+                if (is_register(operands[2])) {
+                    // register offset
+                    new_ins.o3_type = REGISTER;
+                    new_ins.o3 = build_operand(operands[2], map, 0, is_offset);
+                    o4.number = REGISTER_OFFSET;
+                } else {
+                    new_ins.o3_type = LITERAL;
+                    new_ins.o3 = build_operand(operands[2], map, 0, is_offset);
+                    o4.number = UNSIGNED_OFFSET;
+                }
+            }
         } else if (last_character(str) == '!') {
             // pre-index
             new_ins.o2_type = REGISTER;
@@ -338,7 +379,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
             new_ins.o3 = build_operand(operands[2], map, 0, is_offset);
 
             o4.number = PRE_INDEX;
-        } else if (last_character(str) != ']') {
+        } else if (operand_count > 2 && operands[2][0] == '#' && last_character(operands[2]) != ']') {
             // post-index 
             new_ins.o2_type = REGISTER;
             remove_last_character(operands[1]); // remove ']'
@@ -348,24 +389,13 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
             new_ins.o3 = build_operand(operands[2], map, 0, is_offset) ;
 
             o4.number = POST_INDEX;
-        } else {
-            // unsigned offset or register offset
-            new_ins.o2_type = REGISTER;
+        } else if (classify_operand(operands[1]) == LITERAL || classify_operand(operands[1]) == ADDRESS)  {
+            // load literal    
+            new_ins.o2_type = LITERAL;
             new_ins.o2 = build_operand(operands[1], map, address, is_offset);
-            remove_last_character(operands[2]);  // remove ']'
-            if (is_register(operands[2])) {
-                // register offset
-                new_ins.o3_type = REGISTER;
-                new_ins.o3 = build_operand(operands[2], map, 0, is_offset);
-                o4.number = REGISTER_OFFSET;
-            } else {
-                // unsigned offset
-                if (operand_count == 3) {
-                    new_ins.o3_type = LITERAL;
-                    new_ins.o3 = build_operand(operands[3], map, 0, is_offset);
-                }
-                o4.number = UNSIGNED_OFFSET;
-            }
+            o4.number = LOAD_LITERAL;
+        } else {
+            printf("Invalid instruction format for SDTI");
         }
         
         new_ins.o4_type = LITERAL;
@@ -388,8 +418,6 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
                 new_ins.o1 = build_operand(operands[0], map, address, is_offset);
                 break;
             default:
-                // error
-                free(str_copy);
 
                 // TODO: free the 2D arrays
                 free(ins);
@@ -399,8 +427,6 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
 
         handle_aliases(&new_ins);
     }
-
-    free(str_copy);
 
     // TODO: free the 2D arrays
     free(ins);
