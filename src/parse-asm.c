@@ -242,6 +242,9 @@ void handle_aliases(Instruction* instr) {
             strcpy(op, "ands");
         }
 
+        instr->o4 = instr->o3;
+        instr->o4_type = instr->o3_type;
+
         instr->o3 = instr->o2;
         instr->o3_type = instr->o2_type;
 
@@ -270,6 +273,9 @@ void handle_aliases(Instruction* instr) {
             strcpy(op, "orr");
         }
 
+        instr->o4 = instr->o3;
+        instr->o4_type = instr->o3_type;
+        
         instr->o3 = instr->o2;
         instr->o3_type = instr->o2_type;
 
