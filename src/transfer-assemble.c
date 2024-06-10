@@ -79,7 +79,7 @@ uint32_t transfer_assembly(Instruction* ins) {
                 return EXIT_FAILURE;
             }
 
-            result = (sf << SF_SHIFT) | (LL_CONSTANT << LL_CONSTANT_SHIFT) | ((ins->o2.number & build_mask(0,19)) << SIMM19_SHIFT) | rt;
+            result = (sf << SF_SHIFT) | (LL_CONSTANT << LL_CONSTANT_SHIFT) | ((ins->o2.number & build_mask(0,18)) << SIMM19_SHIFT) | rt;
     }
 
     return result;
