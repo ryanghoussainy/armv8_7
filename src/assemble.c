@@ -40,7 +40,7 @@ int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
         */
         // ^^ DEBUGGING
 
-        ins = build_instruction(instructions[line], map, line);
+        ins = build_instruction(instructions[line], map, line - label_count);
 
         // TODO: Classify type of instruction then pass in respective functions
         switch(classify_instruction(ins.operation)) {
