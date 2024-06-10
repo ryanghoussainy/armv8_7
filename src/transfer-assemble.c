@@ -53,7 +53,7 @@ uint32_t transfer_assembly(Instruction* ins) {
             break;
         case REGISTER_OFFSET:
             xn = register_number(ins->o2.reg, &xn_64_bit);
-            xm = register_number(ins->o2.reg, &xm_64_bit);
+            xm = register_number(ins->o3.reg, &xm_64_bit);
             result = (1 << SDT_INDICATOR_SHIFT) | (sf << SF_SHIFT) | (SDT_CONSTANT << SDT_CONSTANT_SHIFT) |
                 (L << L_SHIFT) | (xm << XM_SHIFT) | (REG_OFS_CONSTANT << REG_OFS_CONSTANT_SHIFT) | (xn << XN_SHIFT) | rt;
             break;
