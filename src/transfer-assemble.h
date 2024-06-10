@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "parse-asm.h"
+#include "instr-utils.h"
 
 #define SF_SHIFT 30
 #define LL_CONSTANT 24
