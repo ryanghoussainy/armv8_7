@@ -21,7 +21,7 @@ static size_t pass_one(char* instructions[], Entry* map, size_t size) {
   return count;
 }
 
-static int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
+static void pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
   size_t label_count = 0;
   for (int line = 0; line < size; line++) {
     uint32_t word = 0;
@@ -67,7 +67,6 @@ static int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t s
     }
     output[line-label_count] = word;
   }
-  return 1;
 }
 
 
