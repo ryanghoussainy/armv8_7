@@ -5,7 +5,7 @@
 #include "transfer-assemble.h"
 #include "dp-assemble.h"
 
-size_t pass_one(char* instructions[], Entry* map, size_t size) {
+static size_t pass_one(char* instructions[], Entry* map, size_t size) {
   size_t count = 0;
   for (int line = 0; line < size; line++) {
     char *ins = strdup(instructions[line]);
@@ -21,7 +21,7 @@ size_t pass_one(char* instructions[], Entry* map, size_t size) {
   return count;
 }
 
-int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
+static int pass_two(char* instructions[], Entry* map, uint32_t* output, size_t size)  {
   size_t label_count = 0;
   for (int line = 0; line < size; line++) {
     uint32_t word = 0;

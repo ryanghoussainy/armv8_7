@@ -1,6 +1,6 @@
 #include "branch-asm.h"
 
-uint32_t conditional_instruction(Instruction* instr) {
+static uint32_t conditional_instruction(Instruction* instr) {
     char condition[2] = {instr->operation[2], instr->operation[3]};
 
     uint32_t cond = 15;
@@ -30,12 +30,12 @@ uint32_t conditional_instruction(Instruction* instr) {
     return (uint32_t) (cond + simm19 + ((uint32_t)84 << 24));
 }
 
-uint32_t register_instruction(Instruction* instr) {
+static uint32_t register_instruction(Instruction* instr) {
     bool is64Bit;
     return (uint32_t) ((register_number(instr->o1.reg, &is64Bit) << 5) + ((uint32_t)54815 << 16));
 }
 
-uint32_t unconditional_instruction(Instruction* instr) {
+static uint32_t unconditional_instruction(Instruction* instr) {
     uint32_t address_to_jump_to = (uint32_t) (build_mask(0, 25) & (instr->o1.number));
     return (uint32_t) (((uint32_t)5 << 26) + address_to_jump_to);
 }

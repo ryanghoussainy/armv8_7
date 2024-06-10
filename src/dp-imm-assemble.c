@@ -1,6 +1,6 @@
 #include "dp-imm-assemble.h"
 
-uint32_t build_dp_imm_arithmetic(Instruction* instr) 
+static uint32_t build_dp_imm_arithmetic(Instruction* instr) 
 {
     uint32_t opi = 2;
     uint32_t opc;
@@ -29,7 +29,7 @@ uint32_t build_dp_imm_arithmetic(Instruction* instr)
     return (sf << 31) | (opc << 29) | (4 << 26) | (opi << 23) | (sh << 22) | (imm12 << 10) | (rn << 5) | rd;
 }
 
-uint32_t build_dp_imm_logical(Instruction* instr)
+static uint32_t build_dp_imm_logical(Instruction* instr)
 {
     uint32_t opi = 5;
     uint32_t opc;

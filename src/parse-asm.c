@@ -32,7 +32,7 @@ void remove_leading_spaces(char* str) {
     } 
 }
 
-void remove_trailing_spaces(char* str) {
+static void remove_trailing_spaces(char* str) {
     int len = strlen(str);
     int i;
 
@@ -46,7 +46,7 @@ void remove_trailing_spaces(char* str) {
 }
 
 
-char last_character(const char* str) {
+static char last_character(const char* str) {
     /* Gets the last character from a string, assumes str is not empty */
     const char* ptr = str;
     while (*ptr != '\0') {
@@ -200,7 +200,7 @@ enum OPERAND_TYPE convert_address_to_literal(enum OPERAND_TYPE type) {
 }
 
 
-union Operand build_operand(char* str, Entry* map, uint64_t address, int is_offset) {
+static union Operand build_operand(char* str, Entry* map, uint64_t address, int is_offset) {
     union Operand new_operand;
     switch(classify_operand(str)){
         case LITERAL:
@@ -226,7 +226,7 @@ union Operand build_operand(char* str, Entry* map, uint64_t address, int is_offs
 }
 
 
-void handle_aliases(Instruction* instr) {
+static void handle_aliases(Instruction* instr) {
     char* rzr_str = instr->o1.reg[0] == 'x' ? "xzr" : "wzr";
 
     union Operand rzr;
@@ -441,7 +441,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     return new_ins;
 }
 
-char* print_operand_type(enum OPERAND_TYPE op_type) {
+static char* print_operand_type(enum OPERAND_TYPE op_type) {
     switch(op_type) {
         case REGISTER:
             return "REGISTER";

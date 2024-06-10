@@ -72,17 +72,12 @@ typedef struct {
 
 } Instruction;
 
-void handle_aliases(Instruction* instr);
 uint64_t string_to_int(char* str);
 void remove_leading_spaces(char* str);
-char last_character(const char* str);
-void remove_trailing_spaces(char* str);
 void remove_last_character(char* str);
 char** split_string(char str[], const char* sep, size_t* word_count);
 uint64_t register_number(const char* str, bool* is_64_bit);
 enum LINE_TYPE classify_line(char str[]);
 enum INSTRUCTION_TYPE classify_instruction(char* operation);
-union Operand build_operand(char* str, Entry* map, uint64_t address, int is_offset);
 Instruction build_instruction(char* str, Entry* map, uint64_t address);
-char* print_operand_type(enum OPERAND_TYPE op_type);
 void print_instruction(Instruction* instr);
