@@ -62,7 +62,7 @@ uint32_t transfer_assembly(Instruction* ins) {
             simm9 = ins->o3.number; 
             
             result = (1 << SDT_INDICATOR_SHIFT) | (sf << SF_SHIFT) | (SDT_CONSTANT << SDT_CONSTANT_SHIFT) |
-                (L << L_SHIFT) | ((simm9 << SIMM9_SHIFT) | ((1 << I_SHIFT) | 1) << OFFSET_SHIFT) | (xn << XN_SHIFT) | rt;
+                (L << L_SHIFT) | (((simm9 << SIMM9_SHIFT) | ((1 << I_SHIFT) | 1)) << OFFSET_SHIFT) | (xn << XN_SHIFT) | rt;
 
             break;
         case POST_INDEX:
