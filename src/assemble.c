@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <assert.h>
 #include "assemble-rw.h"
 #include "directives.h"
 #include "branch-asm.h"
@@ -9,6 +10,7 @@ static size_t pass_one(char* instructions[], Entry* map, size_t size) {
   size_t count = 0;
   for (int line = 0; line < size; line++) {
     char *ins = strdup(instructions[line]);
+    assert(ins != NULL);
     if (classify_line(ins) == LABEL) {
       remove_last_character(ins);
       if (add_entry(map, ins, line - count) == 0) {
@@ -90,6 +92,8 @@ int main(int argc, char **argv) {
 
   // pass two, store result in array of uint32_t
   uint32_t* output = malloc(sizeof(uint32_t) * (file_size - label_count));
+  assert(output != NULL);
+
   pass_two(all_lines, map.next, output, file_size);
 
   // write array of uint32_t into bin file

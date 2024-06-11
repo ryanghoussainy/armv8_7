@@ -1,11 +1,14 @@
 #include <string.h>
+#include <assert.h>
 #include "loader.h"
 #include "execute.h"
 
 int main(int argc, char **argv) {
 
   char *FILE_IN = malloc(20 * sizeof(char));
+  assert(FILE_IN != NULL);
   char *FILE_OUT = malloc(20 * sizeof(char));
+  assert(FILE_OUT != NULL);
 
   // Need to dynamically allocate memory for large filenames
 
@@ -16,6 +19,7 @@ int main(int argc, char **argv) {
       // If the filename is larger than 20 characters then reallocate to accommodate
 
       FILE_IN = (char *) realloc(FILE_IN, (strlen(argv[1]) + 1) * sizeof(char));
+      assert(FILE_IN != NULL);
 
     }
 
@@ -27,7 +31,7 @@ int main(int argc, char **argv) {
       if (strlen(argv[2]) >= (20 * sizeof(char))) {
 
         FILE_OUT = (char *) realloc(FILE_OUT, (strlen(argv[2]) + 1) * sizeof(char));
-
+        assert(FILE_OUT != NULL);
       }
 
       strcpy(FILE_OUT, argv[2]);

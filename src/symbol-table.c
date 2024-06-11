@@ -13,7 +13,11 @@ Entry* last_entry(Entry* map) {
 int add_entry(Entry* map, char* label, int value) {
     Entry* end = last_entry(map);
     Entry* new_entry = malloc(sizeof(Entry));
+    assert(new_entry != NULL);
+
     new_entry->label = strdup(label); // Duplicate the label string
+    assert(new_entry->label != NULL);
+    
     new_entry->value = value;
     new_entry->next = NULL;
     end->next = new_entry;

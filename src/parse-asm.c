@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "parse-asm.h"
 
 /*
@@ -100,11 +101,17 @@ char** split_string(char str[], const char* sep, size_t* word_count) {
     char** words = NULL;
 
     token = strtok(str, sep);
+    assert(token != NULL);
+    
     while (token != NULL) {
         words = realloc(words, sizeof(char*) * (*word_count + 1));
+        assert(words != NULL);
+
         words[*word_count] = malloc(strlen(token) + 1);
+        assert(words[*word_count] != NULL);
+
         strcpy(words[*word_count], token);
-        token = strtok(NULL, sep);
+        token = strtok(NULL, sep);  // get next token
         (*word_count)++;
     }
     
@@ -119,6 +126,7 @@ Extracts the shift type from a string, returning NONE if it is not a shift.
 */
 enum OPERAND_TYPE extract_shift_type(char* str) {
     char* str_copy = (char*) malloc(strlen(str) + 1);
+    assert(str_copy != NULL);
     strcpy(str_copy, str);
 
     size_t word_count;
@@ -155,6 +163,7 @@ Extracts the shift bits from a string, returning -1 if it is invalid.
 int extract_shift_bits(char* str) {
     size_t word_count;
     char* str_copy = (char*) malloc(strlen(str) + 1);
+    assert(str_copy != NULL);
     strcpy(str_copy, str);
     
     char** operand = split_string(str_copy, " ", &word_count);
@@ -404,6 +413,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     new_ins.o4_type = NONE;
 
     char* str_copy = (char *) malloc(strlen(str) + 1);
+    assert(str_copy != NULL);
     strcpy(str_copy, str);
 
     size_t word_count;
@@ -421,6 +431,7 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     size_t len = strlen(new_ins.operation);
 
     char* str_copy2 = (char *) malloc(strlen(str) + 1);
+    assert(str_copy2 != NULL);
     strcpy(str_copy2, str);
 
     size_t operand_count;

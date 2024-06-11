@@ -14,7 +14,10 @@ size_t read_asm(char* path, char*** all_lines) {
 
     int counter = 0;
     *all_lines = malloc(sizeof(char*));
+    assert(*all_lines != NULL);
+
     (*all_lines)[0] = malloc(sizeof(char) * MAX_SIZE);
+    assert((*all_lines)[0] != NULL);
 
     char this_line[MAX_SIZE];
 
@@ -25,12 +28,16 @@ size_t read_asm(char* path, char*** all_lines) {
             strcpy((*all_lines)[counter], this_line);
             counter++;
             *all_lines = realloc(*all_lines, sizeof(char*) * (counter + 1));
+            assert(*all_lines != NULL);
+
             (*all_lines)[counter] = malloc(sizeof(char) * MAX_SIZE);
+            assert((*all_lines)[counter] != NULL);
         }
     }
 
     free((*all_lines)[counter]);  // free the last malloc
     *all_lines = realloc(*all_lines, sizeof(char*) * counter);
+    assert(*all_lines != NULL);
 
     fclose(fptr);
     return counter;
