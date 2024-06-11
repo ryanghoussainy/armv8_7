@@ -3,7 +3,7 @@
 static uint32_t conditional_instruction(Instruction* instr) {
     char condition[NUM_CHARS_COND] = {instr->operation[2], instr->operation[3]};
 
-    uint32_t cond = 15;
+    uint32_t cond;
 
     if (strcmp(condition, "eq") == 0) {
         cond = COND_EQ;
