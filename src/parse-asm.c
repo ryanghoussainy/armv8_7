@@ -1,8 +1,12 @@
 #include "parse-asm.h"
 
+/*
+uint64_t val1 = string_to_int("0x1A"); // val1 = 26
+uint64_t val2 = string_to_int("26"); // val2 = 26
 
+Converts a string to an integer, handling both decimal and hexadecimal.
+*/
 uint64_t string_to_int(char* str) {
-    // turns a string into int, handles both denary and hexadecimal
     if (strlen(str) == 1) {
         return atoi(str);
     } else if (strncmp(str, "0x", 2) == 0) {
@@ -13,7 +17,12 @@ uint64_t string_to_int(char* str) {
     }
 }
 
+/*
+char* str = "  Hello";
+remove_leading_spaces(str); // str = "Hello"
 
+Removes leading spaces from a string.
+*/
 void remove_leading_spaces(char* str) {
     int i = 0;
     int j = 0;
@@ -32,6 +41,12 @@ void remove_leading_spaces(char* str) {
     } 
 }
 
+/*
+char* str = "Hello  ";
+remove_trailing_spaces(str); // str = "Hello"
+
+Removes trailing spaces from a string.
+*/
 static void remove_trailing_spaces(char* str) {
     int len = strlen(str);
     int i;
@@ -45,9 +60,13 @@ static void remove_trailing_spaces(char* str) {
     str[i + 1] = '\0'; 
 }
 
+/*
+const char* str = "Hello";
+char c = last_character(str);
 
+Gets the last character from a string, assumes str is not empty
+*/
 static char last_character(const char* str) {
-    /* Gets the last character from a string, assumes str is not empty */
     const char* ptr = str;
     while (*ptr != '\0') {
         ptr++;
@@ -55,12 +74,26 @@ static char last_character(const char* str) {
     return *(ptr - 1);
 }
 
+/*
+char* str = "Hello";
+remove_last_character(str);
+
+Removes the last character from a string
+*/
 void remove_last_character(char* str) {
     if (strlen(str) > 0) {
         str[strlen(str) - 1] = '\0';
     }
 }
 
+/*
+size_t word_count;
+char* str = "Hello World";
+char** result = split_string(str, " ", &word_count);
+
+Splits the string 'str' into an array of strings, using 'sep' as the delimiter and
+keeping track of the word count.
+*/
 char** split_string(char str[], const char* sep, size_t* word_count) {
     *word_count = 0;
     char* token;
@@ -78,7 +111,12 @@ char** split_string(char str[], const char* sep, size_t* word_count) {
     return words;
 }
 
+/*
+char* shift_str = "lsl #2";
+enum OPERAND_TYPE type = extract_shift_type(shift_str); // type = LSL
 
+Extracts the shift type from a string, returning NONE if it is not a shift.
+*/
 enum OPERAND_TYPE extract_shift_type(char* str) {
     size_t word_count;
     char* str_copy = (char*) malloc(strlen(str) + 1);
@@ -102,6 +140,12 @@ enum OPERAND_TYPE extract_shift_type(char* str) {
     }
 }
 
+/*
+char* shift_str = "lsl #2";
+int shift = extract_shift_bits(shift_str); // shift = 2
+
+Extracts the shift bits from a string, returning -1 if it is invalid.
+*/
 int extract_shift_bits(char* str) {
     size_t word_count;
     char* str_copy = (char*) malloc(strlen(str) + 1);
@@ -114,18 +158,15 @@ int extract_shift_bits(char* str) {
     return string_to_int(operand[1] + 1);
 }
 
+/*
+char example[] = "x13";
+bool is_64_bit;
+int example_reg = register_number(example, &is_64_bit); // example_reg = 13, is_64_bit = true
 
+Converts a string to a register number, setting is_64_bit to true if and only if
+it is a 64-bit register.
+*/
 uint64_t register_number(const char* str, bool* is_64_bit) {
-    // An example of how to call the function
-
-    /*
-        char example[] = "x13";
-        bool is_64_bit;
-        int example_reg = register_number(example, &is_64_bit);
-        printf("%lu", example_reg); // 13
-        printf("%d", is_64_bit); // 1 (true)
-    */
-
     if (strcmp(str, "xzr") == 0) {
         *is_64_bit = true;
         // ZR set to 31
@@ -144,6 +185,12 @@ uint64_t register_number(const char* str, bool* is_64_bit) {
     return atoi(str + 1);
 }
 
+/*
+char str[] = "and x1, x2, x3";
+enum LINE_TYPE type = classify_line(str); // type = INSTRUCTION
+
+Classifies a line of assembly code as a directive, label, or instruction.
+*/
 enum LINE_TYPE classify_line(char str[]) {
     remove_trailing_spaces(str);
     if (str[0] == '.') {
@@ -155,6 +202,12 @@ enum LINE_TYPE classify_line(char str[]) {
     }
 }
 
+/*
+char* operation = "cmp";
+enum INSTRUCTION_TYPE type = classify_instruction(operation); // type = DP
+
+Classifies an instruction as a branch, data processing, or transfer.
+*/
 enum INSTRUCTION_TYPE classify_instruction(char* operation)  {
     if (strcmp(operation, "b") == 0 || strncmp(operation, "b.", 2) == 0 || strcmp(operation, "br") == 0) {
         return BRANCH;
@@ -165,7 +218,12 @@ enum INSTRUCTION_TYPE classify_instruction(char* operation)  {
     }
 }
 
+/*
+char* str = "w1";
+bool is_register = is_register(str); // is_register = true
 
+Checks if a string is a valid register.
+*/
 bool is_register(char* str) {
     size_t len = strlen(str);
     if (len != 2 && len != 3) {
@@ -177,9 +235,13 @@ bool is_register(char* str) {
     return reg_no >= 0 && reg_no < ZR;
 }
 
+/*
+char* str = "x1";
+enum OPERAND_TYPE type = classify_operand(str); // type = REGISTER
 
+Classifies an operand as a register, literal, shift, or address.
+*/
 enum OPERAND_TYPE classify_operand(char* operand) {
-    // classify the different types of operands
     enum OPERAND_TYPE type = extract_shift_type(operand);
     if (operand[0] == '#') {
         return LITERAL;
@@ -192,15 +254,27 @@ enum OPERAND_TYPE classify_operand(char* operand) {
     }
 }
 
+/*
+enum OPERAND_TYPE type = ADDRESS;
+type = convert_address_to_literal(type); // type = LITERAL
 
+Converts an address to a literal.
+*/
 enum OPERAND_TYPE convert_address_to_literal(enum OPERAND_TYPE type) {
-    /* This function is needed as address is no longer needed when forming struct instruction */
     if (type == ADDRESS) {
         return LITERAL;
     } else return type;
 }
 
+/*
+char* operand; // example: "x1", "#2", "lsl #2"
+Entry* map;
+uint64_t address;
+int is_offset;
+union Operand new_operand = build_operand(operand, map, address, is_offset);
 
+Builds an operand from a string, using the symbol table to resolve addresses.
+*/
 static union Operand build_operand(char* str, Entry* map, uint64_t address, int is_offset) {
     union Operand new_operand;
     switch(classify_operand(str)){
@@ -226,7 +300,12 @@ static union Operand build_operand(char* str, Entry* map, uint64_t address, int 
     return new_operand;
 }
 
+/*
+Instruction* instr;
+handle_aliases(instr); // modifies instr to handle aliases
 
+Converts instructions which are aliases for other instructions.
+*/
 static void handle_aliases(Instruction* instr) {
     char* rzr_str = instr->o1.reg[0] == 'x' ? "xzr" : "wzr";
 
@@ -285,7 +364,14 @@ static void handle_aliases(Instruction* instr) {
     } 
 }
 
+/*
+char* str = "ldr x1, [x2, #4]";
+Entry* map;
+uint64_t address;
+Instruction new_ins = build_instruction(str, map, address);
 
+Builds an instruction from a string, using the symbol table to resolve addresses.
+*/
 Instruction build_instruction(char* str, Entry* map, uint64_t address) {
 
     Instruction new_ins;
@@ -442,6 +528,12 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     return new_ins;
 }
 
+/*
+enum OPERAND_TYPE op_type = REGISTER;
+char* str = print_operand_type(op_type); // str = "REGISTER"
+
+Returns the operand type as a string.
+*/
 static char* print_operand_type(enum OPERAND_TYPE op_type) {
     switch(op_type) {
         case REGISTER:
