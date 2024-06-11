@@ -55,3 +55,10 @@ void print_all_entries(Entry* map) {
         printf("Invalid input - input is NULL\n");
     }
 }
+
+void freeEntries(Entry* map) {
+    if (map == NULL) return;
+    if (map->next != NULL) freeEntries(map->next);
+    free(map->label);
+    free(map);
+}

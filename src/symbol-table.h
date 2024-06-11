@@ -16,3 +16,4 @@ int add_entry(Entry* map, char* label, int value);
 int get_value(Entry* map, char* label);
 void print_entry(Entry* map);
 void print_all_entries(Entry* map);
+void free_entries(Entry* map);
