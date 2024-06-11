@@ -13,6 +13,7 @@ static size_t pass_one(char* instructions[], Entry* map, size_t size) {
       remove_last_character(ins);
       if (add_entry(map, ins, line - count) == 0) {
         // error handling
+        free(ins);
         return 0;
       }
       count++;
@@ -97,6 +98,8 @@ int main(int argc, char **argv) {
   free_2d_array(all_lines, file_size);
 
   free(output);
+
+  free_entries(map.next);
   
   return EXIT_SUCCESS;
 }

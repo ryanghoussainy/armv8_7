@@ -118,29 +118,32 @@ enum OPERAND_TYPE type = extract_shift_type(shift_str); // type = LSL
 Extracts the shift type from a string, returning NONE if it is not a shift.
 */
 enum OPERAND_TYPE extract_shift_type(char* str) {
-    size_t word_count;
     char* str_copy = (char*) malloc(strlen(str) + 1);
     strcpy(str_copy, str);
 
+    size_t word_count;
     char** operand = split_string(str_copy, " ", &word_count);
     free(str_copy);
 
+    enum OPERAND_TYPE result;
     if (word_count != 2) {
         // not a shift
-        return NONE;
+        result = NONE;
     }
     if (strcmp(operand[0], "lsl") == 0) {
-        return LSL;
+        result = LSL;
     } else if (strcmp(operand[0], "lsr") == 0) {
-        return LSR;
+        result = LSR;
     } else if (strcmp(operand[0], "asr") == 0) {
-        return ASR;
+        result = ASR;
     } else if (strcmp(operand[0], "ror") == 0) {
-        return ROR;
+        result = ROR;
     } else {
         // not a shift
-        return NONE;
+        result = NONE;
     }
+    free_2d_array(operand, word_count);
+    return result;
 }
 
 /*
@@ -155,13 +158,16 @@ int extract_shift_bits(char* str) {
     strcpy(str_copy, str);
     
     char** operand = split_string(str_copy, " ", &word_count);
+    int result = string_to_int(operand[1] + 1);
+
     free(str_copy);
+    free_2d_array(operand, word_count);
 
     if (word_count != 2) {
         // error
         return -1;
     }
-    return string_to_int(operand[1] + 1);
+    return result;
 }
 
 /*
