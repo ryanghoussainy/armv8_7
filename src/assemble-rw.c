@@ -29,6 +29,9 @@ size_t read_asm(char* path, char*** all_lines) {
         }
     }
 
+    free((*all_lines)[counter]);  // free the last malloc
+    *all_lines = realloc(*all_lines, sizeof(char*) * counter);
+
     fclose(fptr);
     return counter;
 }
