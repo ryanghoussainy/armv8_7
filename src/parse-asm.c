@@ -121,7 +121,10 @@ enum OPERAND_TYPE extract_shift_type(char* str) {
     size_t word_count;
     char* str_copy = (char*) malloc(strlen(str) + 1);
     strcpy(str_copy, str);
+
     char** operand = split_string(str_copy, " ", &word_count);
+    free(str_copy);
+
     if (word_count != 2) {
         // not a shift
         return NONE;
@@ -150,7 +153,10 @@ int extract_shift_bits(char* str) {
     size_t word_count;
     char* str_copy = (char*) malloc(strlen(str) + 1);
     strcpy(str_copy, str);
+    
     char** operand = split_string(str_copy, " ", &word_count);
+    free(str_copy);
+
     if (word_count != 2) {
         // error
         return -1;

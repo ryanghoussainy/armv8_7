@@ -92,6 +92,13 @@ int main(int argc, char **argv) {
 
   // write array of uint32_t into bin file
   write_bin(argv[2], output, file_size - label_count);
+
+  for (int i = 0; i < file_size; i++) {
+    free(all_lines[i]);
+  }
+  free(all_lines);
+
+  free(output);
   
   return EXIT_SUCCESS;
 }
