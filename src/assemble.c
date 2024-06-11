@@ -17,6 +17,7 @@ static size_t pass_one(char* instructions[], Entry* map, size_t size) {
       }
       count++;
     }
+    free(ins);
   }
   return count;
 }
@@ -93,10 +94,7 @@ int main(int argc, char **argv) {
   // write array of uint32_t into bin file
   write_bin(argv[2], output, file_size - label_count);
 
-  for (int i = 0; i < file_size; i++) {
-    free(all_lines[i]);
-  }
-  free(all_lines);
+  free_2d_array(all_lines, file_size);
 
   free(output);
   

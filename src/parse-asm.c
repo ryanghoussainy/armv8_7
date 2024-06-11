@@ -370,6 +370,13 @@ static void handle_aliases(Instruction* instr) {
     } 
 }
 
+void free_2d_array(char** arr,  size_t size) {
+    for (int i = 0; i < size; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+}
+
 /*
 char* str = "ldr x1, [x2, #4]";
 Entry* map;
@@ -519,8 +526,8 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
             default:
 
                 // TODO: free the 2D arrays
-                free(ins);
-                free(operands);
+                free_2d_array(ins, word_count);
+                free_2d_array(operands, operand_count);
                 return new_ins;
         }
 
@@ -528,8 +535,8 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
     }
 
     // TODO: free the 2D arrays
-    free(ins);
-    free(operands);
+    free_2d_array(ins, word_count);
+    free_2d_array(operands, operand_count);
 
     return new_ins;
 }
