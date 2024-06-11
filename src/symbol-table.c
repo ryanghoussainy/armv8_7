@@ -56,9 +56,9 @@ void print_all_entries(Entry* map) {
     }
 }
 
-void freeEntries(Entry* map) {
+void free_entries(Entry* map) {
     if (map == NULL) return;
-    if (map->next != NULL) freeEntries(map->next);
+    if (map->next != NULL) free_entries(map->next);
     free(map->label);
     free(map);
 }

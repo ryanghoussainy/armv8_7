@@ -34,16 +34,15 @@ size_t read_asm(char* path, char*** all_lines) {
 }
 
 
-int write_bin(char* path, uint32_t* words, size_t size){
+void write_bin(char* path, uint32_t* words, size_t size){
     FILE *fptr = fopen(path, "wb");
     size_t written = fwrite(words, sizeof(uint32_t), size, fptr);
 
     if(written != size) {
         // error
         fclose(fptr);
-        return EXIT_FAILURE;
+        exit(1);
     }
 
     fclose(fptr);
-    return EXIT_SUCCESS;
 }
