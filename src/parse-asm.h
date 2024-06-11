@@ -11,6 +11,8 @@
 #define ZR 31
 #define PC 32
 
+#define HEX_SIZE 16
+
 enum LINE_TYPE {
     INSTRUCTION,
     LABEL,

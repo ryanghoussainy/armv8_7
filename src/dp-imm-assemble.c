@@ -2,7 +2,7 @@
 
 static uint32_t build_dp_imm_arithmetic(Instruction* instr) 
 {
-    uint32_t opi = 2;
+    uint32_t opi = ARITH_OPI;
     uint32_t opc;
     char* operation = instr->operation;
 
@@ -24,14 +24,14 @@ static uint32_t build_dp_imm_arithmetic(Instruction* instr)
     uint32_t rn = register_number(rn_str, &sf);
 
     uint32_t imm12 = instr->o3.number;
-    uint32_t sh = instr->o4_type == LSL && instr->o4.number == 12;
+    uint32_t sh = instr->o4_type == LSL && instr->o4.number == SH_SHIFT_AMOUNT;
 
-    return (sf << 31) | (opc << 29) | (4 << 26) | (opi << 23) | (sh << 22) | (imm12 << 10) | (rn << 5) | rd;
+    return (sf << SF_SHIFT) | (opc << OPC_SHIFT) | MIDDLE_BITS | (opi << OPI_SHIFT) | (sh << SH_SHIFT) | (imm12 << IMM12_SHIFT) | (rn << RN_SHIFT) | rd;
 }
 
 static uint32_t build_dp_imm_logical(Instruction* instr)
 {
-    uint32_t opi = 5;
+    uint32_t opi = LOGICAL_OPI;
     uint32_t opc;
     char* operation = instr->operation;
 
@@ -52,10 +52,10 @@ static uint32_t build_dp_imm_logical(Instruction* instr)
 
     if (instr->o3_type == LSL) {
         int shift = instr->o3.number;
-        hw = shift / 16;
+        hw = shift / HW_FACTOR;
     }
 
-    return (sf << 31) | (opc << 29) | (4 << 26) | (opi << 23) | (hw << 21) | (imm16 << 5) | rd;
+    return (sf << SF_SHIFT) | (opc << OPC_SHIFT) | MIDDLE_BITS | (opi << OPI_SHIFT) | (hw << HW_SHIFT) | (imm16 << IMM16_SHIFT) | rd;
 }
 
 uint32_t build_dp_imm(Instruction* instr)

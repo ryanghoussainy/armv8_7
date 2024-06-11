@@ -33,25 +33,25 @@ static int conditional_branch(CPU* cpu, uint32_t instr) {
     int cond_holds = 0;
 
     switch (cond) {
-        case 0: // Z == 1
+        case COND_EQ: // Z == 1
             cond_holds = (cpu->PSTATE.Z == 1);
             break;
-        case 1: // Z == 0
+        case COND_NE: // Z == 0
             cond_holds = (cpu->PSTATE.Z == 0);
             break;
-        case 10: // N == V
+        case COND_GE: // N == V
             cond_holds = (cpu->PSTATE.N == cpu->PSTATE.V);
             break;
-        case 11: // N != V
+        case COND_LT: // N != V
             cond_holds = (cpu->PSTATE.N != cpu->PSTATE.V);
             break;
-        case 12: // Z == 0 && N == V
+        case COND_GT: // Z == 0 && N == V
             cond_holds = (cpu->PSTATE.N == cpu->PSTATE.V) && (cpu->PSTATE.Z == 0);
             break;
-        case 13: // !(Z == 0 && N == V)
+        case COND_LE: // !(Z == 0 && N == V)
             cond_holds = !((cpu->PSTATE.N == cpu->PSTATE.V) && (cpu->PSTATE.Z == 0));
             break;
-        case 14: // always
+        case COND_AL: // always
             cond_holds = 1;
             break;
         default:

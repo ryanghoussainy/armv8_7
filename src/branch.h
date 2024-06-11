@@ -26,4 +26,12 @@
 #define COND_BRANCH_24TO31   84
 #define UNCOND_BRANCH_26TO31 5
 
+#define COND_EQ 0
+#define COND_NE 1
+#define COND_GE 10
+#define COND_LT 11
+#define COND_GT 12
+#define COND_LE 13
+#define COND_AL 14
+
 int branch_instruction(CPU* cpu, uint32_t instr);

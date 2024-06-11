@@ -6,13 +6,13 @@ static uint32_t build_dp_reg_arithmetic(Instruction* instr) {
     uint32_t opc;
     char* op = instr->operation;
     if (strcmp(op, "add") == 0) {
-        opc = 0;
+        opc = OPC_ADD;
     } else if (strcmp(op, "adds") == 0) {
-        opc = 1;
+        opc = OPC_ADDS;
     } else if (strcmp(op, "sub") == 0) {
-        opc = 2;
+        opc = OPC_SUB;
     } else if (strcmp(op, "subs") == 0) {
-        opc = 3;
+        opc = OPC_SUBS;
     }
 
     // sf - bit 31
@@ -37,20 +37,20 @@ static uint32_t build_dp_reg_arithmetic(Instruction* instr) {
     uint32_t shift;
     switch (instr->o4_type) {
         case LSL:
-            shift = 0;
+            shift = SHIFT_LSL;
             break;
         case LSR:
-            shift = 1;
+            shift = SHIFT_LSR;
             break;
         case ASR:
-            shift = 2;
+            shift = SHIFT_ASR;
             break;
         case ROR:
             printf("ROR is invalid shift for arithmetic instruction\n");
             exit(1);
         case NONE:
-            shift = 0;
-            operand = 0;
+            shift = NO_SHIFT;
+            operand = NO_SHIFT;
             break;
         default:
             printf("Error operand");
@@ -58,9 +58,9 @@ static uint32_t build_dp_reg_arithmetic(Instruction* instr) {
     }
 
     // opr - bits 21-24
-    uint32_t opr = 8 + (shift << 1);
+    uint32_t opr = ARITH_OPR;
 
-    return (sf << 31) | (opc << 29) | (5 << 25) | (opr << 21) | (rm << 16) | (operand << 10) | (rn << 5) | rd;
+    return (sf << SF_SHIFT) | (opc << OPC_SHIFT) | ARITH_MIDDLE_BITS | (opr << OPR_SHIFT) | (rm << RM_SHIFT) | (operand << OPERAND_SHIFT) | (rn << RN_SHIFT) | rd;
 }
 
 static uint32_t build_dp_reg_logical(Instruction* instr) {
@@ -68,29 +68,29 @@ static uint32_t build_dp_reg_logical(Instruction* instr) {
     uint32_t opc, N;
     char* op = instr->operation;
     if (strcmp(op, "and") == 0) {
-        opc = 0;
-        N = 0;
+        opc = OPC_AND;
+        N = N_AND;
     } else if (strcmp(op, "bic") == 0) {
-        opc = 0;
-        N = 1;
+        opc = OPC_BIC;
+        N = N_BIC;
     } else if (strcmp(op, "orr") == 0) {
-        opc = 1;
-        N = 0;
+        opc = OPC_ORR;
+        N = N_ORR;
     } else if (strcmp(op, "orn") == 0) {
-        opc = 1;
-        N = 1;
+        opc = OPC_ORN;
+        N = N_ORN;
     } else if (strcmp(op, "eor") == 0) {
-        opc = 2;
-        N = 0;
+        opc = OPC_EOR;
+        N = N_EOR;
     } else if (strcmp(op, "eon") == 0) {
-        opc = 2;
-        N = 1;
+        opc = OPC_EON;
+        N = N_EON;
     } else if (strcmp(op, "ands") == 0) {
-        opc = 3;
-        N = 0;
+        opc = OPC_ANDS;
+        N = N_ANDS;
     } else if (strcmp(op, "bics") == 0) {
-        opc = 3;
-        N = 1;
+        opc = OPC_BICS;
+        N = N_BICS;
     } else {
         printf("Invalid operation for logical instruction\n");
         exit(1);
@@ -118,20 +118,20 @@ static uint32_t build_dp_reg_logical(Instruction* instr) {
     uint32_t shift;
     switch (instr->o4_type) {
         case LSL:
-            shift = 0;
+            shift = SHIFT_LSL;
             break;
         case LSR:
-            shift = 1;
+            shift = SHIFT_LSR;
             break;
         case ASR:
-            shift = 2;
+            shift = SHIFT_ASR;
             break;
         case ROR:
-            shift = 3;
+            shift = SHIFT_ROR;
             break;
         case NONE:
-            shift = 0;
-            operand = 0;
+            shift = NO_SHIFT;
+            operand = NO_SHIFT;
             break;
         default:
             printf("Error operand");
@@ -139,9 +139,9 @@ static uint32_t build_dp_reg_logical(Instruction* instr) {
     }
 
     // opr - bits 21-24
-    uint32_t opr = (shift << 1) + N;
+    uint32_t opr = LOGICAL_OPR;
 
-    return (sf << 31) | (opc << 29) | (5 << 25) | (opr << 21) | (rm << 16) | (operand << 10) | (rn << 5) | rd;
+    return (sf << SF_SHIFT) | (opc << OPC_SHIFT) | LOGICAL_MIDDLE_BITS | (opr << OPR_SHIFT) | (rm << RM_SHIFT) | (operand << OPERAND_SHIFT) | (rn << RN_SHIFT) | rd;
 }
 
 static uint32_t build_dp_reg_multiply(Instruction* instr) {
@@ -167,7 +167,7 @@ static uint32_t build_dp_reg_multiply(Instruction* instr) {
     // x - bit 15
     uint32_t x = strcmp(instr->operation, "msub") == 0;
 
-    return (sf << 31) | (216 << 21) | (rm << 16) | (x << 15) | (ra << 10) | (rn << 5) | rd;
+    return (sf << SF_SHIFT) | MULTIPLY_MIDDLE_BITS | (rm << RM_SHIFT) | (x << X_SHIFT) | (ra << RA_SHIFT) | (rn << RN_SHIFT) | rd;
 }
 
 uint32_t build_dp_reg(Instruction* instr) {

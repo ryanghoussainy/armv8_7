@@ -7,7 +7,7 @@ uint64_t string_to_int(char* str) {
         return atoi(str);
     } else if (strncmp(str, "0x", 2) == 0) {
         // hexadecimal
-        return strtol(str, NULL, 16);
+        return strtol(str, NULL, HEX_SIZE);
     } else {
         return atoi(str);
     }
@@ -173,7 +173,7 @@ bool is_register(char* str) {
     } else if(str[0] != 'w' && str[0] != 'x') {
         return false;
     } 
-    return atoi(str + 1) >= 0 && atoi(str + 1) < 31;
+    return atoi(str + 1) >= 0 && atoi(str + 1) < ZR;
 }
 
 
