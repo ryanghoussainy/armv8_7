@@ -172,20 +172,21 @@ bool is_register(char* str) {
         return false;
     } else if(str[0] != 'w' && str[0] != 'x') {
         return false;
-    } 
-    return atoi(str + 1) >= 0 && atoi(str + 1) < ZR;
+    }
+    int reg_no = atoi(str + 1);
+    return reg_no >= 0 && reg_no < ZR;
 }
 
 
 enum OPERAND_TYPE classify_operand(char* operand) {
     // classify the different types of operands
-
+    enum OPERAND_TYPE type = extract_shift_type(operand);
     if (operand[0] == '#') {
         return LITERAL;
     } else if(is_register(operand)) {
         return REGISTER;
-    } else if (extract_shift_type(operand) != NONE) {
-        return extract_shift_type(operand);
+    } else if (type != NONE) {
+        return type;
     } else {
         return ADDRESS;
     }
