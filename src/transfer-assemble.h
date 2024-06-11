@@ -5,7 +5,7 @@
 #include "parse-asm.h"
 #include "instr-utils.h"
 
-#define SF_SHIFT 30
+#define TRANSFER_SF_SHIFT 30
 #define LL_CONSTANT 24
 #define LL_CONSTANT_SHIFT 24
 #define SIMM19_SHIFT 5
