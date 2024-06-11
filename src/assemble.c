@@ -16,7 +16,7 @@ static size_t pass_one(char* instructions[], Entry* map, size_t size) {
       if (add_entry(map, ins, line - count) == 0) {
         // error handling
         free(ins);
-        return 0;
+        exit(1);
       }
       count++;
     }

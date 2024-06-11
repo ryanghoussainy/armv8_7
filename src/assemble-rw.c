@@ -7,7 +7,8 @@ size_t read_asm(char* path, char*** all_lines) {
     fptr = fopen(path, "r");
     if (fptr == NULL) {
         printf("Failed to open file");
-        return -1;
+        fclose(fptr);
+        exit(1);
     }
 
     // set to 100 characters per line

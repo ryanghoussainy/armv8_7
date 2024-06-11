@@ -8,9 +8,7 @@ uint64_t val2 = string_to_int("26"); // val2 = 26
 Converts a string to an integer, handling both decimal and hexadecimal.
 */
 uint64_t string_to_int(char* str) {
-    if (strlen(str) == 1) {
-        return atoi(str);
-    } else if (strncmp(str, "0x", 2) == 0) {
+    if (strncmp(str, "0x", 2) == 0) {
         // hexadecimal
         return strtol(str, NULL, HEX_SIZE);
     } else {
@@ -102,7 +100,7 @@ char** split_string(char str[], const char* sep, size_t* word_count) {
 
     token = strtok(str, sep);
     assert(token != NULL);
-    
+
     while (token != NULL) {
         words = realloc(words, sizeof(char*) * (*word_count + 1));
         assert(words != NULL);
@@ -174,7 +172,8 @@ int extract_shift_bits(char* str) {
 
     if (word_count != 2) {
         // error
-        return -1;
+        printf("Invalid shift string: %s\n", str);
+        exit(1);
     }
     return result;
 }
@@ -247,9 +246,9 @@ Checks if a string is a valid register.
 */
 bool is_register(char* str) {
     size_t len = strlen(str);
-    if (len != 2 && len != 3) {
+    if (len != 2 && len != 3) { // 2 or 3 characters for register name
         return false;
-    } else if(str[0] != 'w' && str[0] != 'x') {
+    } else if(str[0] != 'w' && str[0] != 'x') { // first character must be w or x
         return false;
     }
     int reg_no = atoi(str + 1);
@@ -282,9 +281,7 @@ type = convert_address_to_literal(type); // type = LITERAL
 Converts an address to a literal.
 */
 enum OPERAND_TYPE convert_address_to_literal(enum OPERAND_TYPE type) {
-    if (type == ADDRESS) {
-        return LITERAL;
-    } else return type;
+    return type == ADDRESS ? LITERAL : type;
 }
 
 /*
@@ -315,8 +312,8 @@ static union Operand build_operand(char* str, Entry* map, uint64_t address, int 
             new_operand.number = string_to_int(str + 5);
             break;
         case NONE:
-            // error, should not have been called
-            break;      
+            printf("Invalid operand: %s\n", str);
+            exit(1);      
     }
     return new_operand;
 }
@@ -540,18 +537,11 @@ Instruction build_instruction(char* str, Entry* map, uint64_t address) {
                 new_ins.o1_type = convert_address_to_literal(classify_operand((operands[0])));
                 new_ins.o1 = build_operand(operands[0], map, address, is_offset);
                 break;
-            default:
-
-                // TODO: free the 2D arrays
-                free_2d_array(ins, word_count);
-                free_2d_array(operands, operand_count);
-                return new_ins;
         }
 
         handle_aliases(&new_ins);
     }
 
-    // TODO: free the 2D arrays
     free_2d_array(ins, word_count);
     free_2d_array(operands, operand_count);
 
@@ -583,7 +573,8 @@ static char* print_operand_type(enum OPERAND_TYPE op_type) {
         case NONE:
             return "NONE";
         default:
-            return "";
+            printf("Invalid operand type: %d\n", op_type);
+            exit(1);
     }
 }
 
