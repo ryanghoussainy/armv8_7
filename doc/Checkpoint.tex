@@ -1,25 +1,95 @@
-\documentclass[11pt]{article}
+\documentclass[a4paper, 10pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[tt=false]{libertine}
+\usepackage[scaled=0.8, lining]{FiraMono}
+\usepackage{minted}
+\usepackage[T1]{fontenc}
 
-\usepackage{fullpage}
+\usemintedstyle{xcode}
+\newmintinline[clang]{c}{fontsize=\normalsize,breaklines}
+
+\title{C Project - Part I Report}
+\author{Ashwin, Alexander, Andy, Ryan Ghoussainy}
 
 \begin{document}
-
-\title{ARM Checkpoint... }
-\author{TODO}
+\date{}
 
 \maketitle
 
 \section{Group Organisation}
 
-To efficiently develop the emulator, our team thought it was best to split responsibilites based on instruction types. This would allow for parallel progress since each instruction type could be implemented independently of each other, thus also minimising the risks of merge conflicts in the repository.   
+To efficiently develop the emulator, our team thought it was best to split responsibilities as detailed below:
+\subsection{Responsibilities}
 
-\section{Implementation Strategies}
+\paragraph{CPU structure - Ashwin} Implement the CPU struct and functions to read/write from its memory and registers.
+\paragraph{Binary file loader - Ryan} Implement a binary file loader to load the set of instructions into memory.
+\paragraph{Data processing instructions (register) - Ryan} Implement instructions that perform arithmetic, logical, and multiply operations using registers.
+\paragraph{Data processing instructions (immediate) - Ashwin} Implement instructions that perform arithmetic and logical operations with immediate values.
+\paragraph{Load/Store instructions - Andy} Implement instructions for loading data from and storing data to memory.
+\paragraph{Branch instructions - Alexander} Implement control flow instructions including conditional and unconditional branches.
+\paragraph{Debugging - Alexander, Ryan \& Ashwin} Figure out and fix errors in the final code.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+\subsection{Coordination}
 
+Given that each responsibility was independent of the others, minimal coordination was required during the development phase. Each team member focused on their specific instruction type without needing frequent synchronisation with others.
+
+Once everyone had pushed their code to the repository, we undertook a comprehensive review of each other's work. This review process had two main goals:
+\begin{itemize}
+    \item \textbf{Ensuring Uniformity in Code Style:} We checked for consistent coding standards across the project to maintain a uniform code style, making the code base easier to understand and maintain.
+    \item \textbf{Identifying Overlaps and Redundancies:} We looked for any overlaps in functionality and repeated patterns of code. Identifying these allowed us to refactor the code by separating out repeated patterns into their own modules.
+\end{itemize}
+
+
+By modularising repeated patterns, we significantly improved the cleanliness and readability of the code base. This modular approach not only reduced redundancy but also enhanced maintainability, making the emulator more robust and easier to extend in the future.
+
+Additionally, each team member communicated the general workings of their contributions to the rest of the team. This was crucial for understanding what errors were occurring and how to fix them without the need to directly consult the person who wrote a particular section of code. This therefore allowed for faster debugging and more efficient problem-solving.
+
+
+\section{Group Evaluation} We believe that we have been efficient in our approach to this project, splitting up work evenly and not wasting time. Our easy and regular communication makes understanding each other's parts infinitely easier.
+
+For Part II, Andy has taken the lead in structuring the Assembler, while the other group members were working on debugging the Emulator. We are currently taking a similar approach to Part I, through initially independent work, followed by reconvening to merge our work into one.
+
+As for Parts III and IV, we understand that it will become necessary to work in person and will very likely spend most of our time in the labs.
+
+\section{The Emulator}
+\subsection{Structure}
+The struct that we used to represent the CPU is shown below:
+\begin{minted}{c}
+    typedef struct { uint8_t memory[2097152]; uint64_t registers[31]; uint64_t PC, ZR;
+    PSTATE_flags PSTATE; } CPU;
+    
+    typedef struct { int N, Z, C, V; } PSTATE_flags;
+
+    enum PSTATE_flag { N, Z, C, V };
+\end{minted}
+During the execute cycle, the function \clang{execute_instruction(CPU* cpu, uint32_t instruction)} is called for each instruction. This function determines the instruction type and calls the corresponding handler function to execute the instruction or halt the program.
+
+These corresponding functions break up the instruction into its relevant components and store them in a struct. For example, for DP Immediate instructions, the component struct is as below:
+\begin{minted}{c}
+    typedef struct { uint64_t sf, opc, opi, rd, sh, imm12, rn, hw, imm16; } DPImmComponents;
+\end{minted}
+The specific operation is determined using this struct, and the corresponding function is called, taking in a pointer to the CPU and the components struct. For example, for wide moves:
+\begin{minted}{c}
+    static int do_wide_move(CPU* cpu, DPImmComponents* components);
+\end{minted}
+
+\subsection{Reuse For Assembler}
+
+As of our current assessment, some utility functions that were written for the emulator would most likely be used in assembler. These prominent functions, placed in a separate module \texttt{instr-utils}, contribute towards a modular approach, making the project neater. They are as follows:
+
+\begin{minted}{c}
+    uint64_t build_mask(int start_bit, int end_bit);
+    uint32_t parse_ins(uint32_t instr, int start, int end);
+    uint64_t sign_extend(uint32_t num, int num_bits);
+\end{minted}
+
+\section{Future Implementation Tasks}
+
+We are now currently working on Part II and are starting to encounter some challenges.
+
+Tokenising the assembly source file could present challenges in distinguishing between similar tokens (e.g., register and immediate hexadecimal values). This should also ideally be done in a clean and readable manner. Also, the function \clang{strtok} from \clang{<string.h>} modifies the original string, so creating a copy will be necessary.
+
+Symbol table management could present a challenge for storing and accessing information efficiently, while also preventing excessive memory usage. This would require research and exploration of possible data structures in order to decide which one best suits our needs.
+
+Finally, instruction encoding could present challenges -- for example in addressing modes, ensuring values fit in their allowed ranges and instructions that have variable lengths or different encodings based on certain operands. This would involve thorough validation checks and modularisation.
 \end{document}
