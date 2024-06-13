@@ -11,29 +11,29 @@ orr w1, w0, w2
 
 movz w4, #0xffff
 movz w6, #0
-movz w5, #10000
-
-on:
-    str w6, [w1]
-    str w4, [w0]
-    sub w5, w5, #1
-    cmp w5, #0
-    b.eq onToOff
-    b on
+movz w5, #0xffff, lsl #16
 
 off:
     str w6, [w0]
     str w4, [w1]
-    sub w5, w5, #1
+    sub w5, w5, #0x1
     cmp w5, #0
-    b.eq offToOn
+    b.le offToOn
     b off
 
+on:
+    str w4, [w0]
+    str w6, [w1]
+    sub w5, w5, #0x1
+    cmp w5, #0
+    b.le onToOff
+    b on
+
 onToOff:
-    movz w5, #10000
+    movz w5, #0xffff, lsl #16
     b off
 
 offToOn:
-    movz w5, #10000
+    movz w5, #0xffff, lsl #16
     b on
 
