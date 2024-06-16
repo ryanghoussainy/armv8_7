@@ -1,3 +1,9 @@
 #include "files.h"
 
-// Will include functions to do with files / directories
+void free_file(File* file) {
+    assert(file != NULL);
+
+    free(file->name);
+    free(file->content);
+    free(file);
+}

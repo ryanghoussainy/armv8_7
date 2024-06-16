@@ -1,10 +1,11 @@
 #pragma once
-#include "files.h"
+#include <stdlib.h>
+#include <assert.h>
 
 
 struct File;
 
 typedef struct {
     struct File* file;
-    struct FileList* next;
+    FileList* next;
 } FileList;

@@ -1,12 +1,14 @@
 #pragma once
-#include "file-list.h"
+#include <stdlib.h>
+#include <assert.h>
 
 
 struct FileList;
 
 typedef struct {
     char* name;
-    struct FileList* files;
+    char* content;
+    int size;
 } File;
 
 typedef struct {
