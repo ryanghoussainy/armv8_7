@@ -1,8 +1,8 @@
 #pragma once
 #include <stdlib.h>
 #include <assert.h>
+#include "linked-list.h"
 
-struct LinkedList;
 
 typedef struct
 {
@@ -16,8 +16,8 @@ typedef struct
 typedef struct
 {
     char *name;
-    File *files;
-    struct Directory *directories;
+    LinkedList* files;
+    LinkedList* directories;
     char *path;
     int path_size;
 } Directory;

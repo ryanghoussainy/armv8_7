@@ -50,7 +50,7 @@ int remove_elem(LinkedList* list, void* elem) {
             else {
                 previous->next = current->next;
             }
-            free_elem(current->elem);
+            current->free_elem(current->elem);
             free(current);
 
             return 1;
@@ -58,13 +58,14 @@ int remove_elem(LinkedList* list, void* elem) {
         previous = current;
         current = current->next;
     }
+    return 0;
 }
 
 void free_linked_list(LinkedList* list) {
     assert(list != NULL);
     assert(list->free_elem != NULL);
 
-    free_elem(list->elem);
+    list->free_elem(list->elem);
     if (list->next != NULL) free_linked_list(list->next);
     free(list);
 }

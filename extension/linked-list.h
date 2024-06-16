@@ -3,12 +3,12 @@
 #include <assert.h>
 
 
-struct File;
-
 typedef void (*FreeFunc)(void*);
 
-typedef struct {
+struct LinkedList {
     void* elem;
-    LinkedList* next;
+    struct LinkedList* next;
     FreeFunc free_elem;
-} LinkedList;
+};
+
+typedef struct LinkedList LinkedList;
