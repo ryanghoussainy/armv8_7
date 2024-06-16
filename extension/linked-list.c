@@ -12,6 +12,13 @@ LinkedList* create_linked_list(FreeFunc free_elem) {
     return result;
 }
 
+/*
+File file;
+LinkedList* list;
+add_elem(list, file);
+
+Adds an element to the end of the linked list.
+*/
 void add_elem(LinkedList* list, void* elem) {
     assert(list != NULL);
 
@@ -31,6 +38,11 @@ void add_elem(LinkedList* list, void* elem) {
 }
 
 /*
+File file;
+LinkedList* list;
+if (!remove_elem(list, file)) {
+    // Element not in list - throw error?
+}
 
 Returns 1 for success, 0 for failure.
 */
