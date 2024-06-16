@@ -1,31 +1,31 @@
-#include "file-list.h"
+#include "linked-list.h"
 
 
-FileList* create_file_list(void) {
-    FileList* result = malloc(sizeof(FileList));
+LinkedList* create_linked_list(void) {
+    LinkedList* result = malloc(sizeof(LinkedList));
     assert(result != NULL);
 
-    result->file = NULL;
+    result->elem = NULL;
     result->next = NULL;
 
     return result;
 }
 
-void add_file(FileList* list, struct File* file) {
+void add_elem(LinkedList* list, void* elem) {
     assert(list != NULL);
 
-    FileList* current = list;
+    LinkedList* current = list;
 
     // Go to end of list
     while (current->next != NULL) {
         current = current->next;
     }
 
-    // Add new file
-    current->next = malloc(sizeof(FileList));
+    // Add new element
+    current->next = malloc(sizeof(LinkedList));
     assert(current->next != NULL);
 
-    current->next->file = file;
+    current->next->elem = elem;
     current->next->next = NULL;
 }
 
@@ -33,15 +33,15 @@ void add_file(FileList* list, struct File* file) {
 
 Returns 1 for success, 0 for failure.
 */
-int remove_file(FileList* list, struct File* file) {
+int remove_elem(LinkedList* list, void* elem) {
     assert(list != NULL);
 
-    FileList* current = list;
-    FileList* previous = NULL;
+    LinkedList* current = list;
+    LinkedList* previous = NULL;
 
     while (current != NULL) {
-        if (current->file == file) {
-            // File found
+        if (current->elem == elem) {
+            // Element found
             if (previous == NULL) {
                 // Removing first element
                 list = current->next;
@@ -49,7 +49,7 @@ int remove_file(FileList* list, struct File* file) {
             else {
                 previous->next = current->next;
             }
-            free_file(current->file);
+            free_elem(current->elem);
             free(current);
 
             return 1;
@@ -59,10 +59,11 @@ int remove_file(FileList* list, struct File* file) {
     }
 }
 
-void free_file_list(FileList* list) {
+void free_linked_list(LinkedList* list) {
     assert(list != NULL);
+    assert(list->free_elem != NULL);
 
-    free_file(list->file);
-    if (list->next != NULL) free_file_list(list->next);
+    free_elem(list->elem);
+    if (list->next != NULL) free_linked_list(list->next);
     free(list);
 }
