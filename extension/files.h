@@ -2,13 +2,15 @@
 #include "file-list.h"
 
 
+struct FileList;
+
 typedef struct {
     char* name;
-    FileList* files;
+    struct FileList* files;
 } File;
 
 typedef struct {
     char* name;
     File* files;
-    Directory* directories;
+    struct Directory* directories;
 } Directory;

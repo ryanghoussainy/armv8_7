@@ -2,7 +2,9 @@
 #include "files.h"
 
 
+struct File;
+
 typedef struct {
-    File* file;
-    FileList* next;
+    struct File* file;
+    struct FileList* next;
 } FileList;
