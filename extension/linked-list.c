@@ -1,12 +1,13 @@
 #include "linked-list.h"
 
 
-LinkedList* create_linked_list(void) {
+LinkedList* create_linked_list(FreeFunc free_elem) {
     LinkedList* result = malloc(sizeof(LinkedList));
     assert(result != NULL);
 
     result->elem = NULL;
     result->next = NULL;
+    result->free_elem = free_elem;
 
     return result;
 }
