@@ -7,6 +7,7 @@
 typedef struct
 {
     char *name;
+    char name_size;
     char *content;
     int size;
     char *path;
@@ -16,6 +17,7 @@ typedef struct
 typedef struct
 {
     char *name;
+    char name_size;
     LinkedList* files;
     LinkedList* directories;
     char *path;
