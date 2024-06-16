@@ -29,6 +29,36 @@ void add_file(FileList* list, struct File* file) {
     current->next->next = NULL;
 }
 
+/*
+
+Returns 1 for success, 0 for failure.
+*/
+int remove_file(FileList* list, struct File* file) {
+    assert(list != NULL);
+
+    FileList* current = list;
+    FileList* previous = NULL;
+
+    while (current != NULL) {
+        if (current->file == file) {
+            // File found
+            if (previous == NULL) {
+                // Removing first element
+                list = current->next;
+            }
+            else {
+                previous->next = current->next;
+            }
+            free_file(current->file);
+            free(current);
+
+            return 1;
+        }
+        previous = current;
+        current = current->next;
+    }
+}
+
 void free_file_list(FileList* list) {
     assert(list != NULL);
 
