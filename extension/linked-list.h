@@ -21,3 +21,6 @@ struct LinkedList {
     FreeFunc free_elem;
 };
 typedef struct LinkedList LinkedList;
+
+LinkedList* create_linked_list(FreeFunc free_elem);
+void add_elem(LinkedList* list, void* elem);
