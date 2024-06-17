@@ -15,6 +15,21 @@ char *get_file_path(const char* dir, const char* name)
     return result;
 }
 
+/*
+Returns the path of the parent directory of the given path.
+Assumes that the path is not the root, i.e. that it has a parent.
+*/
+char* previous_directory_path(char* path) {
+    assert(path != NULL);
+
+    char* last_slash = strrchr(path, '/');
+
+    char* result = malloc(last_slash - path + 1);  // last_slash - path gives the number of elems between them
+    strncpy(result, path, last_slash - path);
+    result[last_slash - path] = '\0';
+    return result;
+}
+
 
 ELEMENT_TYPE identify_type(void* item) {
     if (sizeof(item) == sizeof(File)) {
@@ -36,6 +51,8 @@ File* create_file(Directory* dir, char* name) {
     new_file->content = NULL;
 
     new_file->path = get_file_path(dir->path, name);
+
+    new_file->parent = dir;
 
     add_elem(dir->files, new_file);
 
@@ -69,20 +86,6 @@ void file_write(File* file, char* content, bool append) {
     }
 }
 
-void dir_add_file(Directory* dir, File* file) {
-    assert(dir != NULL);
-    assert(file != NULL);
-
-    add_elem(dir->files, file);
-}
-
-void dir_add_directory(Directory* dir, Directory* new_dir) {
-    assert(dir != NULL);
-    assert(new_dir != NULL);
-
-    add_elem(dir->directories, new_dir);
-}
-
 /*
 Returns 1 for success, 0 for failure.
 */
@@ -101,6 +104,44 @@ int dir_remove_directory(Directory* dir, Directory* rm_dir) {
     assert(rm_dir != NULL);
 
     return remove_elem(dir->directories, rm_dir);
+}
+
+/*
+Returns the file with the given name inside of a given directory, or NULL if not found.
+*/
+File* dir_find_file(Directory* dir, char* name) {
+    assert(dir != NULL);
+    assert(name != NULL);
+
+    // Loop through files to get the file with the given name
+    Node* current_node = dir->files->head;
+    while (current_node != NULL) {
+        File* current_file = (File*)current_node->elem;
+        if (strcmp(current_file->name, name) == 0) {
+            return current_file;
+        }
+        current_node = current_node->next;
+    }
+    return NULL;
+}
+
+/*
+Returns the directory with the given name inside of a given directory, or NULL if not found.
+*/
+Directory* dir_find_directory(Directory* dir, char* name) {
+    assert(dir != NULL);
+    assert(name != NULL);
+
+    // Loop through directories to get the directory with the given name
+    Node* current_node = dir->directories->head;
+    while (current_node != NULL) {
+        Directory* current_dir = (Directory*)current_node->elem;
+        if (strcmp(current_dir->name, name) == 0) {
+            return current_dir;
+        }
+        current_node = current_node->next;
+    }
+    return NULL;
 }
 
 void free_file(File* file) {
