@@ -32,10 +32,10 @@ ELEMENT_TYPE identify_type(void* item) {
 File* create_file(Directory* dir, char* name) {
     File* new_file = malloc(sizeof(File));
     new_file->name = strdup(name);    
-    // TODO: namesize?? Why is it a char
+
+    new_file->content = NULL;
 
     new_file->path = get_file_path(dir->path, name);
-    // TODO: path size?
 
     add_elem(dir->files, new_file);
 
@@ -47,13 +47,11 @@ File* create_file(Directory* dir, char* name) {
 Directory* create_dir(Directory* dir, char* name) {
     Directory* new_dir = malloc(sizeof(Directory));
     new_dir->name = strdup(name);
-    // TODO: namesize?? Why is it a char
 
     new_dir->files = create_linked_list((FreeFunc)&free_file);
     new_dir->directories = create_linked_list((FreeFunc)&free_dir);
 
     new_dir->path = get_file_path(dir->path, name);
-    // TODO: path size?
 
     add_elem(dir->directories, new_dir);
 
