@@ -13,22 +13,24 @@ typedef enum ELEMENT_TYPE {
     SDIRECTORY,
 } ELEMENT_TYPE;
 
-typedef struct
-{
+struct File{
     char *name;
     char *content;
     char *path;
-    Directory *parent;
-} File;
+    struct Directory *parent;
+};
 
-typedef struct
-{
+typedef struct File File;
+
+struct Directory {
     char *name;
     LinkedList* files;
     LinkedList* directories;
     char *path;
-    Directory *parent;
-} Directory;
+    struct Directory *parent;
+};
+
+typedef struct Directory Directory;
 
 char* get_file_path(const char* dir, const char* name);
 ELEMENT_TYPE identify_type(void* item);
