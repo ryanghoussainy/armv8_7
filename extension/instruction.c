@@ -46,6 +46,10 @@ enum Operation parse_to_operation(char* operation) {
         return MAN;
     } else if (strcmp(operation, "cd") == 0){
         return CD;
+    } else if (strcmp(operation, "touch") == 0) {
+        return TOUCH;
+    } else if (strcmp(operation, "mkdir") == 0) {
+        return MKDIR;
     } else {
         return NONE;
     }

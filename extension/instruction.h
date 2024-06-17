@@ -10,7 +10,9 @@ enum Operation {
     NONE,
     LS,
     MAN,
-    CD
+    CD,
+    TOUCH,
+    MKDIR
     // Add more as the number of instructions increase
 };
 
