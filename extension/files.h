@@ -13,26 +13,34 @@ typedef enum ELEMENT_TYPE {
     SDIRECTORY,
 } ELEMENT_TYPE;
 
-typedef struct
-{
+struct File{
     char *name;
     char *content;
     char *path;
-} File;
+    struct Directory *parent;
+};
 
-typedef struct
-{
+typedef struct File File;
+
+struct Directory {
     char *name;
     LinkedList* files;
     LinkedList* directories;
     char *path;
-} Directory;
+    struct Directory *parent;
+};
+
+typedef struct Directory Directory;
 
 char* get_file_path(const char* dir, const char* name);
+char* previous_directory_path(char* path);
 ELEMENT_TYPE identify_type(void* item);
 File* create_file(Directory* dir, char* name);
 Directory* create_dir(Directory* dir, char* name);
-void dir_add_file(Directory* dir, File* file);
-int remove_elem(LinkedList* list, void* elem);
+void file_write(File* file, char* content, bool append);
+int dir_remove_file(Directory* dir, File* file);
+int dir_remove_directory(Directory* dir, Directory* rm_dir);
+File* dir_find_file(Directory* dir, char* name);
+Directory* dir_find_directory(Directory* dir, char* name);
 void free_file(File* file);
 void free_dir(Directory* dir);

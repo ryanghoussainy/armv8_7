@@ -1,7 +1,7 @@
 #pragma once
 
-#include "shell.h"
 #include <stdio.h> 
-#include <dirent.h> 
+#include "../shell.h"
+#include "../files.h"
 
 void ls(Shell* shell);

@@ -1,5 +1,5 @@
 #include "linked-list.h"
-
+#include <stdio.h>
 
 LinkedList* create_linked_list(FreeFunc free_elem) {
     LinkedList* linked_list = malloc(sizeof(LinkedList));
@@ -21,14 +21,18 @@ add_elem(list, file);
 Adds an element to the end of the linked list.
 */
 void add_elem(LinkedList* list, void* elem) {
-    Node new_node = { elem, NULL };
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    new_node->elem = elem;
+    new_node->next = NULL;
+
     assert(list != NULL);
+    
     if (list->head == NULL) {
-        list->head = &new_node;
+        list->head = new_node;
     } else {
-        list->tail->next = &new_node;
+        list->tail->next = new_node;
     }
-    list->tail = &new_node;
+    list->tail = new_node;
     list->size++;
 }
 

@@ -9,7 +9,7 @@ CFLAGS  ?= -std=c17 -g\
 
 all: shell
 
-shell: files.o linked-list.o shell.o ls.o instruction.o
+shell: files.o linked-list.o shell.o ls.o commands/cd.o instruction.o
 
 clean:
-	$(RM) *.o
+	$(RM) *.o shell commands/*.o
