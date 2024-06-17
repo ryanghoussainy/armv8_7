@@ -18,6 +18,7 @@ typedef struct
     char *name;
     char *content;
     char *path;
+    Directory *parent;
 } File;
 
 typedef struct
@@ -26,6 +27,7 @@ typedef struct
     LinkedList* files;
     LinkedList* directories;
     char *path;
+    Directory *parent;
 } Directory;
 
 char* get_file_path(const char* dir, const char* name);

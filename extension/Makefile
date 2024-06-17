@@ -12,4 +12,4 @@ all: shell
 shell: files.o linked-list.o shell.o ls.o
 
 clean:
-	$(RM) *.o
+	$(RM) *.o shell
