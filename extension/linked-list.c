@@ -2,14 +2,15 @@
 
 
 LinkedList* create_linked_list(FreeFunc free_elem) {
-    LinkedList* result = malloc(sizeof(LinkedList));
-    assert(result != NULL);
+    LinkedList* linked_list = malloc(sizeof(LinkedList));
+    assert(linked_list != NULL);
 
-    result->elem = NULL;
-    result->next = NULL;
-    result->free_elem = free_elem;
-
-    return result;
+    linked_list->head = NULL;
+    linked_list->tail = NULL;
+    linked_list->size = 0;
+    linked_list->free_elem = free_elem;
+    
+    return linked_list;
 }
 
 /*
@@ -20,21 +21,15 @@ add_elem(list, file);
 Adds an element to the end of the linked list.
 */
 void add_elem(LinkedList* list, void* elem) {
+    Node new_node = { elem, NULL };
     assert(list != NULL);
-
-    LinkedList* current = list;
-
-    // Go to end of list
-    while (current->next != NULL) {
-        current = current->next;
+    if (list->head == NULL) {
+        list->head = &new_node;
+    } else {
+        list->tail->next = &new_node;
     }
-
-    // Add new element
-    current->next = malloc(sizeof(LinkedList));
-    assert(current->next != NULL);
-
-    current->next->elem = elem;
-    current->next->next = NULL;
+    list->tail = &new_node;
+    list->size++;
 }
 
 /*
@@ -49,22 +44,36 @@ Returns 1 for success, 0 for failure.
 int remove_elem(LinkedList* list, void* elem) {
     assert(list != NULL);
 
-    LinkedList* current = list;
-    LinkedList* previous = NULL;
+    if (list->head == NULL) {
+        // empty list
+        return 0;
+    } else if (list->head == elem) {
+        // first element matches
+        Node* temp = list->head->next;
+        list->free_elem(elem);
+        free(list->head);
+        list->head = temp;
+        list->size--;
+        return 1;
+    }
+
+    Node* current = list->head;
+    Node* previous = NULL;
 
     while (current != NULL) {
         if (current->elem == elem) {
-            // Element found
-            if (previous == NULL) {
-                // Removing first element
-                list = current->next;
+            assert(previous != NULL);  // as case handled above
+            // element found
+            if (list->tail == elem) {
+                // last element matches
+                list->tail = previous; 
+                list->free_elem(current);
             }
-            else {
-                previous->next = current->next;
-            }
-            current->free_elem(current->elem);
+            previous->next = current->next;
+            list->free_elem(elem);
             free(current);
 
+            list->size--;
             return 1;
         }
         previous = current;
@@ -77,7 +86,12 @@ void free_linked_list(LinkedList* list) {
     assert(list != NULL);
     assert(list->free_elem != NULL);
 
-    list->free_elem(list->elem);
-    if (list->next != NULL) free_linked_list(list->next);
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* temp = current->next;
+        list->free_elem(current->elem);
+        free(current);
+        current = temp;
+    }
     free(list);
 }

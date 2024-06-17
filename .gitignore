@@ -36,3 +36,4 @@ shell
 *.bin
 
 .vscode/settings.json
+extension/.vscode/settings.json

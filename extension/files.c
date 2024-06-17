@@ -1,49 +1,64 @@
 #include "files.h"
 
-File* create_file(char* name, char* content, int size, char* path) {
-    assert(name != NULL);
-    assert(content != NULL);
-    assert(path != NULL);
 
-    File* result = malloc(sizeof(File));
+char *get_file_path(const char* dir, const char* name)
+{
+    char* name_with_slash = malloc(sizeof(strlen(name) + 2));   // +2, 1 for the slash, 1 for the null terminator
+    name_with_slash[0] = '/';
+    strcpy(name_with_slash + 1, name);
+
+    char *result = malloc(strlen(dir) + strlen(name_with_slash) + 1);  // +1 for null terminator
     assert(result != NULL);
-
-    result->name = malloc(strlen(name) + 1);
-    assert(result->name != NULL);
-    strcpy(result->name, name);
-
-    result->content = malloc(strlen(content) + 1);
-    assert(result->content != NULL);
-    strcpy(result->content, content);
-
-    result->size = size;
-
-    result->path = malloc(strlen(path) + 1);
-    assert(result->path != NULL);
-    strcpy(result->path, path);
-
+    strcpy(result, dir);
+    strcat(result, name_with_slash);
+    free(name_with_slash);
     return result;
 }
 
-Directory* create_directory(char* name, char* path) {
-    assert(name != NULL);
-    assert(path != NULL);
 
-    Directory* result = malloc(sizeof(Directory));
-    assert(result != NULL);
+ELEMENT_TYPE identify_type(void* item) {
+    if (sizeof(item) == sizeof(File)) {
+        return SFILE;
+    } else if (sizeof(item) == sizeof(Directory)) {
+        return SDIRECTORY;
+    } else {
+        // error
+        printf("%s", "neither a file or a directory");
+        exit(1);
+    }
+}
 
-    result->name = malloc(strlen(name) + 1);
-    assert(result->name != NULL);
-    strcpy(result->name, name);
 
-    result->files = create_linked_list(&free_file);
-    result->directories = create_linked_list(&free_dir);
+File* create_file(Directory* dir, char* name) {
+    File* new_file = malloc(sizeof(File));
+    new_file->name = strdup(name);    
+    // TODO: namesize?? Why is it a char
 
-    result->path = malloc(strlen(path) + 1);
-    assert(result->path != NULL);
-    strcpy(result->path, path);
+    new_file->path = get_file_path(dir->path, name);
+    // TODO: path size?
 
-    return result;
+    add_elem(dir->files, new_file);
+
+    free(name);
+    return new_file;
+}
+
+
+Directory* create_dir(Directory* dir, char* name) {
+    Directory* new_dir = malloc(sizeof(Directory));
+    new_dir->name = strdup(name);
+    // TODO: namesize?? Why is it a char
+
+    new_dir->files = create_linked_list((FreeFunc)&free_file);
+    new_dir->directories = create_linked_list((FreeFunc)&free_dir);
+
+    new_dir->path = get_file_path(dir->path, name);
+    // TODO: path size?
+
+    add_elem(dir->directories, new_dir);
+
+    free(name);
+    return new_dir;
 }
 
 void dir_add_file(Directory* dir, File* file) {
