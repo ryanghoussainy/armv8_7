@@ -6,4 +6,5 @@ typedef struct {
     Directory* root;
     Directory* current_directory;
     char* path;
+    FILE* out;
 } Shell;
