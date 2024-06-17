@@ -4,10 +4,10 @@
 #include "linked-list.h"
 
 
-enum ELEMENT_TYPE {
+typedef enum ELEMENT_TYPE {
     FILE,
     DIRECTORY,
-};
+} ELEMENT_TYPE;
 
 typedef struct
 {
@@ -23,8 +23,8 @@ typedef struct
 {
     char *name;
     char name_size;
-    Node* files;
-    Node* directories;
+    LinkedList* files;
+    LinkedList* directories;
     char *path;
     int path_size;
 } Directory;
