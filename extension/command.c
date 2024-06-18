@@ -110,11 +110,10 @@ Command parse_to_command(char* command) {
         int start_pointer = has_options ? 2 : 1;
         arguments = malloc(sizeof(char*) * argument_count);
         assert(arguments != NULL);
-
-        for (int i = start_pointer; i < word_count; i++) {
-            arguments[i] = malloc(strlen(split_command[i]) + 1);
+        for (int i = 0; i < word_count - start_pointer; i++) {
+            arguments[i] = malloc(strlen(split_command[i + start_pointer]) + 1);
             assert(arguments[i] != NULL);
-            arguments[i] = split_command[i];
+            arguments[i] = split_command[i + start_pointer];
         }
     }
 
@@ -136,6 +135,7 @@ free_command(cmd);
 
 Frees the memory of an Command struct
 */
+<<<<<<< HEAD:extension/command.c
 int free_command(Command* command) {
     free(command->options);
     for (int i = 0; i < command->argument_count; i++) {
@@ -143,5 +143,28 @@ int free_command(Command* command) {
     }
     free(command->arguments);
     free(command->manual);
+=======
+int free_instruction(Instruction* instruction) {
+    free(instruction);
+>>>>>>> 366a6afb13e4967a632ce3ea9168db0f9675481f:extension/instruction.c
     return 1;
 }
+
+void output_instruction(Instruction* instruction) {
+    printf("options: %s\n", instruction->options);
+    printf("arguments: ");
+    for (int i = 0; i < instruction->argument_count; i++) {
+        printf(" %s ", instruction->arguments[i]);
+    }
+    printf("\nmanual: %s\n", instruction->manual);
+}
+
+/*
+int main(int argc, char **argv) {
+    char* instruction_string = malloc(20);
+    strcpy(instruction_string, "ls -l arg1 arg2");
+    Instruction* instruction = malloc(sizeof(Instruction));
+    *instruction = parse_to_instruction(instruction_string);
+    free_instruction(instruction);
+}
+*/
