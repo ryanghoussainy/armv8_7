@@ -51,7 +51,7 @@ int remove_elem(LinkedList* list, void* elem) {
     if (list->head == NULL) {
         // empty list
         return 0;
-    } else if (list->head == elem) {
+    } else if (list->head->elem == elem) {
         // first element matches
         Node* temp = list->head->next;
         list->free_elem(elem);

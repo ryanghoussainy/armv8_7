@@ -3,6 +3,7 @@
 #include "commands/cd.h"
 #include "commands/pwd.h"
 #include "commands/rmdir.h"
+#include "commands/rm.h"
 
 void initialise_shell(Shell* shell, FILE* out) {
     Directory* root = malloc(sizeof(Directory));
@@ -38,7 +39,7 @@ int main(void) {
     create_file(test3, "file3");
     
     ls(&shell);
-    rmdir(&shell, "test2");
+    rm(&shell, "file1");
     ls(&shell);
 
     return 0;
