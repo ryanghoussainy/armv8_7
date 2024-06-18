@@ -1,4 +1,4 @@
-#include "instruction.h"
+#include "command.h"
 
 /*
 size_t word_count;
@@ -73,15 +73,15 @@ char* get_manual(enum Operation op) {
 }
 
 /*
-char* instruction = malloc(50);
-assert(instruction != NULL);
-strcpy(instruction, "ls -l");
-Instruction instr = parse_to_instruction(instruction);
+char* command = malloc(50);
+assert(command != NULL);
+strcpy(command, "ls -l");
+Command cmd = parse_to_command(command);
 
-Parses a string input (assuming it is well formed) to a useable Instruction type equivalent
+Parses a string input (assuming it is well formed) to a useable Command type equivalent
 */
-Instruction parse_to_instruction(char* instruction) {
-    Instruction ins;
+Command parse_to_command(char* command) {
+    Command cmd;
     size_t word_count;
 
     enum Operation operation;
@@ -91,17 +91,17 @@ Instruction parse_to_instruction(char* instruction) {
     char* manual;
 
     bool has_options = false;
-    char** split_instruction = split_string(instruction, " ", &word_count);
+    char** split_command = split_string(command, " ", &word_count);
 
     if (word_count >= 1) {
-        operation = parse_to_operation(split_instruction[0]);
+        operation = parse_to_operation(split_command[0]);
         manual = get_manual(operation);
     }
 
-    if (word_count >= 2 && strcmp((char[2]) {split_instruction[1][0], '\0'}, "-") == 0) {
-        options = malloc(strlen(split_instruction[1] - 1));
+    if (word_count >= 2 && strcmp((char[2]) {split_command[1][0], '\0'}, "-") == 0) {
+        options = malloc(strlen(split_command[1] - 1));
         assert(options != NULL);
-        options = split_instruction[1] + 1;
+        options = split_command[1] + 1;
         has_options = true;
     }
 
@@ -112,36 +112,36 @@ Instruction parse_to_instruction(char* instruction) {
         assert(arguments != NULL);
 
         for (int i = start_pointer; i < word_count; i++) {
-            arguments[i] = malloc(strlen(split_instruction[i]) + 1);
+            arguments[i] = malloc(strlen(split_command[i]) + 1);
             assert(arguments[i] != NULL);
-            arguments[i] = split_instruction[i];
+            arguments[i] = split_command[i];
         }
     }
 
-    ins.operation = operation;
-    ins.options = options;
-    ins.arguments = arguments;
-    ins.argument_count = argument_count;
-    ins.manual = manual;
+    cmd.operation = operation;
+    cmd.options = options;
+    cmd.arguments = arguments;
+    cmd.argument_count = argument_count;
+    cmd.manual = manual;
 
-    return ins;
+    return cmd;
 }
 
 /*
-char* instruction = malloc(50);
-assert(instruction != NULL);
-strcpy(instruction, "ls -l");
-Instruction instr = parse_to_instruction(instruction);
-free_instruction(instr);
+char* command = malloc(50);
+assert(command != NULL);
+strcpy(command, "ls -l");
+Command cmd = parse_to_command(command);
+free_command(cmd);
 
-Frees the memory of an Instruction struct
+Frees the memory of an Command struct
 */
-int free_instruction(Instruction* instruction) {
-    free(instruction->options);
-    for (int i = 0; i < instruction->argument_count; i++) {
-        free(instruction->arguments[i]);
+int free_command(Command* command) {
+    free(command->options);
+    for (int i = 0; i < command->argument_count; i++) {
+        free(command->arguments[i]);
     }
-    free(instruction->arguments);
-    free(instruction->manual);
+    free(command->arguments);
+    free(command->manual);
     return 1;
 }

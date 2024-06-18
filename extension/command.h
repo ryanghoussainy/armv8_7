@@ -13,7 +13,7 @@ enum Operation {
     CD,
     TOUCH,
     MKDIR
-    // Add more as the number of instructions increase
+    // Add more as the number of commands increase
 };
 
 typedef struct {
@@ -22,11 +22,11 @@ typedef struct {
     char** arguments;
     size_t argument_count;
     char* manual;
-} Instruction;
+} Command;
 
 // Format: operation -(options) argument1 argument2 ...
 
 char** split_string(char str[], const char* sep, size_t* word_count);
 enum Operation parse_to_operation(char* operation);
-Instruction parse_to_instruction(char* instruction);
-int free_instruction(Instruction* instruction);
+Command parse_to_command(char* command);
+int free_command(Command* command);
