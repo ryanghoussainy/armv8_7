@@ -37,7 +37,13 @@ int main(void) {
 
     mkdir(&shell, "test1/test3");
     mkdir(&shell, "test1/test3/../../test1/test3/test4");
+    
     touch(&shell, "test1/test3/test4/file2");
+
+
+    rm(&shell, "file1");
+    rmdir(&shell, "test2");
+    ls(&shell, "");
 
     ls(&shell, NULL);
     printf("\n");
