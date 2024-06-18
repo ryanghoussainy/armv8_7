@@ -38,11 +38,9 @@ int main(void) {
 
     create_file(test3, "file3");
     
-    cd(&shell, "test1");
-
-    ls(&shell, "..");
-
-    print_shell(&shell);
+    rm(&shell, "file1");
+    rmdir(&shell, "test2");
+    ls(&shell, "");
 
     return 0;
 }
