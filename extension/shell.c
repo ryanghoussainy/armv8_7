@@ -1,5 +1,7 @@
 #include "shell.h"
 #include "commands/ls.h"
+#include "commands/cd.h"
+#include "commands/pwd.h"
 
 void initialise_shell(Shell* shell, FILE* out) {
     Directory* root = malloc(sizeof(Directory));
@@ -28,9 +30,10 @@ int main(void) {
     create_file(test1, "file2");
 
     create_file(test3, "file3");
-
-
-    ls(&shell);
+    
+    pwd(&shell);
+    cd(&shell, "test1");
+    pwd(&shell);
 
     return 0;
 }

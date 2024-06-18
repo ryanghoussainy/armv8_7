@@ -7,6 +7,9 @@ char *get_file_path(const char* dir, const char* name)
     name_with_slash[0] = '/';
     strcpy(name_with_slash + 1, name);
 
+    if (strcmp(dir, "/") == 0)
+        return name_with_slash;
+    
     char *result = malloc(strlen(dir) + strlen(name_with_slash) + 1);  // +1 for null terminator
     assert(result != NULL);
     strcpy(result, dir);
