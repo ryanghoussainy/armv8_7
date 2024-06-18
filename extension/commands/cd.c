@@ -24,7 +24,6 @@ void cd(Shell* shell, char* path) {
         shell->current_directory = shell->root;
         shell->path = strdup("/");
     } else {              // Relative path
-        shell->current_directory = shell->current_directory;
         shell->path = strdup(shell->path);
     }
 
@@ -34,7 +33,7 @@ void cd(Shell* shell, char* path) {
                 shell->current_directory = shell->current_directory->parent;
                 shell->path = previous_directory_path(shell->path);
             } else {
-                printf("Root does not have a parent directory: %s\n", path_copy);
+                printf("Root does not have a parent directory.\n");
                 exit(1);  // Crashes if user tries to go backwards from root
             }
         } else if (strcmp(token, ".") == 0) {

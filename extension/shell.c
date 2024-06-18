@@ -37,7 +37,7 @@ int main(void) {
 
     create_file(test3, "file3");
     
-    cd(&shell, "test1/test3");
+    cd(&shell, "test1/test3/././../..");
     ls(&shell);
 
     print_shell(&shell);

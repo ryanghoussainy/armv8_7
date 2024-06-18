@@ -27,6 +27,10 @@ char* previous_directory_path(char* path) {
 
     char* last_slash = strrchr(path, '/');
 
+    if (last_slash == path) {
+        return strdup("/");
+    }
+
     char* result = malloc(last_slash - path + 1);  // last_slash - path gives the number of elems between them
     strncpy(result, path, last_slash - path);
     result[last_slash - path] = '\0';
@@ -71,6 +75,8 @@ Directory* create_dir(Directory* dir, char* name) {
     new_dir->directories = create_linked_list((FreeFunc)free_dir);
 
     new_dir->path = get_file_path(dir->path, name);
+
+    new_dir->parent = dir;
 
     add_elem(dir->directories, new_dir);
 
