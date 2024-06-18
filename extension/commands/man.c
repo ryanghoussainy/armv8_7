@@ -2,5 +2,5 @@
 
 
 void man(Shell* shell, Command* cmd) {
-    fprintf(shell->out, "%s", cmd->manual);
+    fprintf(shell->out, "%s\n", cmd->manual);
 }
