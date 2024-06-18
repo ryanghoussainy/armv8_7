@@ -3,6 +3,7 @@
 #include "commands/cd.h"
 #include "commands/pwd.h"
 #include "commands/rmdir.h"
+#include "commands/rm.h"
 
 void initialise_shell(Shell* shell, FILE* out) {
     Directory* root = malloc(sizeof(Directory));
