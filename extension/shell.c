@@ -61,7 +61,7 @@ int main(void) {
     printf("\n%s\n", file2->content);
     echo(&shell, "Hello, World!", "test1/test3/test4/file2", false);
     echo(&shell, "Hello, World!!!", "test1/test3/test4/file2", true);
-    echo(&shell, "Hi there...", "test1/something", false);
+    echo(&shell, "Hi there.", "test1/something", true);
     printf("\n%s\n", file2->content);
 
     File* something = dir_find_file(test1, "something");
