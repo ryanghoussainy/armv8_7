@@ -3,6 +3,7 @@
 #include "commands/cd.h"
 #include "commands/pwd.h"
 #include "commands/rmdir.h"
+#include "commands/mkdir.h"
 
 void initialise_shell(Shell* shell, FILE* out) {
     Directory* root = malloc(sizeof(Directory));
@@ -28,18 +29,22 @@ int main(void) {
     Shell shell;
     initialise_shell(&shell, stdout);
 
-    Directory* test1 = create_dir(shell.current_directory, "test1");
-    create_dir(shell.current_directory, "test2");
+    mkdir(&shell, "test1");
+    mkdir(&shell, "test2");
     create_file(shell.current_directory, "file1");
 
-    Directory* test3 = create_dir(test1, "test3");
-    create_file(test1, "file2");
-
-    create_file(test3, "file3");
+    mkdir(&shell, "test1/test3");
+    mkdir(&shell, "test1/test3/../../test1/test3/test4");
     
-    cd(&shell, "test1");
+    // ls(&shell, NULL);
 
-    ls(&shell, "..");
+    // cd(&shell, "test1");
+
+    ls(&shell, NULL);
+    printf("\n");
+    ls(&shell, "test1");
+    printf("\n");
+    ls(&shell, "test1/test3");
 
     print_shell(&shell);
 
