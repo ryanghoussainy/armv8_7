@@ -27,6 +27,7 @@ typedef struct {
 // Format: operation -(options) argument1 argument2 ...
 
 char** split_string(char str[], const char* sep, size_t* word_count);
+void output_instruction(Instruction* instruction);
 enum Operation parse_to_operation(char* operation);
 Instruction parse_to_instruction(char* instruction);
 int free_instruction(Instruction* instruction);
