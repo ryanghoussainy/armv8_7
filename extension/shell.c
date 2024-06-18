@@ -1,32 +1,36 @@
 #include "shell.h"
 #include "commands/ls.h"
 
+void initialise_shell(Shell* shell, FILE* out) {
+    Directory* root = malloc(sizeof(Directory));
+    root->name = strdup("/");
+    root->files = create_linked_list((FreeFunc)free_file);
+    root->directories = create_linked_list((FreeFunc)free_dir);
+    root->path = strdup("/");
+    root->parent = NULL;
+
+    shell->root = root;
+    shell->current_directory = root;
+    shell->path = strdup("/");
+    shell->out = out;
+}
+
 int main(void) {
-    LinkedList* l = create_linked_list(NULL);
 
-    Directory d = {
-        "dir",
-        l,
-        l,
-        "./"
-    };
+    Shell shell;
+    initialise_shell(&shell, stdout);
 
-    Directory* dir = &d;
+    Directory* test1 = create_dir(shell.current_directory, "test1");
+    create_dir(shell.current_directory, "test2");
+    create_file(shell.current_directory, "file1");
 
-    // File f =  { "abc.txt", "", "" };
-    // dir_add_file(dir, &f);
+    Directory* test3 = create_dir(test1, "test3");
+    create_file(test1, "file2");
 
-    // File f2 =  { "defg.txt", "", "" };
-    // dir_add_file(dir, &f2);
+    create_file(test3, "file3");
 
-    Shell s = {
-        dir,
-        dir,
-        "./",
-        stdout
-    };
 
-    ls(&s);
+    ls(&shell);
 
     return 0;
 }

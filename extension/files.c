@@ -56,7 +56,6 @@ File* create_file(Directory* dir, char* name) {
 
     add_elem(dir->files, new_file);
 
-    free(name);
     return new_file;
 }
 
@@ -65,14 +64,13 @@ Directory* create_dir(Directory* dir, char* name) {
     Directory* new_dir = malloc(sizeof(Directory));
     new_dir->name = strdup(name);
 
-    new_dir->files = create_linked_list((FreeFunc)&free_file);
-    new_dir->directories = create_linked_list((FreeFunc)&free_dir);
+    new_dir->files = create_linked_list((FreeFunc)free_file);
+    new_dir->directories = create_linked_list((FreeFunc)free_dir);
 
     new_dir->path = get_file_path(dir->path, name);
 
     add_elem(dir->directories, new_dir);
 
-    free(name);
     return new_dir;
 }
 
