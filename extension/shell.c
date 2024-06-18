@@ -2,6 +2,7 @@
 #include "commands/ls.h"
 #include "commands/cd.h"
 #include "commands/pwd.h"
+#include "commands/rmdir.h"
 
 void initialise_shell(Shell* shell, FILE* out) {
     Directory* root = malloc(sizeof(Directory));
@@ -18,13 +19,12 @@ void initialise_shell(Shell* shell, FILE* out) {
 }
 
 void print_shell(Shell* shell) {
-    printf("Root: %s\n", shell->root->name);
+    printf("\nRoot: %s\n", shell->root->name);
     printf("Current directory: %s\n", shell->current_directory->name);
-    printf("Path: %s\n", shell->path);
+    printf("Path: %s\n\n", shell->path);
 }
 
 int main(void) {
-
     Shell shell;
     initialise_shell(&shell, stdout);
 
@@ -38,6 +38,9 @@ int main(void) {
     create_file(test3, "file3");
     
     cd(&shell, "test1/test3/././../..");
+
+    ls(&shell);
+    rmdir(&shell, "test2");
     ls(&shell);
 
     print_shell(&shell);
