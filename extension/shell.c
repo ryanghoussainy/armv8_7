@@ -17,6 +17,12 @@ void initialise_shell(Shell* shell, FILE* out) {
     shell->out = out;
 }
 
+void print_shell(Shell* shell) {
+    printf("Root: %s\n", shell->root->name);
+    printf("Current directory: %s\n", shell->current_directory->name);
+    printf("Path: %s\n", shell->path);
+}
+
 int main(void) {
 
     Shell shell;
@@ -34,6 +40,8 @@ int main(void) {
     pwd(&shell);
     cd(&shell, "test1");
     pwd(&shell);
+
+    print_shell(&shell);
 
     return 0;
 }
