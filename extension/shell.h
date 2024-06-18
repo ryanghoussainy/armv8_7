@@ -8,3 +8,6 @@ typedef struct {
     char* path;
     FILE* out;
 } Shell;
+
+void initialise_shell(Shell* shell, FILE* out);
+void print_shell(Shell* shell);

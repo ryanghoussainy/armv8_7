@@ -1,5 +1,6 @@
 #include "echo.h"
 #include "touch.h"
+#include "cd.h"
 
 
 /*
@@ -33,8 +34,14 @@ void echo(Shell* shell, char* str, char* path, bool append) {
         if (dir_find_file(shell->current_directory, file_name) == NULL) {
             touch(shell, path); // create file if it doesn't exist
         }
+
+        char* initial_path = shell->path;
+        cd(shell, previous_path);
+        
         write_file = dir_find_file(shell->current_directory, file_name);
         assert(write_file != NULL); // File should now exist
+
+        cd(shell, initial_path);  // Go back to the original path
     }
 
     file_write(write_file, str, append);

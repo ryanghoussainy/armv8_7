@@ -86,10 +86,12 @@ Directory* create_dir(Directory* dir, char* name) {
 void file_write(File* file, char* content, bool append) {
     if (append) {
         file->content = realloc(file->content, strlen(file->content) + strlen(content) + 1);
+        assert(file->content != NULL);
         strcat(file->content, content);
     } else {
         free(file->content);
         file->content = strdup(content);
+        assert(file->content != NULL);
     }
 }
 
