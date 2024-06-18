@@ -5,6 +5,7 @@
 #include "commands/rmdir.h"
 #include "commands/rm.h"
 #include "commands/mkdir.h"
+#include "commands/touch.h"
 
 void initialise_shell(Shell* shell, FILE* out) {
     Directory* root = malloc(sizeof(Directory));
@@ -32,20 +33,19 @@ int main(void) {
 
     mkdir(&shell, "test1");
     mkdir(&shell, "test2");
-    create_file(shell.current_directory, "file1");
+    touch(&shell, "file1");
 
     mkdir(&shell, "test1/test3");
     mkdir(&shell, "test1/test3/../../test1/test3/test4");
-    
-    // ls(&shell, NULL);
-
-    // cd(&shell, "test1");
+    touch(&shell, "test1/test3/test4/file2");
 
     ls(&shell, NULL);
     printf("\n");
     ls(&shell, "test1");
     printf("\n");
     ls(&shell, "test1/test3");
+    printf("\n");
+    ls(&shell, "test1/test3/test4");
 
     print_shell(&shell);
 
