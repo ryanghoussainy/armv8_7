@@ -1,5 +1,5 @@
 #include "shell.h"
-#include "instruction.h"
+#include "command.h"
 #include "commands/ls.h"
 #include "commands/cd.h"
 #include "commands/pwd.h"
@@ -7,6 +7,7 @@
 #include "commands/rm.h"
 #include "commands/mkdir.h"
 #include "commands/touch.h"
+#include "commands/echo.h"
 
 void initialise_shell(Shell* shell, FILE* out) {
     Directory* root = malloc(sizeof(Directory));
@@ -28,22 +29,22 @@ void print_shell(Shell* shell) {
     printf("Path: %s\n\n", shell->path);
 }
 
-void execute_instruction(Shell* shell, Instruction ins) {
-    switch (ins.operation) {
+void execute_command(Shell* shell, Command* cmd) {
+    switch (cmd->operation) {
         case LS:
-            if (ins.argument_count > 0)
-                ls(shell, ins.arguments[0]);
+            if (cmd->argument_count > 0)
+                ls(shell, cmd->arguments[0]);
             else
                 ls (shell, NULL);
             break;
         case CD:
-            cd(shell, ins.arguments[0]);
+            cd(shell, cmd->arguments[0]);
             break;
         case TOUCH:
-            touch(shell, ins.arguments[0]);
+            touch(shell, cmd->arguments[0]);
             break;
         case MKDIR:
-            mkdir(shell, ins.arguments[0]);
+            mkdir(shell, cmd->arguments[0]);
             break;
         default:
             break;
@@ -68,8 +69,8 @@ void execute_file(Shell* shell, const char *filename) {
             line[line_len - 1] = '\0';
         }
 
-        Instruction ins = parse_to_instruction(line);
-        execute_instruction(shell, ins);
+        Command cmd = parse_to_command(line);
+        execute_command(shell, &cmd);
     }
 
     if (ferror(file)) {
@@ -89,10 +90,37 @@ int main(int argc, char **argv) {
 
     mkdir(&shell, "test1/test3");
     mkdir(&shell, "test1/test3/../../test1/test3/test4");
-    
+
     touch(&shell, "test1/test3/test4/file2");
 
     execute_file(&shell, "ins.txt");
+
+    // rm(&shell, "file1");
+    // rmdir(&shell, "test2");
+
+    // ls(&shell, NULL);
+    // printf("\n");
+    // ls(&shell, "test1");
+    // printf("\n");
+    // ls(&shell, "test1/test3");
+    // printf("\n");
+    // ls(&shell, "test1/test3/test4");
+
+    // Directory* test1 = dir_find_directory(shell.root, "test1");
+    // Directory* test3 = dir_find_directory(test1, "test3");
+    // Directory* test4 = dir_find_directory(test3, "test4");
+    // File* file2 = dir_find_file(test4, "file2");
+
+    // printf("\n%s\n", file2->content);
+    // echo(&shell, "Hello, World!", "test1/test3/test4/file2", false);
+    // echo(&shell, "Hello, World!!!", "test1/test3/test4/file2", true);
+    // echo(&shell, "Hi there.", "test1/something", true);
+    // printf("\n%s\n", file2->content);
+
+    // File* something = dir_find_file(test1, "something");
+    // printf("\n%s\n", something->content);
+
+    print_shell(&shell);
 
     return 0;
 }

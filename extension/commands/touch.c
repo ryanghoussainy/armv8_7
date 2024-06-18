@@ -4,6 +4,7 @@
 
 /*
 Creates a file at the provided path.
+Path can be absolute or relative.
 */
 void touch(Shell* shell, char* path) {
     if (strcmp(path, "/") == 0) {
@@ -16,7 +17,14 @@ void touch(Shell* shell, char* path) {
         create_file(shell->current_directory, path); 
         return;
     }
-    // The path includes directories: touch d1/d2/hello
+    // The path includes directories: touch d1/d2/hello / touch /d1/d2/hello
+    
+    char* initial_path = shell->path;
+    if (path[0] == '/') {
+        // Absolute path: change directory to root
+        cd(shell, "/");
+    }
+
     char* file_name = last_slash + 1; // + 1 to skip the '/'
 
     size_t parent_path_len = last_slash - path;
@@ -26,8 +34,7 @@ void touch(Shell* shell, char* path) {
     strncpy(parent_path, path, parent_path_len);
     parent_path[last_slash - path] = '\0';
 
-    char* initial_path = shell->path;
-    cd(shell, parent_path);
+    cd(shell, parent_path);  // Change directory to the parent directory
     create_file(shell->current_directory, file_name);
     cd(shell, initial_path);  // Go back to the original path
 }
