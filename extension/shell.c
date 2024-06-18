@@ -1,4 +1,5 @@
 #include "shell.h"
+#include "instruction.h"
 #include "commands/ls.h"
 #include "commands/cd.h"
 #include "commands/pwd.h"
@@ -27,7 +28,58 @@ void print_shell(Shell* shell) {
     printf("Path: %s\n\n", shell->path);
 }
 
-int main(void) {
+void execute_instruction(Shell* shell, Instruction ins) {
+    switch (ins.operation) {
+        case LS:
+            if (ins.argument_count > 0)
+                ls(shell, ins.arguments[0]);
+            else
+                ls (shell, NULL);
+            break;
+        case CD:
+            cd(shell, ins.arguments[0]);
+            break;
+        case TOUCH:
+            touch(shell, ins.arguments[0]);
+            break;
+        case MKDIR:
+            mkdir(shell, ins.arguments[0]);
+            break;
+        default:
+            break;
+    }
+    printf("\n");
+}
+
+void execute_file(Shell* shell, const char *filename) {
+    int MAX_LINE_LENGTH = 100;
+    FILE *file = fopen(filename, "r");
+
+    if (file == NULL) {
+        perror("Failed to open file");
+        exit(EXIT_FAILURE);
+    }
+
+    char line[MAX_LINE_LENGTH];
+    while (fgets(line, sizeof(line), file)) {
+        int line_len = strlen(line);
+
+        if (line_len > 0 && line[line_len - 1] == '\n') {
+            line[line_len - 1] = '\0';
+        }
+
+        Instruction ins = parse_to_instruction(line);
+        execute_instruction(shell, ins);
+    }
+
+    if (ferror(file)) {
+        perror("Error reading file");
+    }
+
+    fclose(file);
+}
+
+int main(int argc, char **argv) {
     Shell shell;
     initialise_shell(&shell, stdout);
 
@@ -40,20 +92,7 @@ int main(void) {
     
     touch(&shell, "test1/test3/test4/file2");
 
-
-    rm(&shell, "file1");
-    rmdir(&shell, "test2");
-    ls(&shell, "");
-
-    ls(&shell, NULL);
-    printf("\n");
-    ls(&shell, "test1");
-    printf("\n");
-    ls(&shell, "test1/test3");
-    printf("\n");
-    ls(&shell, "test1/test3/test4");
-
-    print_shell(&shell);
+    execute_file(&shell, "ins.txt");
 
     return 0;
 }
