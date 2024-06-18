@@ -135,28 +135,23 @@ free_command(cmd);
 
 Frees the memory of an Command struct
 */
-<<<<<<< HEAD:extension/command.c
-int free_command(Command* command) {
+void free_command(Command* command) {
     free(command->options);
     for (int i = 0; i < command->argument_count; i++) {
         free(command->arguments[i]);
     }
     free(command->arguments);
     free(command->manual);
-=======
-int free_instruction(Instruction* instruction) {
-    free(instruction);
->>>>>>> 366a6afb13e4967a632ce3ea9168db0f9675481f:extension/instruction.c
-    return 1;
+    free(command);
 }
 
-void output_instruction(Instruction* instruction) {
-    printf("options: %s\n", instruction->options);
+void output_command(Command* command) {
+    printf("options: %s\n", command->options);
     printf("arguments: ");
-    for (int i = 0; i < instruction->argument_count; i++) {
-        printf(" %s ", instruction->arguments[i]);
+    for (int i = 0; i < command->argument_count; i++) {
+        printf(" %s ", command->arguments[i]);
     }
-    printf("\nmanual: %s\n", instruction->manual);
+    printf("\nmanual: %s\n", command->manual);
 }
 
 /*

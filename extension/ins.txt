@@ -1,0 +1,6 @@
+cd test1
+ls
+mkdir new-dir
+ls
+cd ..
+ls
