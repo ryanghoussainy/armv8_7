@@ -40,23 +40,18 @@ char* previous_directory_path(char* path) {
 
 
 ELEMENT_TYPE identify_type(void* item) {
-    if (sizeof(item) == sizeof(File)) {
-        return SFILE;
-    } else if (sizeof(item) == sizeof(Directory)) {
-        return SDIRECTORY;
-    } else {
-        // error
-        printf("%s", "neither a file or a directory");
-        exit(1);
-    }
+    return *((ELEMENT_TYPE*)item); // FILET or DIRT
 }
 
 
 File* create_file(Directory* dir, char* name) {
     File* new_file = malloc(sizeof(File));
+
+    new_file->type = FILET;
+
     new_file->name = strdup(name);    
 
-    new_file->content = NULL;
+    new_file->content = strdup("");
 
     new_file->path = get_file_path(dir->path, name);
 
@@ -70,6 +65,9 @@ File* create_file(Directory* dir, char* name) {
 
 Directory* create_dir(Directory* dir, char* name) {
     Directory* new_dir = malloc(sizeof(Directory));
+
+    new_dir->type = DIRT;
+
     new_dir->name = strdup(name);
 
     new_dir->files = create_linked_list((FreeFunc)free_file);
@@ -167,9 +165,14 @@ File* copy_file(File* file) {
     File* copy = malloc(sizeof(File));
     assert(copy != NULL);
 
+    copy->type = FILET;
     copy->name = strdup(file->name);
+    assert(copy->name != NULL);
     copy->content = strdup(file->content);
+    assert(copy->content != NULL);
     copy->path = strdup(file->path);
+    assert(copy->path != NULL);
+    copy->parent = NULL;
     
     return copy;
 }
@@ -182,10 +185,12 @@ Directory* copy_dir(Directory* dir) {
     Directory* copy = malloc(sizeof(Directory));
     assert(copy != NULL);
 
+    copy->type = DIRT;
     copy->name = strdup(dir->name);
     copy->files = copy_linked_list(dir->files);
     copy->directories = copy_linked_list(dir->directories);
     copy->path = strdup(dir->path);
+    copy->parent = NULL;
 
     return copy;
 }

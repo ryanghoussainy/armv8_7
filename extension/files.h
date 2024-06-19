@@ -9,11 +9,12 @@
 
 
 typedef enum ELEMENT_TYPE {
-    SFILE,
-    SDIRECTORY,
+    FILET,
+    DIRT,
 } ELEMENT_TYPE;
 
 struct File{
+    ELEMENT_TYPE type;
     char *name;
     char *content;
     char *path;
@@ -23,6 +24,7 @@ struct File{
 typedef struct File File;
 
 struct Directory {
+    ELEMENT_TYPE type;
     char *name;
     LinkedList* files;
     LinkedList* directories;

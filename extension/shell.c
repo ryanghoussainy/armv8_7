@@ -99,6 +99,9 @@ int main(int argc, char **argv) {
     // rm(&shell, "file1");
     // rmdir(&shell, "test2");
 
+    char* arr = "test1/test3/test4";
+    cp(&shell, &arr, 1, "test2");
+
     ls(&shell, NULL);
     printf("\n");
     ls(&shell, "test1");
@@ -106,6 +109,10 @@ int main(int argc, char **argv) {
     ls(&shell, "test1/test3");
     printf("\n");
     ls(&shell, "test1/test3/test4");
+    printf("\n");
+    ls(&shell, "test2");
+    printf("\n");
+    ls(&shell, "test2/test4");
 
     Directory* test1 = dir_find_directory(shell.root, "test1");
     Directory* test3 = dir_find_directory(test1, "test3");
@@ -116,7 +123,7 @@ int main(int argc, char **argv) {
     echo(&shell, "Hello, World!", "test1/test3/test4/file2", false);
     echo(&shell, "Hello, World!!!", "test1/test3/test4/file2", true);
     echo(&shell, "Hi there.", "test1/something", true);
-    printf("\n%s\n", file2->content);
+    printf("\nfile2: %s\n", file2->content);
 
     File* something = dir_find_file(test1, "something");
     printf("\n%s\n", something->content);
