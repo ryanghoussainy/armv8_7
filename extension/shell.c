@@ -91,12 +91,15 @@ void execute_file(Shell* shell, const char *filename) {
 }
 
 int main(int argc, char **argv) {
+    char* FILE_IN;
     char* FILE_OUT;
 
-    if (argc == 1) {
+    if (argc == 2) {
+        FILE_IN = argv[1];
         FILE_OUT = "stdout";
-    } else if (argc == 2) {
-        FILE_OUT = argv[1];
+    } else if (argc == 3) {
+        FILE_IN = argv[1];
+        FILE_OUT = argv[2];
     } else {
         printf("Wrong number of arguments supplied\n");
         return EXIT_FAILURE;
@@ -121,7 +124,7 @@ int main(int argc, char **argv) {
 
     touch(&shell, "test1/test3/test4/file2");
 
-    execute_file(&shell, "ins.txt");
+    execute_file(&shell, FILE_IN);
 
     // rm(&shell, "file1");
     // rmdir(&shell, "test2");
