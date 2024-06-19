@@ -2,5 +2,4 @@
 #include "../shell.h"
 #include "../files.h"
 
-
-void cd(Shell* shell, char* path);
+void cat(Shell* shell, char* path);

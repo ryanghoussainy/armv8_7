@@ -3,4 +3,4 @@
 #include "../files.h"
 
 
-void cd(Shell* shell, char* path);
+void mkdir(Shell* shell, char* path);

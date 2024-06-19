@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 LinkedList* create_linked_list(FreeFunc free_elem) {
-    LinkedList* linked_list = malloc(sizeof(LinkedList));
+    LinkedList* linked_list = (LinkedList*) malloc(sizeof(LinkedList));
     assert(linked_list != NULL);
 
     linked_list->head = NULL;
@@ -51,7 +51,7 @@ int remove_elem(LinkedList* list, void* elem) {
     if (list->head == NULL) {
         // empty list
         return 0;
-    } else if (list->head == elem) {
+    } else if (list->head->elem == elem) {
         // first element matches
         Node* temp = list->head->next;
         list->free_elem(elem);
@@ -74,7 +74,7 @@ int remove_elem(LinkedList* list, void* elem) {
                 list->free_elem(current);
             }
             previous->next = current->next;
-            list->free_elem(elem);
+            // list->free_elem(elem);
             free(current);
 
             list->size--;

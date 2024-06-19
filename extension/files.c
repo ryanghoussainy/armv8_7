@@ -7,6 +7,9 @@ char *get_file_path(const char* dir, const char* name)
     name_with_slash[0] = '/';
     strcpy(name_with_slash + 1, name);
 
+    if (strcmp(dir, "/") == 0)
+        return name_with_slash;
+    
     char *result = malloc(strlen(dir) + strlen(name_with_slash) + 1);  // +1 for null terminator
     assert(result != NULL);
     strcpy(result, dir);
@@ -23,6 +26,10 @@ char* previous_directory_path(char* path) {
     assert(path != NULL);
 
     char* last_slash = strrchr(path, '/');
+
+    if (last_slash == path) {
+        return strdup("/");
+    }
 
     char* result = malloc(last_slash - path + 1);  // last_slash - path gives the number of elems between them
     strncpy(result, path, last_slash - path);
@@ -56,7 +63,6 @@ File* create_file(Directory* dir, char* name) {
 
     add_elem(dir->files, new_file);
 
-    free(name);
     return new_file;
 }
 
@@ -65,24 +71,32 @@ Directory* create_dir(Directory* dir, char* name) {
     Directory* new_dir = malloc(sizeof(Directory));
     new_dir->name = strdup(name);
 
-    new_dir->files = create_linked_list((FreeFunc)&free_file);
-    new_dir->directories = create_linked_list((FreeFunc)&free_dir);
+    new_dir->files = create_linked_list((FreeFunc)free_file);
+    new_dir->directories = create_linked_list((FreeFunc)free_dir);
 
     new_dir->path = get_file_path(dir->path, name);
 
+    new_dir->parent = dir;
+
     add_elem(dir->directories, new_dir);
 
-    free(name);
     return new_dir;
 }
 
 void file_write(File* file, char* content, bool append) {
     if (append) {
+        if (file->content == NULL) {
+            file->content = strdup(content);
+            assert(file->content != NULL);
+            return;
+        }
         file->content = realloc(file->content, strlen(file->content) + strlen(content) + 1);
+        assert(file->content != NULL);
         strcat(file->content, content);
     } else {
         free(file->content);
         file->content = strdup(content);
+        assert(file->content != NULL);
     }
 }
 
