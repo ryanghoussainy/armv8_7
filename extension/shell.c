@@ -47,6 +47,15 @@ void execute_command(Shell* shell, Command* cmd) {
         case MKDIR:
             mkdir(shell, cmd->arguments[0]);
             break;
+        case CAT:
+            cat(shell, cmd->arguments[0]);
+            break;
+        case RM:
+            rm(shell, cmd->arguments[0]);
+            break;
+        case RMDIR:
+            rmdir(shell, cmd->arguments[0]);
+            break;
         default:
             break;
     }

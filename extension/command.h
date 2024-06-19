@@ -12,7 +12,10 @@ enum Operation {
     MAN,
     CD,
     TOUCH,
-    MKDIR
+    MKDIR,
+    CAT,
+    RM,
+    RMDIR
     // Add more as the number of commands increase
 };
 

@@ -50,6 +50,12 @@ enum Operation parse_to_operation(char* operation) {
         return TOUCH;
     } else if (strcmp(operation, "mkdir") == 0) {
         return MKDIR;
+    } else if (strcmp(operation, "cat") == 0) {
+        return CAT;
+    } else if (strcmp(operation, "rm") == 0) {
+        return RM;
+    } else if (strcmp(operation, "rmdir") == 0) {
+        return RMDIR;
     } else {
         return NONE;
     }
