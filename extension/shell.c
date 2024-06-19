@@ -91,8 +91,26 @@ void execute_file(Shell* shell, const char *filename) {
 }
 
 int main(int argc, char **argv) {
+    char* FILE_OUT;
+
+    if (argc == 1) {
+        FILE_OUT = "stdout";
+    } else if (argc == 2) {
+        FILE_OUT = argv[1];
+    } else {
+        printf("Wrong number of arguments supplied\n");
+        return EXIT_FAILURE;
+    }
+
+
     Shell shell;
-    initialise_shell(&shell, stdout);
+
+    if (strcmp(FILE_OUT, "stdout") == 0)
+        initialise_shell(&shell, stdout);
+    else {
+        FILE* out = fopen(FILE_OUT, "w");
+        initialise_shell(&shell, out);
+    }
 
     mkdir(&shell, "test1");
     mkdir(&shell, "test2");
