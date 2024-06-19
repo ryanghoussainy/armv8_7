@@ -1,4 +1,5 @@
 #include "files.h"
+#include "commands/cd.h"
 
 
 char *get_file_path(const char* dir, const char* name)
@@ -156,6 +157,37 @@ Directory* dir_find_directory(Directory* dir, char* name) {
         current_node = current_node->next;
     }
     return NULL;
+}
+
+/*
+Returns a deep copy of the given file.
+IMPORTANT: This function requires the user to define copy->parent after calling this function.
+*/
+File* copy_file(File* file) {
+    File* copy = malloc(sizeof(File));
+    assert(copy != NULL);
+
+    copy->name = strdup(file->name);
+    copy->content = strdup(file->content);
+    copy->path = strdup(file->path);
+    
+    return copy;
+}
+
+/*
+Returns a deep copy of the given directory.
+IMPORTANT: This function requires the user to define copy->parent after calling this function.
+*/
+Directory* copy_dir(Directory* dir) {
+    Directory* copy = malloc(sizeof(Directory));
+    assert(copy != NULL);
+
+    copy->name = strdup(dir->name);
+    copy->files = copy_linked_list(dir->files);
+    copy->directories = copy_linked_list(dir->directories);
+    copy->path = strdup(dir->path);
+
+    return copy;
 }
 
 void free_file(File* file) {

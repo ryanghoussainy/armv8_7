@@ -42,5 +42,7 @@ int dir_remove_file(Directory* dir, File* file);
 int dir_remove_directory(Directory* dir, Directory* rm_dir);
 File* dir_find_file(Directory* dir, char* name);
 Directory* dir_find_directory(Directory* dir, char* name);
+File* copy_file(File* file);
+Directory* copy_dir(Directory* dir);
 void free_file(File* file);
 void free_dir(Directory* dir);

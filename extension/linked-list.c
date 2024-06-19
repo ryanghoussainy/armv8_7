@@ -86,6 +86,16 @@ int remove_elem(LinkedList* list, void* elem) {
     return 0;
 }
 
+LinkedList* copy_linked_list(LinkedList* list) {
+    assert(list != NULL);
+
+    LinkedList* new_list = create_linked_list(list->free_elem);
+    for (Node* current = list->head; current != NULL; current = current->next) {
+        add_elem(new_list, current->elem);
+    }
+    return new_list;
+}
+
 void free_linked_list(LinkedList* list) {
     assert(list != NULL);
     assert(list->free_elem != NULL);
