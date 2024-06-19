@@ -40,7 +40,6 @@ static uint32_t unconditional_instruction(Instruction* instr) {
 }
 
 uint32_t branch_assembly(Instruction* instr) {
-    //print_instruction(instr); // for debugging
     if (instr->operation[1] == '.') {
         return conditional_instruction(instr);
     } else if (instr->operation[1] == 'r') {
