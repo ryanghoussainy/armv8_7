@@ -59,7 +59,6 @@ void execute_command(Shell* shell, Command* cmd) {
         default:
             break;
     }
-    printf("\n");
 }
 
 void execute_file(Shell* shell, const char *filename) {
@@ -74,11 +73,12 @@ void execute_file(Shell* shell, const char *filename) {
     char line[MAX_LINE_LENGTH];
     while (fgets(line, sizeof(line), file)) {
         int line_len = strlen(line);
-
         if (line_len > 0 && line[line_len - 1] == '\n') {
             line[line_len - 1] = '\0';
         }
 
+        
+        fprintf(shell->out, "\n%s:\n", line);
         Command cmd = parse_to_command(line);
         execute_command(shell, &cmd);
     }
@@ -151,7 +151,7 @@ int main(int argc, char **argv) {
     // File* something = dir_find_file(test1, "something");
     // printf("\n%s\n", something->content);
 
-    print_shell(&shell);
+    // print_shell(&shell);
 
     return 0;
 }
