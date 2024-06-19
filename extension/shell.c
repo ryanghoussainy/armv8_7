@@ -8,6 +8,7 @@
 #include "commands/mkdir.h"
 #include "commands/touch.h"
 #include "commands/echo.h"
+#include "commands/cat.h"
 
 void initialise_shell(Shell* shell, FILE* out) {
     Directory* root = malloc(sizeof(Directory));
