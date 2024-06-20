@@ -7,3 +7,5 @@ ls
 cd ..
 mkdir new-dir-2
 ls
+ls new-dir
+cat new-dir/file.txt

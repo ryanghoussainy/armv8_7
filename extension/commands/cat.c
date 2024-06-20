@@ -1,27 +1,29 @@
 #include "cat.h"
-
+#include "cd.h"
 /*
 'cat' prints the contents of a file
 
 Future development will see more options and more capabilities
 */
-void cat(Shell* shell, char* path) {
+void cat(Shell* shell, char* filepath) {
 
     // vv Using same code as in rm.c --> make a function?
 
+    char* initial_path = shell->path;
     char* prefixed_filepath = NULL;
 
-    if (path[0] != '/') {
-        prefixed_filepath = malloc(strlen("./") + strlen(path) + 1);
-        assert(prefixed_filepath != NULL);
+    if (filepath[0] != '/') {
+        prefixed_filepath = malloc(strlen("./") + strlen(filepath) + 1);
         strcpy(prefixed_filepath, "./");
-        prefixed_filepath = strcat(prefixed_filepath, path);
-
-    } else {
-        prefixed_filepath = strdup(path);
+        prefixed_filepath = strcat(prefixed_filepath, filepath);
+    }else {
+        prefixed_filepath = strdup(filepath);
     }
-
+    
+    char* path = previous_directory_path(prefixed_filepath);
     char* name = prefixed_filepath + strlen(path) + 1;
+    
+    cd(shell, path);
 
     File* cat_file = dir_find_file(shell->current_directory, name);
 
@@ -35,4 +37,5 @@ void cat(Shell* shell, char* path) {
     }
 
     free(prefixed_filepath);
+    cd(shell, initial_path);
 }
