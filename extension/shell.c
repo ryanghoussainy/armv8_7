@@ -35,7 +35,7 @@ void print_shell(Shell *shell)
     printf("Path: %s\n\n", shell->path);
 }
 
-void execute_command(Shell *shell, Command *cmd)
+static void execute_command(Shell *shell, Command *cmd)
 {
     bool redirect;
     bool append;
@@ -116,7 +116,7 @@ void execute_command(Shell *shell, Command *cmd)
     }
 }
 
-void execute_file(Shell *shell, const char *filename)
+static void execute_file(Shell *shell, const char *filename)
 {
     int MAX_LINE_LENGTH = 100;
     FILE *file = fopen(filename, "r");
