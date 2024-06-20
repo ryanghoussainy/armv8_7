@@ -97,16 +97,40 @@ enum Operation parse_to_operation(char* operation) {
 char* get_manual(enum Operation op) {
     switch (op) {
         case LS:
-            return strdup("ls manual goes here");
+            return strdup("Lists directory contents.");
             break;
         case MAN:
-            return strdup("man manual goes here");
+            return strdup("Really?");
             break;
         case CD:
-            return strdup("cd manual goes here");
+            return strdup("Change working directory.");
             break;
-        default:
-            return strdup("no manual");
+        case TOUCH:
+            return strdup("Create a file.");
+            break;
+        case MKDIR:
+            return strdup("Create a directory.");
+            break;
+        case CAT:
+            return strdup("Print file contents.");
+            break;
+        case RM:
+            return strdup("Remove a file.");
+            break;
+        case RMDIR:
+            return strdup("Remove a directory.");
+            break;
+        case CP:
+            return strdup("Copy files/directories to a directory.");
+            break;
+        case MV:
+            return strdup("Move files/directories to a directory.");
+            break;
+        case PWD:
+            return strdup("Print working directory.");
+            break;
+        case ECHO:
+            return strdup("Prints string argument.");
             break;
     }
 }
@@ -179,13 +203,3 @@ void output_command(Command* command) {
     }
     printf("\nmanual: %s\n", command->manual);
 }
-
-/*
-int main(int argc, char **argv) {
-    char* instruction_string = malloc(20);
-    strcpy(instruction_string, "ls -l arg1 arg2");
-    Instruction* instruction = malloc(sizeof(Instruction));
-    *instruction = parse_to_instruction(instruction_string);
-    free_instruction(instruction);
-}
-*/
