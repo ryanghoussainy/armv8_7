@@ -21,7 +21,6 @@ enum Operation {
 
 typedef struct {
     enum Operation operation;
-    char* options;
     char** arguments;
     size_t argument_count;
     char* manual;

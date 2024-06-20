@@ -91,12 +91,10 @@ Command parse_to_command(char* command) {
     size_t word_count;
 
     enum Operation operation;
-    char* options;
     char** arguments;
     size_t argument_count = 0;
     char* manual;
 
-    bool has_options = false;
     char** split_command = split_string(command, " ", &word_count);
 
     if (word_count >= 1) {
@@ -104,16 +102,9 @@ Command parse_to_command(char* command) {
         manual = get_manual(operation);
     }
 
-    if (word_count >= 2 && strcmp((char[2]) {split_command[1][0], '\0'}, "-") == 0) {
-        options = malloc(strlen(split_command[1] - 1));
-        assert(options != NULL);
-        options = split_command[1] + 1;
-        has_options = true;
-    }
-
     if (word_count >= 2) {
-        argument_count = has_options ? word_count - 2 : word_count - 1;
-        int start_pointer = has_options ? 2 : 1;
+        argument_count = word_count - 1;
+        int start_pointer = 1;
         arguments = malloc(sizeof(char*) * argument_count);
         assert(arguments != NULL);
         for (int i = 0; i < word_count - start_pointer; i++) {
@@ -124,7 +115,6 @@ Command parse_to_command(char* command) {
     }
 
     cmd.operation = operation;
-    cmd.options = options;
     cmd.arguments = arguments;
     cmd.argument_count = argument_count;
     cmd.manual = manual;
@@ -142,7 +132,6 @@ free_command(cmd);
 Frees the memory of an Command struct
 */
 void free_command(Command* command) {
-    free(command->options);
     for (int i = 0; i < command->argument_count; i++) {
         free(command->arguments[i]);
     }
@@ -152,7 +141,6 @@ void free_command(Command* command) {
 }
 
 void output_command(Command* command) {
-    printf("options: %s\n", command->options);
     printf("arguments: ");
     for (int i = 0; i < command->argument_count; i++) {
         printf(" %s ", command->arguments[i]);
