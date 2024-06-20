@@ -30,7 +30,7 @@ void cat(Shell* shell, char* filepath, bool redirect, char* redirect_path, bool 
 
     File* cat_file = dir_find_file(shell->current_directory, name);
 
-    // ^^ Using same code as in rm.c --> make a function?
+    cd(shell, initial_path);
 
     if (cat_file != NULL) {
         if (redirect) {
@@ -48,5 +48,4 @@ void cat(Shell* shell, char* filepath, bool redirect, char* redirect_path, bool 
     }
 
     free(prefixed_filepath);
-    cd(shell, initial_path);
 }

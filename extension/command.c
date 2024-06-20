@@ -55,27 +55,6 @@ char** split_string(char str[], size_t* word_count) {
     }
     return parsed;
 }
-//     *word_count = 0;
-//     char* token;
-//     char** words = NULL;
-
-//     token = strtok(str, sep);
-//     assert(token != NULL);
-
-//     while (token != NULL) {
-//         words = realloc(words, sizeof(char*) * (*word_count + 1));
-//         assert(words != NULL);
-
-//         words[*word_count] = malloc(strlen(token) + 1);
-//         assert(words[*word_count] != NULL);
-
-//         strcpy(words[*word_count], token);
-//         token = strtok(NULL, sep);  // get next token
-//         (*word_count)++;
-//     }
-    
-//     return words;
-// }
 
 /*
 char* operation = malloc(50);
