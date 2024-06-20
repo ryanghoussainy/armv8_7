@@ -22,16 +22,18 @@ void cd(Shell* shell, char* path) {
 
     if (path[0] == '/') { // Absolute path
         shell->current_directory = shell->root;
+        free(shell->path);
         shell->path = strdup("/");
-    } else {              // Relative path
-        shell->path = strdup(shell->path);
     }
 
     while (token != NULL) {  // loop through the directories in the path
         if (strcmp(token, "..") == 0) {
             if (shell->current_directory->parent != NULL) {
                 shell->current_directory = shell->current_directory->parent;
-                shell->path = previous_directory_path(shell->path);
+
+                char* temp = previous_directory_path(shell->path);
+                free(shell->path);
+                shell->path = temp;
             } else {
                 printf("Root does not have a parent directory.\n");
                 exit(1);  // Crashes if user tries to go backwards from root
@@ -44,8 +46,11 @@ void cd(Shell* shell, char* path) {
                 printf("Directory not found. Token: %s\n", token);
                 exit(1);
             }
-            shell->path = get_file_path(shell->path, token);
+            char* temp = get_file_path(shell->path, token);
+            free(shell->path);
+            shell->path = temp;
         }
         token = strtok(NULL, "/");
     }
+    free(path_copy);
 }

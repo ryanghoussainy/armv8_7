@@ -27,22 +27,26 @@ void echo(Shell* shell, char* str, bool redirect, char* redirect_path, bool appe
             write_file = dir_find_file(shell->current_directory, redirect_path);
             assert(write_file != NULL); // File should now exist
         }
-    } else { 
+    } else {
         // Get name of file
         char* previous_path = previous_directory_path(redirect_path);
         char* file_name = redirect_path + strlen(previous_path) + 1; // +1 to skip the '/'
 
-        if (dir_find_file(shell->current_directory, file_name) == NULL) {
-            touch(shell, redirect_path); // create file if it doesn't exist
-        }
-
-        char* initial_path = shell->path;
+        char* initial_path = strdup(shell->path);
         cd(shell, previous_path);
         
         write_file = dir_find_file(shell->current_directory, file_name);
-        assert(write_file != NULL); // File should now exist
+
+        if (write_file == NULL) {
+            touch(shell, file_name); // create file if it doesn't exist
+            write_file = dir_find_file(shell->current_directory, file_name);
+            assert(write_file != NULL); // File should now exist
+        }
 
         cd(shell, initial_path);  // Go back to the original path
+
+        free(initial_path);
+        free(previous_path);
     }
 
     file_write(write_file, str, append);

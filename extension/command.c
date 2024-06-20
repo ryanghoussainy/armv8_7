@@ -97,16 +97,16 @@ enum Operation parse_to_operation(char* operation) {
 char* get_manual(enum Operation op) {
     switch (op) {
         case LS:
-            return "ls manual goes here";
+            return strdup("ls manual goes here");
             break;
         case MAN:
-            return "man manual goes here";
+            return strdup("man manual goes here");
             break;
         case CD:
-            return "cd manual goes here";
+            return strdup("cd manual goes here");
             break;
         default:
-            return "no manual";
+            return strdup("no manual");
             break;
     }
 }
@@ -119,8 +119,8 @@ Command cmd = parse_to_command(command);
 
 Parses a string input (assuming it is well formed) to a useable Command type equivalent
 */
-Command parse_to_command(char* command) {
-    Command cmd;
+Command* parse_to_command(char* command) {
+    Command* cmd = malloc(sizeof(Command));
     size_t word_count;
 
     enum Operation operation;
@@ -137,13 +137,19 @@ Command parse_to_command(char* command) {
 
     if (word_count >= 2) {
         argument_count = word_count - 1;
-        arguments = split_command + 1;
+        arguments = malloc(argument_count * sizeof(char*));
+        for (int i = 0; i < argument_count; i++) {
+            arguments[i] = split_command[i + 1];
+        }
     }
 
-    cmd.operation = operation;
-    cmd.arguments = arguments;
-    cmd.argument_count = argument_count;
-    cmd.manual = manual;
+    free(split_command[0]);
+    free(split_command);
+
+    cmd->operation = operation;
+    cmd->arguments = arguments;
+    cmd->argument_count = argument_count;
+    cmd->manual = manual;
 
     return cmd;
 }

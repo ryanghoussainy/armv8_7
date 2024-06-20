@@ -3,7 +3,7 @@
 
 void rm(Shell* shell, char* filepath)
 {
-    char* initial_path = shell->path;
+    char* initial_path = strdup(shell->path);
     char* prefixed_filepath = NULL;
 
     if (filepath[0] != '/') {
@@ -29,4 +29,7 @@ void rm(Shell* shell, char* filepath)
     dir_remove_file(shell->current_directory, rm_file);
 
     cd(shell, initial_path);
+    free(initial_path);
+    free(prefixed_filepath);
+    free(path);
 }

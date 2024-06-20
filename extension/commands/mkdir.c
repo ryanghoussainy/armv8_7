@@ -25,8 +25,10 @@ void mkdir(Shell* shell, char* path) {
     strncpy(parent_path, path, parent_path_len);
     parent_path[last_slash - path] = '\0';
 
-    char* initial_path = shell->path;
+    char* initial_path = strdup(shell->path);
     cd(shell, parent_path);
     create_dir(shell->current_directory, dir_name);
     cd(shell, initial_path);  // Go back to the original path
+    free(initial_path);
+    free(parent_path);
 }

@@ -19,7 +19,7 @@ void cp_mv(Shell* shell, char** srcs, int src_count, char* dest, bool is_mv) {
 
     for (int i = 0; i < src_count; i++) { // Loop through each source
         char* src_path = srcs[i];
-        char* initial_path = shell->path;
+        char* initial_path = strdup(shell->path);
 
         char* last_slash = strrchr(src_path, '/');
         if (last_slash != NULL) {
@@ -35,10 +35,12 @@ void cp_mv(Shell* shell, char** srcs, int src_count, char* dest, bool is_mv) {
         }
 
         // Get the source file/dir
-        File* src_file = dir_find_file(shell->current_directory, last_slash + 1);
-        Directory* src_dir = dir_find_directory(shell->current_directory, last_slash + 1);
+        char* file_name = last_slash == NULL ? src_path : last_slash + 1;
+
+        File* src_file = dir_find_file(shell->current_directory, file_name);
+        Directory* src_dir = dir_find_directory(shell->current_directory, file_name);
         if (src_file == NULL && src_dir == NULL) {
-            printf("File %s does not exist\n", last_slash + 1);
+            printf("File %s does not exist\n", file_name);
             return;
         }
 
@@ -47,6 +49,7 @@ void cp_mv(Shell* shell, char** srcs, int src_count, char* dest, bool is_mv) {
             Directory* copy = copy_dir(src_dir);
 
             // If mv, delete the original directory
+            printf("path: %s\n", src_dir->path);
             if (is_mv) {
                 rmdir(shell, src_dir->path);
             }
@@ -85,7 +88,7 @@ void cp_mv(Shell* shell, char** srcs, int src_count, char* dest, bool is_mv) {
             // Go back to the original directory
             cd(shell, initial_path);
         }
-
+        free(initial_path);
     }
     
 }

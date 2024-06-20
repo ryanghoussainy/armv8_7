@@ -3,7 +3,7 @@
 
 void rmdir(Shell* shell, char* dirpath)
 {
-    char* initial_path = shell->path;
+    char* initial_path = strdup(shell->path);
     char* prefixed_dirpath = NULL;
 
     if (dirpath[0] != '/') {
@@ -15,7 +15,7 @@ void rmdir(Shell* shell, char* dirpath)
     }
     
     char* path = previous_directory_path(prefixed_dirpath);
-    char* name = prefixed_dirpath + strlen(path) + 1;
+    char* name = prefixed_dirpath + strlen(path);
     
     cd(shell, path);
 
@@ -29,4 +29,7 @@ void rmdir(Shell* shell, char* dirpath)
     dir_remove_directory(shell->current_directory, delete_this_dir);
 
     cd(shell, initial_path);
+    free(initial_path);
+    free(prefixed_dirpath);
+    free(path);
 }

@@ -9,7 +9,7 @@ the directory at that path.
 */
 void ls(Shell* shell, char* path, bool redirect, char* redirect_path, bool append)
 {
-    char* initial_path = shell->path;
+    char* initial_path = strdup(shell->path);
     if (path != NULL) {
         cd(shell, path);   // Change directory to the path
     }
@@ -44,4 +44,5 @@ void ls(Shell* shell, char* path, bool redirect, char* redirect_path, bool appen
     if (path != NULL) {
         cd(shell, initial_path);  // Change directory back to the initial path
     }
+    free(initial_path);
 }

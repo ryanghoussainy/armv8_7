@@ -4,7 +4,8 @@
 
 char *get_file_path(const char* dir, const char* name)
 {
-    char* name_with_slash = malloc(sizeof(strlen(name) + 2));   // +2, 1 for the slash, 1 for the null terminator
+    char* name_with_slash = malloc(strlen(name) + 2);   // +2, 1 for the slash, 1 for the null terminator
+    assert(name_with_slash != NULL);
     name_with_slash[0] = '/';
     strcpy(name_with_slash + 1, name);
 
@@ -217,7 +218,8 @@ void free_dir(Directory* dir) {
             current = temp;
         }
     }
-    if (dir->directories != NULL) {
+    free(dir->files);
+    if (dir->directories->head != NULL) {
         Node* current = dir->directories->head;
         while (current != NULL) {
             Node* temp = current->next;
@@ -226,6 +228,7 @@ void free_dir(Directory* dir) {
             current = temp;
         }
     }
+    free(dir->directories);
     free(dir->path);
     free(dir);
 }

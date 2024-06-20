@@ -8,7 +8,7 @@ Prints the contents of a file to the shell's output by default.
 */
 void cat(Shell* shell, char* filepath, bool redirect, char* redirect_path, bool append) {
 
-    char* initial_path = shell->path;
+    char* initial_path = strdup(shell->path);
     char* prefixed_filepath = NULL;
 
     if (filepath[0] != '/') {
@@ -43,5 +43,7 @@ void cat(Shell* shell, char* filepath, bool redirect, char* redirect_path, bool 
         }
     }
 
+    free(path);
     free(prefixed_filepath);
+    free(initial_path);
 }

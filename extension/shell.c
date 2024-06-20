@@ -89,19 +89,21 @@ static void execute_command(Shell *shell, Command *cmd)
     case RMDIR:
         rmdir(shell, cmd->arguments[0]);
         break;
-    case CP: ;
+    case CP:
         srcs = malloc(sizeof(char*) * (cmd->argument_count - 1));
         for (int i = 0; i < cmd->argument_count - 1; i++) {
             srcs[i] = cmd->arguments[i];
         }
         cp(shell, srcs, cmd->argument_count - 1, cmd->arguments[cmd->argument_count - 1]);
+        free(srcs); // strings inside will be freed anyway
         break;
-    case MV: ;
+    case MV:
         srcs = malloc(sizeof(char*) * (cmd->argument_count - 1));
         for (int i = 0; i < cmd->argument_count - 1; i++) {
             srcs[i] = cmd->arguments[i];
         }
         mv(shell, srcs, cmd->argument_count - 1, cmd->arguments[cmd->argument_count - 1]);
+        free(srcs); // strings inside will be freed anyway
         break;
     case ECHO:
         echo(shell, cmd->arguments[0], redirect, cmd->arguments[cmd->argument_count - 1], append);
@@ -137,8 +139,9 @@ static void execute_file(Shell *shell, const char *filename)
         }
 
         fprintf(shell->out, "\n(%s) %s:\n", shell->path, line);
-        Command cmd = parse_to_command(line);
-        execute_command(shell, &cmd);
+        Command* cmd = parse_to_command(line);
+        execute_command(shell, cmd);
+        free_command(cmd);
     }
 
     if (ferror(file))
@@ -147,6 +150,13 @@ static void execute_file(Shell *shell, const char *filename)
     }
 
     fclose(file);
+}
+
+static void free_shell(Shell *shell)
+{
+    free_dir(shell->root);
+    free(shell->path);
+    free(shell);
 }
 
 int main(int argc, char **argv)
@@ -170,17 +180,23 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    Shell shell;
+    Shell* shell = malloc(sizeof(Shell));
+    assert(shell != NULL);
 
     if (strcmp(FILE_OUT, "stdout") == 0)
-        initialise_shell(&shell, stdout);
+        initialise_shell(shell, stdout);
     else
     {
         FILE *out = fopen(FILE_OUT, "w");
-        initialise_shell(&shell, out);
+        initialise_shell(shell, out);
     }
 
-    execute_file(&shell, FILE_IN);
+    execute_file(shell, FILE_IN);
+
+    if (strcmp(FILE_OUT, "stdout") != 0)
+        fclose(shell->out);
+
+    free_shell(shell);
 
     return 0;
 }

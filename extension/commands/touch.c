@@ -37,4 +37,6 @@ void touch(Shell* shell, char* path) {
     cd(shell, parent_path);  // Change directory to the parent directory
     create_file(shell->current_directory, file_name);
     cd(shell, initial_path);  // Go back to the original path
+
+    free(parent_path);
 }
