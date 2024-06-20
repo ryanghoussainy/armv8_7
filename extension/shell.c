@@ -155,12 +155,8 @@ int main(int argc, char **argv) {
     File* something = dir_find_file(test1, "something");
     printf("\n%s\n", something->content);
 
-<<<<<<< HEAD
     print_shell(&shell);
 
-=======
-    // print_shell(&shell);
     cat(&shell, "test1/test3/test4/file2");
->>>>>>> 20708cadb40de17b7732a2a966fd113dde446b26
     return 0;
 }
