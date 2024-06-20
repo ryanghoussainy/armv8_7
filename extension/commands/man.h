@@ -3,4 +3,4 @@
 #include "../command.h"
 
 
-void man(Shell* shell, Command* cmd);
+void man(Shell* shell, Command* cmd, bool redirect, char* redirect_path, bool append);

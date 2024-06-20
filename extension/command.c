@@ -8,28 +8,74 @@ char** result = split_string(str, " ", &word_count);
 Splits the string 'str' into an array of strings, using 'sep' as the delimiter and
 keeping track of the word count.
 */
-char** split_string(char str[], const char* sep, size_t* word_count) {
-    *word_count = 0;
-    char* token;
-    char** words = NULL;
-
-    token = strtok(str, sep);
-    assert(token != NULL);
-
-    while (token != NULL) {
-        words = realloc(words, sizeof(char*) * (*word_count + 1));
-        assert(words != NULL);
-
-        words[*word_count] = malloc(strlen(token) + 1);
-        assert(words[*word_count] != NULL);
-
-        strcpy(words[*word_count], token);
-        token = strtok(NULL, sep);  // get next token
-        (*word_count)++;
+char** split_string(char str[], size_t* word_count) {
+    // Get number of separate words ("hello world" counts for 1)
+    *word_count = 1;
+    bool open = false; // whether or not brackets are open
+    for (char* p = str; *p != '\0'; p++) {
+        if (*p == '\"') {
+            open = !open;
+        } else if (*p == ' ' && !open) {
+            (*word_count)++;
+            while (*(p + 1) == ' ') p++;
+        }
     }
     
-    return words;
+    char** parsed = malloc(sizeof(char*) * *word_count);
+    int current = 0;
+    
+    char* start = str;
+    open = false;
+    for (char* p = str; ; p++) {
+        if (*p == '\"') {
+            open = !open;
+            if (open) start = p + 1;
+            else {
+                int length = p - start;
+                parsed[current] = malloc(length + 1);
+                strncpy(parsed[current], start, length);
+                parsed[current][length] = '\0';
+                current++;
+                start = p + 1;
+            }
+        } else if (*p == ' ' || *p == '\0') {
+            if (!open) {
+                int length = p - start;
+                if (length > 0) {
+                    parsed[current] = malloc(length + 1);
+                    strncpy(parsed[current], start, length);
+                    parsed[current][length] = '\0';
+                    current++;
+                }
+                start = p + 1;
+                while (*start == ' ') start++;
+            }
+            if (*p == '\0') break;
+        }
+    }
+    return parsed;
 }
+//     *word_count = 0;
+//     char* token;
+//     char** words = NULL;
+
+//     token = strtok(str, sep);
+//     assert(token != NULL);
+
+//     while (token != NULL) {
+//         words = realloc(words, sizeof(char*) * (*word_count + 1));
+//         assert(words != NULL);
+
+//         words[*word_count] = malloc(strlen(token) + 1);
+//         assert(words[*word_count] != NULL);
+
+//         strcpy(words[*word_count], token);
+//         token = strtok(NULL, sep);  // get next token
+//         (*word_count)++;
+//     }
+    
+//     return words;
+// }
 
 /*
 char* operation = malloc(50);
@@ -40,7 +86,15 @@ Operation op = parse_to_operation(operation);
 Converts a string input into its Operation enum type equivalent
 */
 enum Operation parse_to_operation(char* operation) {
-    if (strcmp(operation, "ls") == 0){
+    if (strcmp(operation, "cp") == 0) {
+        return CP;
+    } else if (strcmp(operation, "mv") == 0) {
+        return MV;
+    } else if (strcmp(operation, "pwd") == 0) {
+        return PWD;
+    } else if (strcmp(operation, "echo") == 0) {
+        return ECHO;
+    } else if (strcmp(operation, "ls") == 0){
         return LS;
     } else if (strcmp(operation, "man") == 0){
         return MAN;
@@ -95,7 +149,7 @@ Command parse_to_command(char* command) {
     size_t argument_count = 0;
     char* manual;
 
-    char** split_command = split_string(command, " ", &word_count);
+    char** split_command = split_string(command, &word_count);
 
     if (word_count >= 1) {
         operation = parse_to_operation(split_command[0]);
@@ -104,13 +158,12 @@ Command parse_to_command(char* command) {
 
     if (word_count >= 2) {
         argument_count = word_count - 1;
-        int start_pointer = 1;
         arguments = malloc(sizeof(char*) * argument_count);
         assert(arguments != NULL);
-        for (int i = 0; i < word_count - start_pointer; i++) {
-            arguments[i] = malloc(strlen(split_command[i + start_pointer]) + 1);
+        for (int i = 0; i < argument_count; i++) {
+            arguments[i] = malloc(strlen(split_command[i + 1]) + 1);
             assert(arguments[i] != NULL);
-            arguments[i] = split_command[i + start_pointer];
+            arguments[i] = split_command[i + 1];
         }
     }
 

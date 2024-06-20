@@ -1,11 +1,14 @@
 #include "cat.h"
 #include "cd.h"
+#include "echo.h"
+
+
 /*
 'cat' prints the contents of a file
 
 Future development will see more options and more capabilities
 */
-void cat(Shell* shell, char* filepath) {
+void cat(Shell* shell, char* filepath, bool redirect, char* redirect_path, bool append) {
 
     // vv Using same code as in rm.c --> make a function?
 
@@ -30,10 +33,18 @@ void cat(Shell* shell, char* filepath) {
     // ^^ Using same code as in rm.c --> make a function?
 
     if (cat_file != NULL) {
-        fwrite(cat_file->content, 1, strlen(cat_file->content) + 1, shell->out);
+        if (redirect) {
+            echo(shell, cat_file->content, true, redirect_path, append);
+        } else {
+            fwrite(cat_file->content, 1, strlen(cat_file->content) + 1, shell->out);
+        }
     } else {
         char message[25] = "Empty or Invalid File";
-        fwrite(message, 1, 25, shell->out);
+        if (redirect) {
+            echo(shell, message, true, redirect_path, append);
+        } else {
+            fwrite(message, 1, 25, shell->out);
+        }
     }
 
     free(prefixed_filepath);
