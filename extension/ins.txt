@@ -1,6 +1,9 @@
-cd test1
 ls
 mkdir new-dir
 ls
+cd new-dir
+touch file.txt
+ls
 cd ..
+mkdir new-dir-2
 ls

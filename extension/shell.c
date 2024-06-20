@@ -79,7 +79,7 @@ void execute_file(Shell* shell, const char *filename) {
         }
 
         
-        fprintf(shell->out, "\n%s:\n", line);
+        fprintf(shell->out, "\n(%s) %s:\n", shell->path, line);
         Command cmd = parse_to_command(line);
         execute_command(shell, &cmd);
     }
@@ -115,7 +115,7 @@ int main(int argc, char **argv) {
         FILE* out = fopen(FILE_OUT, "w");
         initialise_shell(&shell, out);
     }
-
+    /*
     mkdir(&shell, "test1");
     mkdir(&shell, "test2");
     touch(&shell, "file1");
@@ -124,12 +124,13 @@ int main(int argc, char **argv) {
     mkdir(&shell, "test1/test3/test4");
 
     touch(&shell, "test1/test3/test4/file2");
-
+    */
     execute_file(&shell, FILE_IN);
 
     // rm(&shell, "file1");
     // rmdir(&shell, "test2");
-
+    
+    /*
     char* arr = "test1/test3/test4";
     cp(&shell, &arr, 1, "test2");
 
@@ -160,6 +161,7 @@ int main(int argc, char **argv) {
     printf("\n%s\n", something->content);
 
     // print_shell(&shell);
+    */
 
     return 0;
 }
