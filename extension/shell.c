@@ -45,6 +45,8 @@ void execute_command(Shell *shell, Command *cmd)
     case CAT:
     case ECHO:
     case MAN:
+        if (cmd->argument_count < 2) break; // Definitely no redirect
+
         if (strcmp(cmd->arguments[cmd->argument_count - 2], ">") == 0) {
             redirect = true;
             append = false;
@@ -64,6 +66,8 @@ void execute_command(Shell *shell, Command *cmd)
     case LS:
         if (cmd->argument_count > 0)
             ls(shell, cmd->arguments[0], redirect, cmd->arguments[cmd->argument_count - 1], append);
+        else if (cmd->argument_count == 0)
+            ls(shell, NULL, redirect, NULL, append);
         else
             ls(shell, NULL, redirect, cmd->arguments[cmd->argument_count - 1], append);
         break;
