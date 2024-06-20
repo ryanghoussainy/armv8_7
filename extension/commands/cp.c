@@ -1,6 +1,7 @@
 #include "cp.h"
 #include "cd.h"
 #include "rm.h"
+#include "rmdir.h"
 
 /*
 Copies the contents of the files/dirs in srcs to the dest directory.
@@ -8,7 +9,12 @@ srcs is an array of file/dirs paths. src_count is the number of files/dirs in sr
 
 Example: cp file1 dir1 file2 dest
 */
+
 void cp(Shell* shell, char** srcs, int src_count, char* dest) {
+    cp_mv(shell, srcs, src_count, dest, false);
+}
+
+void cp_mv(Shell* shell, char** srcs, int src_count, char* dest, bool is_mv) {
     assert(src_count > 0); // Should be checked before running this function
 
     for (int i = 0; i < src_count; i++) { // Loop through each source
@@ -40,6 +46,11 @@ void cp(Shell* shell, char** srcs, int src_count, char* dest) {
             // Copy the directory
             Directory* copy = copy_dir(src_dir);
 
+            // If mv, delete the original directory
+            if (is_mv) {
+                rmdir(shell, src_dir->path);
+            }
+
             // Go back to the original directory
             cd(shell, initial_path);
 
@@ -55,6 +66,11 @@ void cp(Shell* shell, char** srcs, int src_count, char* dest) {
         } else {
             // Copy the file
             File* copy = copy_file(src_file);
+
+            // If mv, delete the original file
+            if (is_mv) {
+                rm(shell, src_file->path);
+            }
 
             // Go back to the original directory
             cd(shell, initial_path);

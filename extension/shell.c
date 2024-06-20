@@ -10,6 +10,7 @@
 #include "commands/echo.h"
 #include "commands/cat.h"
 #include "commands/cp.h"
+#include "commands/mv.h"
 
 void initialise_shell(Shell* shell, FILE* out) {
     Directory* root = malloc(sizeof(Directory));
@@ -115,6 +116,7 @@ int main(int argc, char **argv) {
         FILE* out = fopen(FILE_OUT, "w");
         initialise_shell(&shell, out);
     }
+    initialise_shell(&shell, stdout);
 
     mkdir(&shell, "test1");
     mkdir(&shell, "test2");
@@ -130,9 +132,6 @@ int main(int argc, char **argv) {
     // rm(&shell, "file1");
     // rmdir(&shell, "test2");
 
-    char* arr = "test1/test3/test4";
-    cp(&shell, &arr, 1, "test2");
-
     ls(&shell, NULL);
     printf("\n");
     ls(&shell, "test1");
@@ -141,9 +140,6 @@ int main(int argc, char **argv) {
     printf("\n");
     ls(&shell, "test1/test3/test4");
     printf("\n");
-    ls(&shell, "test2");
-    printf("\n");
-    ls(&shell, "test2/test4");
 
     Directory* test1 = dir_find_directory(shell.root, "test1");
     Directory* test3 = dir_find_directory(test1, "test3");
@@ -159,7 +155,7 @@ int main(int argc, char **argv) {
     File* something = dir_find_file(test1, "something");
     printf("\n%s\n", something->content);
 
-    // print_shell(&shell);
+    print_shell(&shell);
 
     return 0;
 }

@@ -208,8 +208,24 @@ void free_dir(Directory* dir) {
     assert(dir != NULL);
 
     free(dir->name);
-    if (dir->files != NULL)       dir->files->free_elem(dir->files);
-    if (dir->directories != NULL) dir->directories->free_elem(dir->directories);
+    if (dir->files->head != NULL) {
+        Node* current = dir->files->head;
+        while (current != NULL) {
+            Node* temp = current->next;
+            free_file((File*)current->elem);
+            free(current);
+            current = temp;
+        }
+    }
+    if (dir->directories != NULL) {
+        Node* current = dir->directories->head;
+        while (current != NULL) {
+            Node* temp = current->next;
+            free_dir((Directory*)current->elem);
+            free(current);
+            current = temp;
+        }
+    }
     free(dir->path);
     free(dir);
 }
