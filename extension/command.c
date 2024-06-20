@@ -137,13 +137,7 @@ Command parse_to_command(char* command) {
 
     if (word_count >= 2) {
         argument_count = word_count - 1;
-        arguments = malloc(sizeof(char*) * argument_count);
-        assert(arguments != NULL);
-        for (int i = 0; i < argument_count; i++) {
-            arguments[i] = malloc(strlen(split_command[i + 1]) + 1);
-            assert(arguments[i] != NULL);
-            arguments[i] = split_command[i + 1];
-        }
+        arguments = split_command + 1;
     }
 
     cmd.operation = operation;

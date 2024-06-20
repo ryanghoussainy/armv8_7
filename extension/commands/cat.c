@@ -4,13 +4,9 @@
 
 
 /*
-'cat' prints the contents of a file
-
-Future development will see more options and more capabilities
+Prints the contents of a file to the shell's output by default.
 */
 void cat(Shell* shell, char* filepath, bool redirect, char* redirect_path, bool append) {
-
-    // vv Using same code as in rm.c --> make a function?
 
     char* initial_path = shell->path;
     char* prefixed_filepath = NULL;
@@ -36,14 +32,14 @@ void cat(Shell* shell, char* filepath, bool redirect, char* redirect_path, bool 
         if (redirect) {
             echo(shell, cat_file->content, true, redirect_path, append);
         } else {
-            fwrite(cat_file->content, 1, strlen(cat_file->content) + 1, shell->out);
+            fprintf(shell->out, "%s\n", cat_file->content);
         }
     } else {
         char message[25] = "Empty or Invalid File";
         if (redirect) {
             echo(shell, message, true, redirect_path, append);
         } else {
-            fwrite(message, 1, 25, shell->out);
+            fprintf(shell->out, "%s\n", message);
         }
     }
 

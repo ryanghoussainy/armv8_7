@@ -8,4 +8,6 @@ cd ..
 mkdir new-dir-2
 ls
 ls new-dir
+echo "hello there buddy" > new-dir/file.txt
+echo "hi there mate" >> new-dir/file.txt
 cat new-dir/file.txt
