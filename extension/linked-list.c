@@ -56,7 +56,7 @@ int remove_elem(LinkedList* list, void* elem) {
     } else if (list->head->elem == elem) {
         // first element matches
         Node* temp = list->head->next;
-        list->free_elem(elem);
+        list->free_elem(list->head->elem);
         free(list->head);
         list->head = temp;
         list->size--;
@@ -70,13 +70,12 @@ int remove_elem(LinkedList* list, void* elem) {
         if (current->elem == elem) {
             assert(previous != NULL);  // as case handled above
             // element found
-            if (list->tail == elem) {
+            if (list->tail == current) {
                 // last element matches
                 list->tail = previous; 
-                list->free_elem(current);
             }
             previous->next = current->next;
-            // list->free_elem(elem);
+            list->free_elem(current->elem);
             free(current);
 
             list->size--;

@@ -4,32 +4,40 @@
 void rmdir(Shell* shell, char* dirpath)
 {
     char* initial_path = strdup(shell->path);
-    char* prefixed_dirpath = NULL;
 
-    if (dirpath[0] != '/') {
-        prefixed_dirpath = malloc(strlen("./") + strlen(dirpath) + 1);
-        strcpy(prefixed_dirpath, "./");
-        prefixed_dirpath = strcat(prefixed_dirpath, dirpath);
-    }else {
-        prefixed_dirpath = strdup(dirpath);
+    if (strcmp(dirpath, "/") == 0) {
+        fprintf(shell->out, "Cannot delete root directory\n");
+        return;
     }
-    
-    char* path = previous_directory_path(prefixed_dirpath);
-    char* name = prefixed_dirpath + strlen(path);
-    
-    cd(shell, path);
 
-    Directory* delete_this_dir = dir_find_directory(shell->current_directory, name);
+    char* last_slash = strrchr(dirpath, '/');
+    char* name;
+    if (last_slash != NULL) {
+        // The path includes directories: mkdir d1/d2/hello
+        name = last_slash + 1; // + 1 to skip the '/'
+        size_t parent_path_len = last_slash - dirpath;
+        char* parent_path = malloc(parent_path_len + 1);  // +1 for the null terminator
+        assert(parent_path != NULL);
+        
+        strncpy(parent_path, dirpath, parent_path_len);
+        parent_path[last_slash - dirpath] = '\0';
 
-    if (delete_this_dir == NULL) {
+        cd(shell, parent_path);
+        
+        free(parent_path);
+    } else {
+        name = dirpath;
+    }
+
+    Directory* rm_dir = dir_find_directory(shell->current_directory, name);
+
+    if (rm_dir == NULL) {
         printf("Directory %s does not exist\n", name);
         return;
     }
 
-    dir_remove_directory(shell->current_directory, delete_this_dir);
+    dir_remove_directory(shell->current_directory, rm_dir);
 
     cd(shell, initial_path);
     free(initial_path);
-    free(prefixed_dirpath);
-    free(path);
 }

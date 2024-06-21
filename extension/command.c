@@ -132,6 +132,9 @@ char* get_manual(enum Operation op) {
         case ECHO:
             return strdup("Prints string argument.");
             break;
+        default:
+            return strdup("Invalid command. No manual available.");
+            break;
     }
 }
 
