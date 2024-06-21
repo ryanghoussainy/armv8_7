@@ -64,7 +64,7 @@ static void execute_command(Shell *shell, Command *cmd)
     char** srcs;
     switch (cmd->operation) {
     case LS:
-        if (cmd->argument_count > 0)
+        if (cmd->argument_count > 0 && strcmp(cmd->arguments[0], ">") != 0 && strcmp(cmd->arguments[0], ">>") != 0)
             ls(shell, cmd->arguments[0], redirect, cmd->arguments[cmd->argument_count - 1], append);
         else if (cmd->argument_count == 0)
             ls(shell, NULL, redirect, NULL, append);
@@ -112,7 +112,7 @@ static void execute_command(Shell *shell, Command *cmd)
         pwd(shell, redirect, cmd->arguments[cmd->argument_count - 1], append);
         break;
     case MAN:
-        man(shell, cmd, redirect, cmd->arguments[cmd->argument_count - 1], append);
+        man(shell, cmd->arguments[0], redirect, cmd->arguments[cmd->argument_count - 1], append);
     default:
         break;
     }
