@@ -1,0 +1,8 @@
+mkdir newdir
+mkdir newdir2
+mkdir newdir/newdir3
+touch newdir/newdir3/file.txt
+rm newdir/newdir3/file.txt
+ls newdir/newdir3
+rmdir newdir
+ls

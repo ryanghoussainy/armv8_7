@@ -50,7 +50,6 @@ void cp_mv(Shell* shell, char** srcs, int src_count, char* dest, bool is_mv) {
 
             // If mv, delete the original directory
             if (is_mv) {
-                printf("success\n");
                 rmdir(shell, src_dir->path);
             }
 

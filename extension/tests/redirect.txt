@@ -1,0 +1,8 @@
+echo "hello world"
+echo "hello world" > file.txt
+cat file.txt
+mkdir newdir
+ls >> file.txt
+pwd >> file.txt
+man cat >> file.txt
+cat file.txt

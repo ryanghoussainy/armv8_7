@@ -1,0 +1,7 @@
+mkdir newdir
+mkdir newdir2
+ls
+mkdir newdir/newdir3
+ls newdir
+cd /newdir/newdir3
+ls
