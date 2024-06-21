@@ -12,4 +12,5 @@ void man(Shell* shell, char* cmd, bool redirect, char* redirect_path, bool appen
     } else {
         fprintf(shell->out, "%s\n", manual);
     }
+    free(manual);
 }

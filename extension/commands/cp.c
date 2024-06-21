@@ -32,6 +32,7 @@ void cp_mv(Shell* shell, char** srcs, int src_count, char* dest, bool is_mv) {
             parent_path[last_slash - src_path] = '\0';
 
             cd(shell, parent_path);  // Change directory to the parent directory
+            free(parent_path);
         }
 
         // Get the source file/dir

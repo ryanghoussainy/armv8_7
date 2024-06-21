@@ -19,7 +19,7 @@ void touch(Shell* shell, char* path) {
     }
     // The path includes directories: touch d1/d2/hello / touch /d1/d2/hello
     
-    char* initial_path = shell->path;
+    char* initial_path = strdup(shell->path);
     if (path[0] == '/') {
         // Absolute path: change directory to root
         cd(shell, "/");
@@ -39,4 +39,5 @@ void touch(Shell* shell, char* path) {
     cd(shell, initial_path);  // Go back to the original path
 
     free(parent_path);
+    free(initial_path);
 }
